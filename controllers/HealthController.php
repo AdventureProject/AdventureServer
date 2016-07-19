@@ -19,9 +19,11 @@ class HealthController extends Controller
     
     public function post( $request )
     {
-        if( count($request->args) == 1 && is_numeric($request->args[0]) )
+        if( count($request->args) == 1 && is_numeric($request->args[0]) && is_numeric($request->params['version']) )
         {
             $photoFrameId = $request->args[0];
+			
+			$photoFrameVersion = $request->params['version'];
 
             $errors = "no";
             if( !empty($request->post) )
@@ -30,6 +32,7 @@ class HealthController extends Controller
             }
             
             $item['photo_frame'] = $photoFrameId;
+			$item['version'] = $photoFrameVersion;
             $item['errors'] = $errors;
             
             $db = getDb();
