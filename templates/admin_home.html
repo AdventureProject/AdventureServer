@@ -1,0 +1,22 @@
+        <a href="/admin/signout">Sign Out</a><br />
+        <a href="/addphoto">Add Photo</a><br />
+        
+        <h2>Photos</h2>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Flickr ID</th>
+                <th>Wallpaper?</th>
+                <th>Photoframe?</th>
+                <th>PhotoWall ID</th>
+            </tr>
+            <!-- BEGIN: photo_row -->
+            <tr>
+                <td><a href="/photo/{PHOTO_ID}">{PHOTO_ID}</a></td>
+                <td><a href="https://www.flickr.com/photos/adamwbrown/{FLICKR_ID}/">{FLICKR_ID}</a></td>
+                <td>{IS_WALLPAPER}</td>
+                <td>{IS_PHOTOFRAME}</td>
+                <td>{PHOTOWALL_ID}</td>
+            </tr>
+            <!-- END: photo_row -->
+        </table>
