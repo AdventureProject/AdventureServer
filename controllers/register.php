@@ -15,6 +15,7 @@ require_once('AdminController.php');
 require_once('AddPhotoController.php');
 require_once('PhotoController.php');
 require_once('HealthController.php');
+require_once('PhotoFrameErrorLogController.php');
 
 $config = new Config( '/admin' );
 
@@ -32,5 +33,6 @@ $registered_controllers['admin'] = new AdminController( $config );
 $registered_controllers['addphoto'] = new AddPhotoController( $config );
 $registered_controllers['photo'] = new PhotoController( $config );
 $registered_controllers['health'] = new HealthController( $config );
+$registered_controllers['errorlog'] = new PhotoFrameErrorLogController( $config );
 
 ?>

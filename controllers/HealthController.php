@@ -14,7 +14,54 @@ class HealthController extends Controller
 	
     public function get( $request )
     {
-        echo 'error';
+		if( $this->isAuthenticated() )
+        {
+			$photo = getTodaysPhoto();
+
+			$xtpl = new XTemplate('templates/base.html');
+			$xtpl->assign('IMAGE', $photo->image);
+
+			$xtpl->assign_file('BODY_FILE', 'templates/health.html');
+
+			$db = getDb();
+			$photoFrameIds = $db->photo_frame()->select('*');
+
+			foreach( $photoFrameIds as $id => $photoFrame )
+			{
+				$xtpl->assign( 'PHOTO_FRAME_ID', $id );
+				$xtpl->assign( 'PHOTO_FRAME_OWNER', $photoFrame['owner'] );
+				$xtpl->assign( 'PHOTO_FRAME_CREATED', $photoFrame['created'] );
+
+				$healthInfo = $db->health_monitor()->select('*')->where('photo_frame', $id)->order('date DESC')->limit(1);;
+				foreach( $healthInfo as $checkIn )
+				{
+					$curCheckIn = $checkIn;
+					break;
+				}
+
+				$xtpl->assign( 'CHECK_IN_DATE', $curCheckIn['date'] );
+				$xtpl->assign( 'CURRENT_VERSION', $curCheckIn['version'] );
+				
+				$errors = $db->health_monitor()->select('id,date')->where('photo_frame = ? AND errors <> ?', $id, '')->order('date DESC');
+				
+				foreach( $errors as $logId => $error )
+				{
+					$xtpl->assign( 'ERROR_LOG_ID', $logId );
+					$xtpl->assign( 'ERROR_LOG_DATE', $error['date'] );
+					$xtpl->parse('main.body.photo_frame.error_log');
+				}
+
+				$xtpl->parse('main.body.photo_frame');
+			}
+
+			$xtpl->parse('main.body');
+			$xtpl->parse('main');
+			$xtpl->out('main');
+        }
+		else
+		{
+			header('Location:'.$this->config->authUrl);
+		}
     }
     
     public function post( $request )
