@@ -25,7 +25,7 @@ class PhotoFrameErrorLogController extends Controller
 				$row = $db->health_monitor[ $request->args[0] ];
 				
 				header("Content-Type: text/plain");
-				echo {$row['errors']};
+				echo $row['errors'];
 			}
 		}
 	}
