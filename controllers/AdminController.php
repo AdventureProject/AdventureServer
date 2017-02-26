@@ -1,13 +1,13 @@
 <?php
 
-require_once('Controller.php');
+require_once('BaseController.php');
 require_once('Request.php');
 
 require_once('photos.php');
 
 include_once('libs/xtemplate.class.php');
 
-class AdminController extends Controller
+class AdminController extends BaseController
 {
     public function __construct( $config )
     {
@@ -20,6 +20,8 @@ class AdminController extends Controller
                     
         $xtpl = new XTemplate('templates/base.html');
         $xtpl->assign('IMAGE', $photo->image);
+		
+		$this->setup( $xtpl );
         
         if( count($request->args) > 0 )
         {
@@ -28,6 +30,11 @@ class AdminController extends Controller
                 if( $request->args[0] == 'home' )
                 {
                     $this->renderHome( $xtpl );
+                }
+				else if( $request->args[0] == 'refreshcache' )
+                {
+                    $this->refreshCache();
+                    header('Location:/admin');
                 }
                 else if( $request->args[0] == 'signout' )
                 {
@@ -89,11 +96,48 @@ class AdminController extends Controller
             $xtpl->assign( 'IS_WALLPAPER', $photo['wallpaper'] == 1 ? 'YES' : 'no' );
             $xtpl->assign( 'IS_PHOTOFRAME', $photo['photoframe'] == 1 ? 'YES' : 'no' );
             $xtpl->assign( 'PHOTOWALL_ID', $photo['photowall_id'] );
+			
+			$xtpl->assign( 'PHOTO_TITLE', substr( $photo['cache_title'], 0, 48 ) );
+			$xtpl->assign( 'PHOTO_THUMBNAIL', $photo['cache_thumbnail'] );
+			
+			$xtpl->assign( 'PHOTO_LOCATION', $photo['cache_location'] );
+			
+			if( $id % 2 == 0 )
+			{
+				$xtpl->parse('main.body.photo_row.alt');
+			}
+			else
+			{
+				$xtpl->parse('main.body.photo_row.default');
+			}
+			
+			if( !$photo['cache_location'] )
+			{
+				$xtpl->parse('main.body.photo_row.location_false');
+			}
+			else
+			{
+				$xtpl->parse('main.body.photo_row.location_true');
+			}
+			
             $xtpl->parse('main.body.photo_row');
         }
         
         $xtpl->parse('main.body');
     }
+	
+	private function refreshCache()
+	{
+		$db = getDb();
+        
+        foreach ($db->photos() as $id => $photo)
+        {
+        	$photoFlickr = getPhoto( $photo['flickr_id'] );
+			updatePhotoCache( $id, $photoFlickr, $db );
+			
+			usleep( 500000 ); // Wait for half a second so we don't anger Flickr
+		}
+	}
 }
 
 ?>

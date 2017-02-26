@@ -1,34 +1,54 @@
-        <!-- BEGIN: admin_links -->
-        <a href="/admin/home">Admin Home</a><br />
-        <!-- END: admin_links -->
+        <style>
+            ul.admin-list-item {
+                width: 300px;
+                background-color: white;
+            }
+            
+            img.fill
+            {
+                width: 100%;
+            }
+        </style>
 
-        <a href="{PREV_PHOTO_URL}">&lt; Previous</a> | <a href="{NEXT_PHOTO_URL}">Next &gt;</a><br />
-        
-        <h2>Photo: {PHOTO_ID}</h2>
-        <strong>Title:</strong> {PHOTO_TITLE}<br />
-        <strong>Date:</strong> {PHOTO_DATE}<br />
-        <strong>Location:</strong> {PHOTO_LOCATION}<br />
-        <strong>Description:</strong> {PHOTO_DESCRIPTION}<br />
-        <br />
+        <div class="mdl-grid center-items">
+            <div class="mdl-cell mdl-cell--8-col data mdl-shadow--2dp">
+                
+                <!-- BEGIN: admin_links -->
+                <a href="/admin/home">Admin Home</a><br />
+                <a href="/addphoto">Add another Photo</a><br />
+                <br />
+                <!-- END: admin_links -->
 
-        <!-- BEGIN: photo_actions -->
-        <form action="/photo/{PHOTO_ID}" method="post">
-            <input type="checkbox" name="is_wallpaper" {IS_WALLPAPER} /> Is Wallpaper<br>
-            <input type="checkbox" name="is_photoframe" {IS_PHOTOFRAME} /> Is Photoframe<br>
-            <input type="submit" value="Update" /><br>
-        </form>
-        <!-- END: photo_actions -->
+                <a href="{PREV_PHOTO_URL}">&lt; Previous</a> | <a href="{NEXT_PHOTO_URL}">Next &gt;</a><br />
 
-        <strong>PhotoWall ID:</strong> {PHOTOWALL_ID} 
-        <!-- BEGIN: add_photowall -->
-        <form action="/photo/{PHOTO_ID}" method="post">
-            <input type="submit" name="add_to_photowall" value="Add to Wall [{NEXT_PHOTOWALL_ID}]" /><br>
-        </form>
-        <!-- END: add_photowall -->
-        <br>
-        
-        <br />
+                <h2>Photo: {PHOTO_ID}</h2>
+                <strong>Title:</strong> {PHOTO_TITLE}<br />
+                <strong>Date:</strong> {PHOTO_DATE}<br />
+                <strong>Location:</strong> {PHOTO_LOCATION}<br />
+                <strong>Description:</strong> {PHOTO_DESCRIPTION}<br />
+                <br />
 
-        <a href="https://www.flickr.com/photos/adamwbrown/{FLICKR_ID}/">Flickr ID: {FLICKR_ID}<br />
-            <img src="{FLICKR_IMG}" />
-        </a>
+                <!-- BEGIN: photo_actions -->
+                <form action="/photo/{PHOTO_ID}" method="post">
+                    <input type="checkbox" name="is_wallpaper" {IS_WALLPAPER} /> Is Wallpaper<br>
+                    <input type="checkbox" name="is_photoframe" {IS_PHOTOFRAME} /> Is Photoframe<br>
+                    <input type="submit" value="Update" /><br>
+                </form>
+                <!-- END: photo_actions -->
+
+                <strong>PhotoWall ID:</strong> {PHOTOWALL_ID} 
+                <!-- BEGIN: add_photowall -->
+                <form action="/photo/{PHOTO_ID}" method="post">
+                    <input type="submit" name="add_to_photowall" value="Add to Wall [{NEXT_PHOTOWALL_ID}]" /><br>
+                </form>
+                <!-- END: add_photowall -->
+                <br>
+
+                <br />
+
+                <a href="https://www.flickr.com/photos/adamwbrown/{FLICKR_ID}/">Flickr ID: {FLICKR_ID}<br />
+                    <img class="fill" src="{FLICKR_IMG}" />
+                </a>
+                
+            </div>  
+        </div>

@@ -16,8 +16,8 @@ class RandomController extends Controller
     {
         $wallpapers = getWallpapers();
         
-        $photoId = $wallpapers[array_rand($wallpapers)];
-        echo json_encode( getPhoto( $photoId ) );
+        $photoIds = $wallpapers[array_rand($wallpapers)];
+        echo json_encode( getPhoto( $photoIds['flickr_id'], $photoIds['id'] ) );
     }
 }
 

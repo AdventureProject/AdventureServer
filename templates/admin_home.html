@@ -1,23 +1,79 @@
-        <a href="/admin/signout">Sign Out</a><br />
-        <a href="/addphoto">Add Photo</a><br />
-        <a href="/health">Health Monitor</a><br />
-        
-        <h2>Photos</h2>
-        <table>
-            <tr>
-                <th>ID</th>
-                <th>Flickr ID</th>
-                <th>Wallpaper?</th>
-                <th>Photoframe?</th>
-                <th>PhotoWall ID</th>
-            </tr>
-            <!-- BEGIN: photo_row -->
-            <tr>
-                <td><a href="/photo/{PHOTO_ID}">{PHOTO_ID}</a></td>
-                <td><a href="https://www.flickr.com/photos/adamwbrown/{FLICKR_ID}/">{FLICKR_ID}</a></td>
-                <td>{IS_WALLPAPER}</td>
-                <td>{IS_PHOTOFRAME}</td>
-                <td>{PHOTOWALL_ID}</td>
-            </tr>
-            <!-- END: photo_row -->
-        </table>
+
+        <style>
+            ul.admin-list-item {
+                width: 300px;
+                background-color: white;
+            }
+            
+            tr {
+                padding: 16px;
+            }
+            
+            th {
+                padding: 16px;
+            }
+          
+            td {
+                padding: 16px;
+            }
+            
+            @media screen and (max-width: 640px) {
+                .hide { display: none; }
+            }
+        </style>
+
+        <div class="mdl-grid">
+            <div class="mdl-cell mdl-cell--3-col">
+                <h2>Admin</h2>
+                <ul class="admin-list-item mdl-list mdl-shadow--2dp">
+                  <li class="mdl-list__item">
+                    <span class="mdl-list__item-primary-content">
+                      <a href="/addphoto">Add Photo</a>
+                    </span>
+                  </li>
+                  <li class="mdl-list__item">
+                    <span class="mdl-list__item-primary-content">
+                      <a href="/health">Health Monitor</a>
+                    </span>
+                  </li>
+                  <li class="mdl-list__item">
+                    <span class="mdl-list__item-primary-content">
+                      <a href="/admin/refreshcache">Refresh Cache<br />(<em>will take several minutes</em>)</a>
+                    </span>
+                  </li>
+                </ul>
+            </div>
+            <div class="mdl-cell mdl-cell--7-col">
+                <h2>Photos</h2>
+                <table class="data mdl-shadow--2dp">
+                    <tr style="background-color:rgba(0, 0, 0, 0.1);">
+                        <th>ID</th>
+                        <th>Preview</th>
+                        <th class="hide">Location?</th>
+                        <th class="hide">Wallpaper?</th>
+                        <th class="hide">Photoframe?</th>
+                        <th class="hide">PhotoWall</th>
+                    </tr>
+                    <!-- BEGIN: photo_row -->
+                    <!-- BEGIN: default -->
+                    <tr>
+                    <!-- END: default -->
+                    <!-- BEGIN: alt -->
+                    <tr style="background-color:rgba(0, 0, 0, 0.1);">
+                    <!-- END: alt -->
+                        <td><a href="/photo/{PHOTO_ID}">{PHOTO_ID}</a></td>
+                        <td style="text-align:center"><a href="/photo/{PHOTO_ID}">{PHOTO_TITLE}<br /><img src="{PHOTO_THUMBNAIL}"/></a><br /> <a href="https://www.flickr.com/photos/adamwbrown/{FLICKR_ID}/">Flickr ID: {FLICKR_ID}</a></td>
+                        <!-- BEGIN: location_true -->
+                        <td class="hide">{PHOTO_LOCATION}</td>
+                        <!-- END: location_true -->
+                        <!-- BEGIN: location_false -->
+                        <td style="background-color:black;text-align:center;" class="hide"><span style="color:red"><strong>No Location</strong></span>{PHOTO_LOCATION}</td>
+                        <!-- END: location_false -->
+                        <td class="hide">{IS_WALLPAPER}</td>
+                        <td class="hide">{IS_PHOTOFRAME}</td>
+                        <td class="hide">{PHOTOWALL_ID}</td>
+                    </tr>
+                    <!-- END: photo_row -->
+                </table>
+            </div>
+        </div>

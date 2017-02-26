@@ -7,7 +7,7 @@ require_once('photos.php');
 
 include_once('libs/xtemplate.class.php');
 
-class RootController extends BaseController
+class AppsController extends BaseController
 {
     public function __construct( $config )
     {
@@ -23,9 +23,9 @@ class RootController extends BaseController
 		
 		$this->setup( $xtpl );
 		
-		$xtpl->assign_file('BODY_FILE', 'templates/today.html');
+		$xtpl->assign_file('BODY_FILE', 'templates/apps.html');
 		
-        //$xtpl->parse('main.body');
+        $xtpl->parse('main.body');
         $xtpl->parse('main');
 	    $xtpl->out('main');
     }

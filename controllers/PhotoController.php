@@ -28,7 +28,7 @@ class PhotoController extends Controller
         
         $xtpl->parse('main.body');
         $xtpl->parse('main');
-	    $xtpl->out('main');
+		$xtpl->out('main');
     }
     
     private function renderPhoto( $xtpl, $photoId )
@@ -41,10 +41,11 @@ class PhotoController extends Controller
         }
         
         $db = getDb();
-        $photoData = $db->photos("id = ?", $photoId)->fetch();
-        
+        $photoData = $db->photos[$photoId];
         $photoFlickr = getPhoto( $photoData['flickr_id'], true, 512, 512 );
-            
+		
+		updatePhotoCache( $photoId, $photoFlickr, $db );
+
 		if( $photoId-1 > 0 )
 		{
 			$xtpl->assign( 'PREV_PHOTO_URL', '/photo/'.($photoId-1) );
@@ -53,7 +54,7 @@ class PhotoController extends Controller
 		{
 			$xtpl->assign( 'PREV_PHOTO_URL', '/admin' );
 		}
-		
+
 		if( $photoId+1 <= $db->photos()->max('id') )
 		{
 			$xtpl->assign( 'NEXT_PHOTO_URL', '/photo/'.($photoId+1) );
@@ -104,28 +105,28 @@ class PhotoController extends Controller
 		{
 			$xtpl->assign( 'NEXT_PHOTOWALL_ID', $db->photos()->max('photowall_id')+1 );
 			$xtpl->assign( 'PHOTOWALL_ID', '<em>not on the wall</em>' );
-            
-            if( $this->isAuthenticated() )
-            {
-                $xtpl->parse('main.body.add_photowall');
-            }
+
+			if( $this->isAuthenticated() )
+			{
+					$xtpl->parse('main.body.add_photowall');
+			}
 		}
     }
     
-    public function post( $request )
-    {
-        if( $this->enforceAuth() )
-        {
-            if( count($request->args) == 1 && is_numeric( $request->args[0] ) )
-            {
+	public function post( $request )
+	{
+		if( $this->enforceAuth() )
+		{
+			if( count($request->args) == 1 && is_numeric( $request->args[0] ) )
+			{
 				$photoId = $request->args[0];
-				
+
 				$db = getDb();
 				$photoRow = $db->photos()[$photoId];
 				if( $photoRow )
 				{
 					$success = false;
-					
+
 					if( isset($request->post['add_to_photowall']) )
 					{
 						if( empty($photoRow['photowall_id']) )
@@ -146,7 +147,7 @@ class PhotoController extends Controller
 
 						$success = $photoRow->update();
 					}
-					
+
 					if( $success )
 					{
 						header("Location:/photo/$photoId");

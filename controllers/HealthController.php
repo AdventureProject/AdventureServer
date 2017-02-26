@@ -15,7 +15,7 @@ class HealthController extends Controller
     public function get( $request )
     {
 		if( $this->isAuthenticated() )
-        {
+		{
 			$photo = getTodaysPhoto();
 
 			$xtpl = new XTemplate('templates/base.html');
@@ -41,9 +41,9 @@ class HealthController extends Controller
 
 				$xtpl->assign( 'CHECK_IN_DATE', $curCheckIn['date'] );
 				$xtpl->assign( 'CURRENT_VERSION', $curCheckIn['version'] );
-				
+
 				$errors = $db->health_monitor()->select('id,date')->where('photo_frame = ? AND errors <> ?', $id, '')->order('date DESC');
-				
+
 				foreach( $errors as $logId => $error )
 				{
 					$xtpl->assign( 'ERROR_LOG_ID', $logId );
@@ -57,7 +57,7 @@ class HealthController extends Controller
 			$xtpl->parse('main.body');
 			$xtpl->parse('main');
 			$xtpl->out('main');
-        }
+		}
 		else
 		{
 			header('Location:'.$this->config->authUrl);
@@ -66,27 +66,36 @@ class HealthController extends Controller
     
     public function post( $request )
     {
-        if( count($request->args) == 1 && is_numeric($request->args[0]) && is_numeric($request->params['version']) )
-        {
-            $photoFrameId = $request->args[0];
-			
-			$photoFrameVersion = $request->params['version'];
+			if( count($request->args) == 1 && is_numeric($request->args[0]) && is_numeric($request->params['version']) )
+			{
+				$photoFrameId = $request->args[0];
 
-            $errors = "no";
-            if( !empty($request->post) )
-            {
-                $errors = $request->post;
-            }
-            
-            $item['photo_frame'] = $photoFrameId;
-			$item['version'] = $photoFrameVersion;
-            $item['errors'] = $errors;
-            
-            $db = getDb();
-            $row = $db->health_monitor()->insert( $item );
+				$db = getDb();
+				$row = $db->photo_frame[$photoFrameId];
+				// Register unregistered photo frames
+				if( !$row )
+				{
+					$item['id'] = $photoFrameId;
+					$item['owner'] = 'unregistered';
+					$db->photo_frame()->insert( $item );
+				}
 
-            echo $row;
-        }
+				$photoFrameVersion = $request->params['version'];
+
+				$errors = "none";
+				if( isset( $request->post['errors'] ) )
+				{
+					$errors = $request->post['errors'];
+				}
+
+				$item['photo_frame'] = $photoFrameId;
+				$item['version'] = $photoFrameVersion;
+				$item['errors'] = $errors;
+
+				$row = $db->health_monitor()->insert( $item );
+
+				echo $row;
+			}
     }
 }
 

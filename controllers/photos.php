@@ -28,14 +28,18 @@ function getDb()
 function getWallpapers()
 {
     $db = getDb();
-    $row = $db->photos()->select('flickr_id')->where("wallpaper", 1);
-    
+    $row = $db->photos()->select('id, flickr_id')->where("wallpaper", 1);
+
     $wallpapers = array();
     while( $data = $row->fetch() )
     {
-        $wallpapers[] = $data['flickr_id'];
+        $photoIds = array();
+        $photoIds['id'] = $data['id'];
+        $photoIds['flickr_id'] = $data['flickr_id'];
+
+        $wallpapers[] = $photoIds;
     }
-    
+
     return $wallpapers;
 }
 
@@ -66,19 +70,20 @@ function getPhotoForDay($dayOfYear)
     mt_srand($dayOfYear);
     $photoIndex = mt_rand( 0, count($wallpapers) );
     
-    $photoId = $wallpapers[$photoIndex];
+    $photoIds = $wallpapers[$photoIndex];
 
-    return getPhoto( $photoId );
+    return getPhoto( $photoIds['flickr_id'], $photoIds['id'] );
 }
 
-function getPhoto( $photoId, $findSmallest = false, $minWidth = -1, $minHeight = -1 )
+function getPhoto( $flickrId, $photoId, $findSmallest = false, $minWidth = -1, $minHeight = -1 )
 {
     global $flickr;
-    
+
     $todaysPhoto = new Photo();
-    
+    $todaysPhoto->id = $photoId;
+
     $method = 'flickr.photos.getInfo';
-    $args = array('photo_id' => $photoId);
+    $args = array('photo_id' => $flickrId);
     $response = $flickr->call_method($method, $args);
     
     if( $response['stat'] == "ok" )
@@ -88,6 +93,8 @@ function getPhoto( $photoId, $findSmallest = false, $minWidth = -1, $minHeight =
         $todaysPhoto->title = $photoInfo['title']['_content'];
         $todaysPhoto->description = $photoInfo['description']['_content'];
         $todaysPhoto->date = $photoInfo['dates']['taken'];
+        $todaysPhoto->url = $photoInfo['urls']['url'][0]['_content'];
+        
         if( array_key_exists('location', $photoInfo) )
         {
             $todaysPhoto->location = $photoInfo['location']['latitude'] . ',' . $photoInfo['location']['longitude'];
@@ -95,7 +102,7 @@ function getPhoto( $photoId, $findSmallest = false, $minWidth = -1, $minHeight =
     }
     
     $method = 'flickr.photos.getSizes';
-    $args = array('photo_id' => $photoId);
+    $args = array('photo_id' => $flickrId);
     $response = $flickr->call_method($method, $args);
 
     if( $response['stat'] == "ok" )
@@ -109,9 +116,19 @@ function getPhoto( $photoId, $findSmallest = false, $minWidth = -1, $minHeight =
             $selectedSize = findLargest( $response['sizes']['size'] );
         }
         $todaysPhoto->image = $selectedSize['source'];
-        $todaysPhoto->url = $selectedSize['url'];
+        
+        $thumbnail = NULL;
+        foreach( $response['sizes']['size'] as $size )
+        {
+            if( $size['label'] === 'Large Square' )
+            {
+                $thumbnail = $size;
+                break;
+            }
+        }
+        $todaysPhoto->thumbnail = $thumbnail['source'];
     }
-
+    
     return $todaysPhoto;
 }
 
@@ -150,6 +167,19 @@ function findSmallest( $sizes, $minWidth, $minHeight )
     return $smallestSize;
 }
 
+function updatePhotoCache( $id, $flickrPhoto, $db )
+{
+    $rowUpdate = array(
+        'cache_title' => $flickrPhoto->title,
+        'cache_thumbnail' => $flickrPhoto->thumbnail,
+        'cache_location' => $flickrPhoto->location,
+        'cache_updated' => new NotORM_Literal("NOW()")
+    );
+    
+    $photoRow = $db->photos[$id];
+    $photoRow->update( $rowUpdate );
+}
+
 class Photo
 {
     public $title = "";
@@ -157,7 +187,9 @@ class Photo
     public $date = "";
     public $image = "";
     public $url = "";
+    public $thumbnail = "";
     public $location = "";
+    public $id = "";
 }
 
 ?>
