@@ -20,26 +20,26 @@ class PhotoWallController extends Controller
         }
         else
         {
-            $photoId = $request->args[0];
+            $photoWallId = $request->args[0];
             
             $photoAlbum = 72157661260548425;
     
-            $flickrId = -1;
+            $photoId = -1;
 
             $db = getDb();
-            $row = $db->photos()->select('flickr_id')->where("photowall_id", $photoId);
+            $row = $db->photos()->select('id')->where("photowall_id", $photoWallId);
             if( $row !== false )
             {
                 $result = $row->fetch();
                 if( $result !== false )
                 {
-                    $flickrId = $result['flickr_id'];
+                    $photoId = $result['id'];
                 }
             }
 
-            if( $flickrId > 0 )
+            if( $photoId > 0 )
             {
-                header( "Location: https://www.flickr.com/photos/adamwbrown/$flickrId/in/album-$photoAlbum/" );
+                header( "Location: http://wethinkadventure.rocks/photo/$photoId" );
             }
             else
             {

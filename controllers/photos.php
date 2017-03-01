@@ -93,7 +93,8 @@ function getPhoto( $flickrId, $photoId, $findSmallest = false, $minWidth = -1, $
         $todaysPhoto->title = $photoInfo['title']['_content'];
         $todaysPhoto->description = $photoInfo['description']['_content'];
         $todaysPhoto->date = $photoInfo['dates']['taken'];
-        $todaysPhoto->url = $photoInfo['urls']['url'][0]['_content'];
+        //$todaysPhoto->url = $photoInfo['urls']['url'][0]['_content'];
+        $todaysPhoto->url = "http://wethinkadventure.rocks/photo/$photoId";
         
         if( array_key_exists('location', $photoInfo) )
         {
