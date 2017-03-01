@@ -1,12 +1,30 @@
     <div class="mdl-grid center-items">
-        <div class="mdl-cell mdl-cell--4-col data">
-            
-            <form action="/addphoto" method="post">
-                Flickr ID: <input type="text" name="flickr_id" /><br />
-                <input type="checkbox" name="is_wallpaper" /> Is Wallpaper<br />
-                <input type="checkbox" name="is_photoframe" /> Is Photoframe<br />
-                <input type="checkbox" name="is_photowall" /> Is PhotoWall<br /><br />
-                <input type="submit" value="Add Photo" />
-            </form>
+        
+		<div class="mdl-card navigation-card mdl-cell mdl-cell--2-col">
+		  <div class="mdl-card__title">
+			 <h4 class="mdl-card__title-text">Admin</h4>
+		  </div>
+			<ul class="mdl-list">
+                  <li class="mdl-list__item">
+                    <span class="mdl-list__item-primary-content">
+                      <a href="/admin/home">Admin Home</a>
+                    </span>
+                  </li>
+			</ul>
+		</div>
+        
+        <div class="mdl-card admin-card mdl-cell mdl-cell--6-col">
+		  <div class="mdl-card__title">
+			 <h4 class="mdl-card__title-text">Add Photo</h4>
+		  </div>
+		  <div class="adventure-content">
+			<form action="/addphoto" method="post">
+				Flickr ID: <input type="text" name="flickr_id" /><br />
+				<input type="checkbox" name="is_wallpaper" /> Is Wallpaper<br />
+				<input type="checkbox" name="is_photoframe" /> Is Photoframe<br />
+				<input type="checkbox" name="is_photowall" /> Is PhotoWall<br /><br />
+				<input type="submit" value="Add Photo" />
+			</form>
+		  </div>
         </div>
     </div>

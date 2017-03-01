@@ -8,15 +8,17 @@ require_once('RedirectController.php');
 require_once('ClientController.php');
 require_once('PhotoFrameController.php');
 require_once('RandomController.php');
-require_once('PeekController.php');
 require_once('TodaysWallpaperController.php');
-require_once('RootController.php');
-require_once('AdminController.php');
-require_once('AddPhotoController.php');
-require_once('PhotoController.php');
-require_once('HealthController.php');
-require_once('AppsController.php');
 require_once('PhotoFrameErrorLogController.php');
+require_once('base/PeekController.php');
+require_once('base/RootController.php');
+require_once('base/AdminController.php');
+require_once('base/AddPhotoController.php');
+require_once('base/PhotoController.php');
+require_once('base/HealthController.php');
+require_once('base/AppsController.php');
+require_once('base/AboutController.php');
+require_once('base/VideosController.php');
 
 $config = new Config( '/admin' );
 
@@ -36,5 +38,7 @@ $registered_controllers['photo'] = new PhotoController( $config );
 $registered_controllers['health'] = new HealthController( $config );
 $registered_controllers['apps'] = new AppsController( $config );
 $registered_controllers['errorlog'] = new PhotoFrameErrorLogController( $config );
+$registered_controllers['about'] = new AboutController( $config );
+$registered_controllers['videos'] = new VideosController( $config );
 
 ?>
