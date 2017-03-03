@@ -1,5 +1,7 @@
 <?php
 
+require_once('controllers/KeysUtil.php');
+
 require_once('controllers/base/BaseController.php');
 require_once('Request.php');
 
@@ -15,12 +17,7 @@ class PhotoController extends BaseController
     {
         parent::__construct( false, $config );
 		
-		$keys = json_decode( utf8_encode( file_get_contents('../keys.json') ) );
-
-		if( !$keys )
-		{
-			die('Bad Keys file');
-		}
+		$keys = getKeys();
 
 		$this->googleMapsApiKey = $keys->google_maps_api->key;
     }

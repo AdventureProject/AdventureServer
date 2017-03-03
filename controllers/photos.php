@@ -1,16 +1,13 @@
 <?php
 
+require_once('controllers/KeysUtil.php');
+
 require_once( 'libs/flickr.simple.php' );
 require_once( 'libs/NotORM.php' );
 
 date_default_timezone_set('America/Los_Angeles');
 
-$keys = json_decode( utf8_encode( file_get_contents('../keys.json') ) );
-
-if( !$keys )
-{
-    die('Bad Keys file');
-}
+$keys = getKeys();
 
 $key = $keys->flickr_api->key;
 $secret = $keys->flickr_api->secret;

@@ -21,9 +21,11 @@ class RootController extends BaseController
 	
     public function getBody( $request, $todaysPhoto, $xtpl )
     {
-		    $xtpl->assign_file('BODY_FILE', 'templates/today.html');
+		$xtpl->assign_file('BODY_FILE', 'templates/today.html');
 		
-        //$xtpl->parse('main.body');
+		$xtpl->assign('PHOTO_ID',$todaysPhoto->id);
+		
+        $xtpl->parse('main.body');
     }
 }
 

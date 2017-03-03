@@ -1,5 +1,7 @@
 <?php
 
+require_once('controllers/KeysUtil.php');
+
 require_once('controllers/base/BaseController.php');
 require_once('Request.php');
 
@@ -9,9 +11,14 @@ include_once('libs/xtemplate.class.php');
 
 class AdminController extends BaseController
 {
+	private $authPassword;
+	
     public function __construct( $config )
     {
         parent::__construct( false, $config );
+		
+		$keys = getKeys();
+		$this->authPassword = $keys->admin->password;
     }
 	
     public function getTitle()
@@ -65,7 +72,7 @@ class AdminController extends BaseController
         {
             if( $request->args[0] == 'authenticate' )
             {
-                if( isset($request->post['auth']) && $request->post['auth'] == '3.14159!' )
+                if( isset($request->post['auth']) && $request->post['auth'] == $this->authPassword )
                 {
                     $_SESSION['auth'] = true;
                     header('Location:/admin/home');
