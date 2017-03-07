@@ -19,9 +19,9 @@ class PhotoFrameController extends Controller
         
         $photoFramePhotoIds = getPhotoframes();
 
-        $photoId = $photoFramePhotoIds[array_rand( $photoFramePhotoIds )];
+        $photo = $photoFramePhotoIds[array_rand( $photoFramePhotoIds )];
 
-        echo json_encode( getPhoto( $photoId, true, 800, 480 ) );
+        echo json_encode( getPhoto( $photo['flickr_id'], $photo['id'], true, 800, 480 ) );
     }
 }
 

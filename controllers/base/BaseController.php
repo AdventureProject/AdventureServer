@@ -20,7 +20,7 @@ abstract class BaseController extends Controller
         $this->getBody( $request, $todaysPhoto, $xtpl );
         
         $xtpl->parse('main');
-		    $xtpl->out('main');
+		$xtpl->out('main');
     }
   
     abstract public function getTitle();

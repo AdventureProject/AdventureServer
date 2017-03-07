@@ -1,0 +1,37 @@
+	<style>
+		.pic-card-land.mdl-card {
+		  height: 200px;
+		}
+
+		.pic-card-port.mdl-card {
+		  height: 200px;
+		}
+
+		.adventure.mdl-layout .mdl-layout__content {
+			padding-bottom: 20px;
+		}
+		
+		@media screen and (min-width: 640px) {
+			.adventure.mdl-layout .mdl-layout__content {
+				padding-left: 15px;
+				padding-right: 15px;
+			}
+		}
+		
+		<!-- BEGIN: highlight_style -->
+		.adventure .pic-{PHOTO_ID} .mdl-card__media {
+			background-image: url('{PHOTO_THUMBNAIL}');
+
+		}
+		<!-- END: highlight_style -->
+	</style>
+
+	<div class="mdl-grid mdl-grid--no-spacing center-items">
+		 <!-- BEGIN: highlight -->
+		<div class="mdl-card pic-{PHOTO_ID} mdl-cell {PHOTO_STYLE} ml-shadow--2dp">
+			<div class="mdl-card__media">
+				<a class="card_media_link" href="/photo/{PHOTO_ID}"></a>
+			</div>
+		</div>
+		<!-- END: highlight -->
+	</div>

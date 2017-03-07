@@ -29,10 +29,19 @@ class PhotoController extends BaseController
     
     public function getBody( $request, $todaysPhoto, $xtpl )
     {
+		$xtpl->parse('main.action_random');
+		
         if( count($request->args) == 1 && is_numeric( $request->args[0] ) )
         {
             $this->renderPhoto( $xtpl, $request->args[0] );
         }
+		else
+		{
+			$photoIds = getRandomPhoto();
+			
+			header( 'Location: /photo/'.$photoIds['id'] );
+			exit();
+		}
         
         $xtpl->parse('main.body');
     }
@@ -43,7 +52,7 @@ class PhotoController extends BaseController
         
         $db = getDb();
         $photoData = $db->photos[$photoId];
-        $photoFlickr = getPhoto( $photoData['flickr_id'], true, 512, 512 );
+        $photoFlickr = getPhoto( $photoData['flickr_id'], $photoId, true, 1024, 1024 );
 		
 		updatePhotoCache( $photoId, $photoFlickr, $db );
 
@@ -93,29 +102,30 @@ class PhotoController extends BaseController
 		$xtpl->assign( 'MAP_ZOOMED_IN', $this->getZoomedInMapUrl( $photoFlickr->location ) );
 		
         $xtpl->assign( 'IS_WALLPAPER', $photoData['wallpaper'] == 1 ? 'checked' : '' );
+		$xtpl->assign( 'IS_HIGHLIGHT', $photoData['highlight'] == 1 ? 'checked' : '' );
         $xtpl->assign( 'IS_PHOTOFRAME', $photoData['photoframe'] == 1 ? 'checked' : '' );
 		
         if( $this->isAuthenticated() )
         {
+			if( !empty($photoData['photowall_id']) )
+			{
+				$photoWallId = $photoData['photowall_id'];
+				$xtpl->assign( 'PHOTOWALL_ID', $photoData['photowall_id'] );
+			}
+			else
+			{
+				$xtpl->assign( 'NEXT_PHOTOWALL_ID', $db->photos()->max('photowall_id')+1 );
+				$xtpl->assign( 'PHOTOWALL_ID', '<em>not on the wall</em>' );
+
+				if( $this->isAuthenticated() )
+				{
+					$xtpl->parse('main.body.admin_links.add_photowall');
+				}
+			}
+			
             $xtpl->parse('main.body.admin_links.photo_actions');
 			$xtpl->parse('main.body.admin_links');
         }
-        
-		if( !empty($photoData['photowall_id']) )
-		{
-			$photoWallId = $photoData['photowall_id'];
-			$xtpl->assign( 'PHOTOWALL_ID', $photoData['photowall_id'] );
-		}
-		else
-		{
-			$xtpl->assign( 'NEXT_PHOTOWALL_ID', $db->photos()->max('photowall_id')+1 );
-			$xtpl->assign( 'PHOTOWALL_ID', '<em>not on the wall</em>' );
-
-			if( $this->isAuthenticated() )
-			{
-					$xtpl->parse('main.body.admin_links.add_photowall');
-			}
-		}
     }
     
 	public function post( $request )
@@ -149,6 +159,7 @@ class PhotoController extends BaseController
 					{
 						$photoRow['wallpaper'] = isset($request->post['is_wallpaper']) ? 1 : 0;
 						$photoRow['photoframe'] = isset($request->post['is_photoframe']) ? 1 : 0;
+						$photoRow['highlight'] = isset($request->post['is_highlight']) ? 1 : 0;
 
 						$success = $photoRow->update();
 					}

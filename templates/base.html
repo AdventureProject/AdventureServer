@@ -1,102 +1,103 @@
 <!-- BEGIN: main -->
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="description" content="Adam and Stacy's Adventures.">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-        
-        <meta name="theme-color" content="#29388e">
-        
-        <title>{TITLE} - We Think Adventure.Rocks</title>
-        
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-        
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-        <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-red.min.css">
-        <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-        
-        <link rel="stylesheet" href="/templates/base.css">
-        
-        <style>
-            html
-            { 
-              background: url({IMAGE}) no-repeat center center fixed; 
-              -webkit-background-size: cover;
-              -moz-background-size: cover;
-              -o-background-size: cover;
-              background-size: cover;
-            }
-            
-            .data {
-                background-color: #f9f7f2;
-                padding: 16px;
-            }
-			
-			.mdl-grid.center-items {
-			  justify-content: center;
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="description" content="Adam and Stacy's Adventures.">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+
+		<meta name="theme-color" content="#29388e">
+
+		<title>{TITLE} - We Think Adventure.Rocks</title>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+		<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-red.min.css">
+		<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+
+		<link rel="stylesheet" href="/templates/base.css">
+
+		<style>
+			html { 
+				background: url({IMAGE}) no-repeat center center fixed; 
+				-webkit-background-size: cover;
+				-moz-background-size: cover;
+				-o-background-size: cover;
+				background-size: cover;
 			}
-        </style>
-        
-        <link rel="icon" 
-              type="image/png" 
-              href="/icon.png" />
-        
+
+			.data {
+				background-color: #f9f7f2;
+				padding: 16px;
+			}
+
+			.mdl-grid.center-items {
+				justify-content: center;
+			}
+		</style>
+
+		<link rel="icon" 
+				type="image/png" 
+				href="/icon.png" />
+
 		<!-- Add to homescreen for Chrome on Android -->
 		<meta name="mobile-web-app-capable" content="yes">
 		<link rel="icon" sizes="192x192" href="images/android-desktop.png">
-        
+
 		<!-- Add to homescreen for Safari on iOS -->
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="#29388e">
 		<meta name="apple-mobile-web-app-title" content="WeatherToClimb.Rocks">
 		<link rel="apple-touch-icon-precomposed" href="images/ios-desktop.png">
-        
+
 		<!-- Tile icon for Win8 (144x144 + tile color) -->
 		<meta name="msapplication-TileImage" content="images/ms-touch-icon-144x144-precomposed.png">
 		<meta name="msapplication-TileColor" content="#29388e">
-    </head>
-    
-    <body>
-        <!-- Always shows a header, even in smaller screens. -->
-        <div class="adventure mdl-layout mdl-js-layout mdl-layout--fixed-header has-drawer is-upgraded">
-            <header class="mdl-layout__header">
-                <div class="mdl-layout__header-row">
-                    <!-- Title -->
-                    <span class="mdl-layout-title">Adventure.Rocks</span>
-                    <!-- Add spacer, to align navigation to the right -->
-                    <div class="mdl-layout-spacer"></div>
-                    <!-- Navigation. We hide it in small screens. -->
-                    <nav class="mdl-navigation">
-                        <!-- BEGIN: authenticated -->
-                        <a class="mdl-navigation__link" href="/admin/signout">Sign Out</a>
-                        <!-- END: authenticated -->
-                    </nav>
-                </div>
-            </header>
-            <div class="mdl-layout__drawer">
-                <span class="mdl-layout-title">Navigation</span>
-                <nav class="mdl-navigation">
+	</head>
+
+	<body>
+		<!-- Always shows a header, even in smaller screens. -->
+		<div class="adventure mdl-layout mdl-js-layout mdl-layout--fixed-header has-drawer is-upgraded">
+			<header class="mdl-layout__header">
+				<div class="mdl-layout__header-row">
+					<!-- Title -->
+					<span class="mdl-layout-title">Adventure.Rocks</span>
+					<!-- Add spacer, to align navigation to the right -->
+					<div class="mdl-layout-spacer"></div>
+					<!-- Navigation. We hide it in small screens. -->
+					<nav class="mdl-navigation">
+						<!-- BEGIN: action_random -->
+						<a class="mdl-navigation__link" href="/photo/random"><i class="material-icons">shuffle</i></a>
+						<!-- END: action_random -->
+						<!-- BEGIN: authenticated -->
+						<a class="mdl-navigation__link" href="/admin/signout">Sign Out</a>
+						<!-- END: authenticated -->
+					</nav>
+				</div>
+			</header>
+			<div class="mdl-layout__drawer">
+				<span class="mdl-layout-title">Navigation</span>
+				<nav class="mdl-navigation">
 					<a class="mdl-navigation__link" href="/about">About</a>
-					<a class="mdl-navigation__link" href="/apps">Apps</a>
-                    <a class="mdl-navigation__link" href="/">Today's Photo</a>
-					<hr />
+					<a class="mdl-navigation__link" href="/highlights">Highlights</a>
 					<a class="mdl-navigation__link" href="/videos">Videos</a>
-					<a class="mdl-navigation__link" href="https://www.flickr.com/photos/adamwbrown/albums" target="_blank">Our Flickr <img src="/images/leaving_site.png" /></a>
+					<a class="mdl-navigation__link" href="/apps">Apps</a>
+					<a class="mdl-navigation__link" href="/">Today's Photo</a>
 					<hr />
-                    <a class="mdl-navigation__link" href="/admin">Admin</a>
-                </nav>
-            </div>
-            <!-- BEGIN: body -->
-            <main class="adventure mdl-layout__content">
-                <div class="page-content" id="body">
-                    {FILE {BODY_FILE}}
-                </div>
-            </main>
-            <!-- END: body -->
-        </div>
-    </body>
+					<a class="mdl-navigation__link" href="/admin">Admin</a>
+				</nav>
+			</div>
+			<!-- BEGIN: body -->
+			<main class="adventure mdl-layout__content">
+				<div class="page-content" id="body">
+					{FILE {BODY_FILE}}
+				</div>
+			</main>
+			<!-- END: body -->
+		</div>
+	</body>
 </html>
 <!-- END: main -->

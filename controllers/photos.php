@@ -22,6 +22,50 @@ function getDb()
     return $adventure;
 }
 
+function getRandomPhoto()
+{
+    $db = getDb();
+    $row = $db->photos()->select('id, flickr_id')->order('RAND()')->limit('1');
+	$data = $row->fetch();
+
+	$photoIds = array();
+	$photoIds['id'] = $data['id'];
+	$photoIds['flickr_id'] = $data['flickr_id'];
+
+    return $photoIds;
+}
+
+function getAllPhotos()
+{
+    $db = getDb();
+    $row = $db->photos()->select('id, flickr_id');
+
+    $photos = array();
+    while( $data = $row->fetch() )
+    {
+        $photoIds = array();
+        $photoIds['id'] = $data['id'];
+        $photoIds['flickr_id'] = $data['flickr_id'];
+
+        $photos[] = $photoIds;
+    }
+
+    return $photos;
+}
+
+function getRandomWallpaper()
+{
+    $db = getDb();
+    $row = $db->photos()->select('id, flickr_id')->where("wallpaper", 1)->order('RAND()')->limit('1');
+	$data = $row->fetch();
+
+	$photoIds = array();
+	$photoIds['id'] = $data['id'];
+	$photoIds['flickr_id'] = $data['flickr_id'];
+
+    return $photoIds;
+}
+
 function getWallpapers()
 {
     $db = getDb();
@@ -43,12 +87,12 @@ function getWallpapers()
 function getPhotoframes()
 {
     $db = getDb();
-    $row = $db->photos()->select('flickr_id')->where("photoframe", 1);
+    $row = $db->photos()->select('id, flickr_id')->where("photoframe", 1);
     
     $photos = array();
     while( $data = $row->fetch() )
     {
-        $photos[] = $data['flickr_id'];
+        $photos[] = array( 'id' => $data['id'], 'flickr_id' => $data['flickr_id'] );
     }
     
     return $photos;
@@ -118,12 +162,20 @@ function getPhoto( $flickrId, $photoId, $findSmallest = false, $minWidth = -1, $
         $thumbnail = NULL;
         foreach( $response['sizes']['size'] as $size )
         {
-            if( $size['label'] === 'Large Square' )
+            if( $size['label'] === 'Medium' )
             {
                 $thumbnail = $size;
                 break;
             }
         }
+		if( $thumbnail['width'] > $thumbnail['height'] )
+		{
+			$todaysPhoto->orientation = 'land';
+		}
+		else
+		{
+			$todaysPhoto->orientation = 'port';
+		}
         $todaysPhoto->thumbnail = $thumbnail['source'];
     }
     
@@ -170,6 +222,7 @@ function updatePhotoCache( $id, $flickrPhoto, $db )
     $rowUpdate = array(
         'cache_title' => $flickrPhoto->title,
         'cache_thumbnail' => $flickrPhoto->thumbnail,
+		'cache_orientation' => $flickrPhoto->orientation,
         'cache_location' => $flickrPhoto->location,
         'cache_updated' => new NotORM_Literal("NOW()")
     );
@@ -186,6 +239,7 @@ class Photo
     public $image = "";
     public $url = "";
     public $thumbnail = "";
+	public $orientation = "";
     public $location = "";
     public $id = "";
 }

@@ -20,6 +20,12 @@
             @media screen and (max-width: 640px) {
                 .hide { display: none; }
             }
+			
+			img.image_preview {
+				width: 128px;
+				height: 128px;
+				object-fit: cover;
+			}
         </style>
 
         <div class="mdl-grid center-items">
@@ -62,7 +68,7 @@
                     <tr style="background-color:rgba(0, 0, 0, 0.1);">
                     <!-- END: alt -->
                         <td><a href="/photo/{PHOTO_ID}">{PHOTO_ID}</a></td>
-                        <td style="text-align:center"><a href="/photo/{PHOTO_ID}">{PHOTO_TITLE}<br /><img src="{PHOTO_THUMBNAIL}"/></a><br /> <a href="https://www.flickr.com/photos/adamwbrown/{FLICKR_ID}/">Flickr ID: {FLICKR_ID}</a></td>
+                        <td style="text-align:center"><a href="/photo/{PHOTO_ID}">{PHOTO_TITLE}<br /><img class="image_preview" src="{PHOTO_THUMBNAIL}"/></a><br /> <a href="https://www.flickr.com/photos/adamwbrown/{FLICKR_ID}/">Flickr ID: {FLICKR_ID}</a></td>
                         <!-- BEGIN: location_true -->
                         <td class="hide">{PHOTO_LOCATION}</td>
                         <!-- END: location_true -->

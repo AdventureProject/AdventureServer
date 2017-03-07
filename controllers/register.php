@@ -19,6 +19,7 @@ require_once('base/HealthController.php');
 require_once('base/AppsController.php');
 require_once('base/AboutController.php');
 require_once('base/VideosController.php');
+require_once('base/HighlightsController.php');
 
 $config = new Config( '/admin' );
 
@@ -40,5 +41,6 @@ $registered_controllers['apps'] = new AppsController( $config );
 $registered_controllers['errorlog'] = new PhotoFrameErrorLogController( $config );
 $registered_controllers['about'] = new AboutController( $config );
 $registered_controllers['videos'] = new VideosController( $config );
+$registered_controllers['highlights'] = new HighlightsController( $config );
 
 ?>

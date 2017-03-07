@@ -74,7 +74,6 @@ body .adventure {
 	-webkit-align-items: flex-end;
 			-ms-flex-align: end;
 				align-items: flex-end;
-	cursor: pointer;
 }
 .adventure .mdl-card__media a,
 .adventure .mdl-card__title a {
@@ -445,4 +444,13 @@ div.adventure-content {
 
 .admin-card .mdl-card__title {
     background-color:#B0BEC5;
+}
+
+a.card_media_link {
+	position: absolute;
+	display: block;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
 }
