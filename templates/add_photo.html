@@ -1,31 +1,55 @@
     <div class="mdl-grid center-items">
-        
-		<div class="mdl-card navigation-card mdl-cell mdl-cell--2-col">
-		  <div class="mdl-card__title">
-			 <h4 class="mdl-card__title-text">Admin</h4>
-		  </div>
+
+		<div class="mdl-card navigation-card mdl-cell mdl-cell--4-col mdl-cell--4-col-phone">
+			<div class="mdl-card__title">
+				<h4 class="mdl-card__title-text">Admin</h4>
+			</div>
 			<ul class="mdl-list">
-                  <li class="mdl-list__item">
-                    <span class="mdl-list__item-primary-content">
-                      <a href="/admin/home">Admin Home</a>
-                    </span>
-                  </li>
+				<li class="mdl-list__item">
+					<span class="mdl-list__item-primary-content">
+						<a href="/admin/home">Admin Home</a>
+					</span>
+				</li>
 			</ul>
 		</div>
-        
-        <div class="mdl-card admin-card mdl-cell mdl-cell--6-col">
-		  <div class="mdl-card__title">
-			 <h4 class="mdl-card__title-text">Add Photo</h4>
-		  </div>
-		  <div class="adventure-content">
-			<form action="/addphoto" method="post">
-				Flickr ID: <input type="text" name="flickr_id" /><br />
-				<input type="checkbox" name="is_wallpaper" /> Is Wallpaper<br />
-				<input type="checkbox" name="is_highlight" /> Is Highlight<br />
-				<input type="checkbox" name="is_photoframe" /> Is Photoframe<br />
-				<input type="checkbox" name="is_photowall" /> Is PhotoWall<br /><br />
-				<input type="submit" value="Add Photo" />
-			</form>
-		  </div>
-        </div>
-    </div>
+
+		<div class="mdl-card admin-card mdl-cell mdl-cell--6-col">
+			<div class="mdl-card__title">
+				<h4 class="mdl-card__title-text">Add Photo</h4>
+			</div>
+			<div class="adventure-content">
+				<form action="/addphoto" method="post">
+					<div class="mdl-textfield mdl-js-textfield">
+						<input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="flickr_id" name="flickr_id">
+						<label class="mdl-textfield__label" for="flickr_id">Flickr ID</label>
+					</div>
+					<br /><br />
+					<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="is_wallpaper">
+						<input type="checkbox" id="is_wallpaper" name="is_wallpaper" class="mdl-switch__input">
+						<span class="mdl-switch__label">Is Wallpaper</span>
+					</label>
+					<br /><br />
+					<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="is_highlight">
+						<input type="checkbox" id="is_highlight" name="is_highlight" class="mdl-switch__input">
+						<span class="mdl-switch__label">Is Highlight</span>
+					</label>
+					<br /><br />
+					<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="is_photoframe">
+						<input type="checkbox" id="is_photoframe" name="is_photoframe" class="mdl-switch__input">
+						<span class="mdl-switch__label">Is Photoframe</span>
+					</label>
+					<br /><br />
+					<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="is_photowall">
+						<input type="checkbox" id="is_photowall" name="is_photowall" class="mdl-switch__input">
+						<span class="mdl-switch__label">Is PhotoWall</span>
+					</label>
+					<br /><br />
+					
+					<button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored" style="float:right;" type="submit">
+						<i class="material-icons">add</i>
+					</button>
+				</form>
+			</div>
+		</div>
+		
+	</div>

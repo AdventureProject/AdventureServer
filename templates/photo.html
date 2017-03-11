@@ -1,109 +1,155 @@
-<style>
-    .adventure.mdl-layout .mdl-layout__content {
-        padding-top: 0px;
-    }
-    
-    .adventure .photo_title .mdl-card__media {
-        padding-top: 150px;
-        background-image: url({MAP_ZOOMED_OUT});
-    }
-    
-    .adventure .map .mdl-card__media {
-        background-image: url({MAP_ZOOMED_IN});
-        height: 80%;
-        width: 100%;
-    }
-    
-    img.fill {
-        width: 100%;
-    }
-    
-    h3.title {
-        background-color: rgba(33, 33, 33, 0.75);
-        color: #fff;
-        display: inline;
-        padding: 0.5rem;
-        -webkit-box-decoration-break: clone;
-        box-decoration-break: clone;
-    }
-</style>
+			<style>
+				.adventure.mdl-layout .mdl-layout__content {
+					padding-top: 0px;
+				}
 
-<div class="mdl-grid center-items">
+				.adventure .photo_title .mdl-card__media {
+					padding-top: 150px;
+					background-image: url({MAP_ZOOMED_OUT});
+				}
 
-    <!-- BEGIN: admin_links -->
-    <div class="mdl-card mdl-cell mdl-cell--12-col mdl-shadow--2dp">
-        <div class="mdl-card__supporting-text mdl-color-text--grey-600">
-            <div>
-                <a href="/admin/home">Admin Home</a><br />
-                <a href="/addphoto">Add another Photo</a><br />
+				.adventure .map .mdl-card__media {
+				background-image: url({MAP_ZOOMED_IN});
+					height: 80%;
+					width: 100%;
+				}
 
-                <!-- BEGIN: photo_actions -->
-                <hr />
-                <a href="{PREV_PHOTO_URL}">&lt; Previous</a> | <a href="{NEXT_PHOTO_URL}">Next &gt;</a><br /><br />
-                <strong>Photo ID:</strong> {PHOTO_ID}<br />
-                <strong>PhotoWall ID:</strong> {PHOTOWALL_ID}<br />
-                <strong>Flickr ID:</strong> {FLICKR_ID}<br />
-                <strong>Location:</strong> {PHOTO_LOCATION}<br />
+				img.fill {
+					width: 100%;
+				}
 
-                <form action="/photo/{PHOTO_ID}" method="post">
-                    <input type="checkbox" name="is_wallpaper" {IS_WALLPAPER} /> Is Wallpaper<br>
-                    <input type="checkbox" name="is_highlight" {IS_HIGHLIGHT} /> Is Highlight<br>
-                    <input type="checkbox" name="is_photoframe" {IS_PHOTOFRAME} /> Is Photoframe<br>
-                    <input type="submit" value="Update" /><br>
-                </form>
-                <!-- END: photo_actions -->
+				h3.title {
+					background-color: rgba(33, 33, 33, 0.75);
+					color: #fff;
+					display: inline;
+					padding: 0.5rem;
+					-webkit-box-decoration-break: clone;
+					box-decoration-break: clone;
+				}
+				
+				.photo_card {
+					background-color: #f9f7f2;
+					padding: 16px;
+				}
+			</style>
 
-                <!-- BEGIN: add_photowall -->
-                <form action="/photo/{PHOTO_ID}" method="post">
-                    <input type="submit" name="add_to_photowall" value="Add to Wall [{NEXT_PHOTOWALL_ID}]" /><br>
-                </form>
-                <!-- END: add_photowall -->
-            </div>
-        </div>
-    </div>
-    <!-- END: admin_links -->
+			<div class="mdl-grid center-items">
 
-    <div class="mdl-cell mdl-cell--11-col data mdl-shadow--2dp">
-        <img class="fill" src="{FLICKR_IMG}" />
-    </div>
+			<!-- BEGIN: admin_links -->
+			<div class="mdl-card navigation-card mdl-cell mdl-cell--4-col mdl-cell--4-col-phone">
+				<div class="mdl-card__title">
+					<h4 class="mdl-card__title-text">Admin</h4>
+				</div>
+				<ul class="mdl-list">
+					<li class="mdl-list__item">
+						<span class="mdl-list__item-primary-content">
+							<a href="/admin/home">Admin Home</a>
+						</span>
+					</li>
+					<li class="mdl-list__item">
+						<span class="mdl-list__item-primary-content">
+							<a href="/addphoto">Add Photo</a>
+						</span>
+					</li>
+				</ul>
+			</div>
+				
+			<div class="mdl-card admin-card mdl-cell mdl-cell--8-col mdl-cell--4-col-phone">
+				<div class="mdl-card__title">
+					<h4 class="mdl-card__title-text">Edit Photo</h4>
+				</div>
+					<div style="padding: 15px;">
+						<!-- BEGIN: photo_actions -->
+						<button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" onclick="location.href='{PREV_PHOTO_URL}';">
+							<i class="material-icons">arrow_back</i>
+						</button>
+						
+						<button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" onclick="location.href='{NEXT_PHOTO_URL}';" style="float:right;">
+							<i class="material-icons">arrow_forward</i>
+						</button>
+						<br /><br />
+						<b>Photo ID:</b> {PHOTO_ID}<br />
+						<b>PhotoWall ID:</b> {PHOTOWALL_ID}<br />
+						<b>Flickr ID:</b> {FLICKR_ID}<br />
+						<b>Location:</b> {PHOTO_LOCATION}<br />
+						<br />
+						<form action="/photo/{PHOTO_ID}" method="post">
+							<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="is_wallpaper">
+								<input type="checkbox" id="is_wallpaper" name="is_wallpaper" class="mdl-switch__input">
+								<span class="mdl-switch__label">Is Wallpaper</span>
+							</label>
+							<br /><br />
+							<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="is_highlight">
+								<input type="checkbox" id="is_highlight" name="is_highlight" class="mdl-switch__input">
+								<span class="mdl-switch__label">Is Highlight</span>
+							</label>
+							<br /><br />
+							<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="is_photoframe">
+								<input type="checkbox" id="is_photoframe" name="is_photoframe" class="mdl-switch__input">
+								<span class="mdl-switch__label">Is Photoframe</span>
+							</label>
+							<br /><br />
+							<br />
+							<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit">
+								Update
+							</button><br>
+						</form>
+						<!-- END: photo_actions -->
 
-    <div class="mdl-card photo_title title-card-wide mdl-cell mdl-cell--6-col mdl-shadow--2dp">
-        <div class="mdl-card__media">
-            <div class="mdl-card__title mdl-color-text--grey-50">
-                <h3 class="title">{PHOTO_TITLE}</h3>
-            </div>
-        </div>
-        <div class="mdl-card__supporting-text meta mdl-color-text--grey-600">
-            <img src="/images/photo_info_icon.png" class="comment__avatar">
-            <div>
-            <span>
-                <b>Date:</b> {PHOTO_DATE}<br />
-                <b>Description:</b> {PHOTO_DESCRIPTION}<br />
-              </span>
-            </div>
-        </div>
-        <div class="mdl-card__actions mdl-card--border">
-            <a target="_blank" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="https://www.flickr.com/photos/adamwbrown/{FLICKR_ID}/">
-          View on Flickr
-        </a>
-        </div>
-    </div>
+						<!-- BEGIN: add_photowall -->
+						<hr />
+						<br />
+						<form action="/photo/{PHOTO_ID}" method="post">
+							<button name="add_to_photowall" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit">
+								Add to Wall [{NEXT_PHOTOWALL_ID}]
+							</button>
+						</form>
+						<!-- END: add_photowall -->
+					</div>
+			</div>
+			<!-- END: admin_links -->
 
-    <div class="mdl-card map title-card-wide mdl-cell mdl-cell--6-col mdl-shadow--2dp">
-        <div class="mdl-card__media">
-            <div class="mdl-card__title mdl-color-text--grey-50">
-                <div class="mdl-card__title mdl-color-text--grey-50">
-                    <h3 class="title">Location</h3>
-                </div>
-            </div>
-        </div>
-        <div class="mdl-card__supporting-text meta mdl-color-text--grey-600">
-            <img src="/images/map_location_icon.png" class="comment__avatar">
-            <div>
-                <span>
-                    <b>Coordinates:</b> {PHOTO_LOCATION}<br />
-                 </span>
-            </div>
-        </div>
-    </div>
-</div>
+			<div class="mdl-cell mdl-cell--11-col photo_card mdl-shadow--2dp">
+				<img class="fill" src="{FLICKR_IMG}" />
+			</div>
+
+			<div class="mdl-card photo_title title-card-wide mdl-cell mdl-cell--6-col mdl-shadow--2dp">
+				<div class="mdl-card__media">
+					<div class="mdl-card__title mdl-color-text--grey-50">
+						<h3 class="title">{PHOTO_TITLE}</h3>
+					</div>
+				</div>
+				<div class="mdl-card__supporting-text meta mdl-color-text--grey-600">
+					<img src="/images/photo_info_icon.png" class="comment__avatar">
+						<div>
+							<span>
+								<b>Date:</b> {PHOTO_DATE}<br />
+								<b>Description:</b> {PHOTO_DESCRIPTION}<br />
+							</span>
+						</div>
+					</div>
+					<div class="mdl-card__actions mdl-card--border">
+						<a target="_blank" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="https://www.flickr.com/photos/adamwbrown/{FLICKR_ID}/">
+							View on Flickr
+						</a>
+					</div>
+				</div>
+
+				<div class="mdl-card map title-card-wide mdl-cell mdl-cell--6-col mdl-shadow--2dp">
+					<div class="mdl-card__media">
+						<div class="mdl-card__title mdl-color-text--grey-50">
+							<div class="mdl-card__title mdl-color-text--grey-50">
+								<h3 class="title">Location</h3>
+							</div>
+						</div>
+					</div>
+					<div class="mdl-card__supporting-text meta mdl-color-text--grey-600">
+						<img src="/images/map_location_icon.png" class="comment__avatar">
+						<div>
+							<span>
+								<b>Coordinates:</b> {PHOTO_LOCATION}<br />
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>

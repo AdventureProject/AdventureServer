@@ -8,8 +8,11 @@
 				</style>
 
 				<form action="/photo/{PHOTO_ID}">
-					<button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored info_button"
+					<button id="info_button" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored info_button"
 							type="submit">
 					  <i class="material-icons">info</i>
 					</button>
 				</form>
+				<div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--top" for="info_button">
+					More Info
+				</div>

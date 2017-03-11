@@ -1,6 +1,7 @@
 <!-- BEGIN: main -->
 <!DOCTYPE html>
 <html>
+
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,37 +12,45 @@
 
 		<title>{TITLE} - We Think Adventure.Rocks</title>
 
+		<!-- Rich preview -->
+		<meta property="og:title" content="{RICH_PREVIEW_TITLE}" />
+		<meta property="og:description" content="{RICH_PREVIEW_DESCRIPTION}" />
+		<meta property="og:image" content="{RICH_PREVIEW_IMAGE}" />
+
+		<!-- SEO -->
+		<meta name="keywords" content="{SEO_KEYWORDS}" />
+		<meta name="robots" content="{SEO_ROBOTS}" />
+
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
-		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-		<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-red.min.css">
+		<!-- MDL -->
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en" />
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+		<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-red.min.css" />
 		<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 
-		<link rel="stylesheet" href="/templates/base.css">
+		<link rel="stylesheet" href="/base.css">
 
 		<style>
-			html { 
-				background: url({IMAGE}) no-repeat center center fixed; 
+			html {
+				background: url({IMAGE}) no-repeat center center fixed;
 				-webkit-background-size: cover;
 				-moz-background-size: cover;
 				-o-background-size: cover;
 				background-size: cover;
 			}
 
-			.data {
-				background-color: #f9f7f2;
-				padding: 16px;
+			div.mdl-layout__drawer > nav.mdl-navigation > a.mdl-navigation__link {
+				display: inline-flex;
+				vertical-align: middle;
 			}
 
-			.mdl-grid.center-items {
-				justify-content: center;
+			div.mdl-layout__drawer > nav.mdl-navigation > a.mdl-navigation__link i {
+				margin-right: 20px;
 			}
 		</style>
 
-		<link rel="icon" 
-				type="image/png" 
-				href="/icon.png" />
+		<link rel="icon" type="image/png" href="/icon.png" />
 
 		<!-- Add to homescreen for Chrome on Android -->
 		<meta name="mobile-web-app-capable" content="yes">
@@ -56,12 +65,28 @@
 		<!-- Tile icon for Win8 (144x144 + tile color) -->
 		<meta name="msapplication-TileImage" content="images/ms-touch-icon-144x144-precomposed.png">
 		<meta name="msapplication-TileColor" content="#29388e">
+
+		<!-- Google Analytics -->
+		<script>
+		  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+		  ga('create', 'UA-87333451-2', 'auto');
+		  ga('send', 'pageview');
+		</script>
 	</head>
 
 	<body>
 		<!-- Always shows a header, even in smaller screens. -->
 		<div class="adventure mdl-layout mdl-js-layout mdl-layout--fixed-header has-drawer is-upgraded">
 			<header class="mdl-layout__header">
+				<!-- BEGIN: nav_back -->
+				<div class="mdl-layout__drawer-button mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" onclick="location.href='{BACK_URL}'">
+					<i class="material-icons">arrow_back</i>
+				</div>
+				<!-- END: nav_back -->
 				<div class="mdl-layout__header-row">
 					<!-- Title -->
 					<span class="mdl-layout-title">Adventure.Rocks</span>
@@ -69,27 +94,36 @@
 					<div class="mdl-layout-spacer"></div>
 					<!-- Navigation. We hide it in small screens. -->
 					<nav class="mdl-navigation">
-						<!-- BEGIN: action_random -->
-						<a class="mdl-navigation__link" href="/photo/random"><i class="material-icons">shuffle</i></a>
-						<!-- END: action_random -->
+						<!-- BEGIN: nav_action -->
+						<a id="action_{ACTION_ID}" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" href="{ACTION_URL}"><i class="material-icons">{ACTION_ICON}</i></a>
+						<div class="mdl-tooltip mdl-tooltip--large" for="action_{ACTION_ID}">
+							{ACTION_TOOLTIP}
+						</div>
+						<!-- END: nav_action -->
 						<!-- BEGIN: authenticated -->
-						<a class="mdl-navigation__link" href="/admin/signout">Sign Out</a>
+						<a id="action_signout" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" href="/admin/signout"><i class="material-icons">lock_open</i></a>
+						<div class="mdl-tooltip mdl-tooltip--large" for="action_signout">
+							Sign Out
+						</div>
 						<!-- END: authenticated -->
 					</nav>
 				</div>
 			</header>
+			<!-- BEGIN: nav_drawer -->
 			<div class="mdl-layout__drawer">
-				<span class="mdl-layout-title">Navigation</span>
+				<span class="mdl-layout-title">Adventure.Rocks</span>
 				<nav class="mdl-navigation">
-					<a class="mdl-navigation__link" href="/about">About</a>
-					<a class="mdl-navigation__link" href="/highlights">Highlights</a>
-					<a class="mdl-navigation__link" href="/videos">Videos</a>
-					<a class="mdl-navigation__link" href="/apps">Apps</a>
-					<a class="mdl-navigation__link" href="/">Today's Photo</a>
+					<a class="mdl-navigation__link" href="/about"><i class="material-icons">info_outline</i> About</a>
+					<a class="mdl-navigation__link" href="/apps"><i class="material-icons">smartphone</i> Apps</a>
 					<hr />
-					<a class="mdl-navigation__link" href="/admin">Admin</a>
+					<a class="mdl-navigation__link" href="/highlights"><i class="material-icons">grade</i> Highlights</a>
+					<a class="mdl-navigation__link" href="/videos"><i class="material-icons">local_movies</i> Videos</a>
+					<a class="mdl-navigation__link" href="/"><i class="material-icons">camera_alt</i> Today's Photo</a>
+					<hr />
+					<a class="mdl-navigation__link" href="/admin"><i class="material-icons">fingerprint</i> Admin</a>
 				</nav>
 			</div>
+			<!-- END: nav_drawer -->
 			<!-- BEGIN: body -->
 			<main class="adventure mdl-layout__content">
 				<div class="page-content" id="body">
@@ -99,5 +133,6 @@
 			<!-- END: body -->
 		</div>
 	</body>
+
 </html>
 <!-- END: main -->

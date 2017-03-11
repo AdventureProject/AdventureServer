@@ -19,6 +19,11 @@ class AppsController extends BaseController
     	return 'Apps';
     }
 	
+	public function getRichDescription()
+	{
+		return 'Apps to automatically set your wallpaper to the Photo of the Day';
+	}
+	
     public function getBody( $request, $todaysPhoto, $xtpl )
     {
 		$xtpl->assign_file('BODY_FILE', 'templates/apps.html');

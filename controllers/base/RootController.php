@@ -19,9 +19,16 @@ class RootController extends BaseController
       return 'Photo of the Day';
     }
 	
+	public function getRichTitle()
+	{
+		return 'Adventure.Rocks';
+	}
+	
     public function getBody( $request, $todaysPhoto, $xtpl )
     {
 		$xtpl->assign_file('BODY_FILE', 'templates/today.html');
+		
+		$this->addNavAction( 'about', 'help', 'What is this site?', '/about', $xtpl );
 		
 		$xtpl->assign('PHOTO_ID',$todaysPhoto->id);
 		

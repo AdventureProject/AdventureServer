@@ -19,6 +19,11 @@ class AboutController extends BaseController
     	return 'About';
     }
 	
+	public function getRichTitle()
+	{
+		return 'Adventure.Rocks';
+	}
+	
     public function getBody( $request, $todaysPhoto, $xtpl )
     {
 		$xtpl->assign_file('BODY_FILE', 'templates/about.html');

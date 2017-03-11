@@ -12,6 +12,7 @@ include_once('libs/xtemplate.class.php');
 class PhotoController extends BaseController
 {
 	private $googleMapsApiKey;
+	private $currentPhoto;
 	
     public function __construct( $config )
     {
@@ -26,10 +27,15 @@ class PhotoController extends BaseController
     {
     	return 'Photo';
     }
+	
+	public function provideBack()
+	{
+		return true;
+	}
     
     public function getBody( $request, $todaysPhoto, $xtpl )
     {
-		$xtpl->parse('main.action_random');
+		$this->addNavAction( 'random', 'shuffle', 'Random', '/photo/random', $xtpl );
 		
         if( count($request->args) == 1 && is_numeric( $request->args[0] ) )
         {
@@ -45,87 +51,112 @@ class PhotoController extends BaseController
         
         $xtpl->parse('main.body');
     }
+	
+	public function getRichTitle()
+	{
+		return $this->currentPhoto->title;
+	}
+	
+	public function getRichDescription()
+	{
+		return $this->currentPhoto->description;
+	}
+	
+	public function getRichImage()
+	{
+		return $this->currentPhoto->thumbnail;
+	}
     
     private function renderPhoto( $xtpl, $photoId )
     {
-        $xtpl->assign_file('BODY_FILE', 'templates/photo.html');
-        
         $db = getDb();
-        $photoData = $db->photos[$photoId];
-        $photoFlickr = getPhoto( $photoData['flickr_id'], $photoId, true, 1024, 1024 );
 		
-		updatePhotoCache( $photoId, $photoFlickr, $db );
+		if( $photoId <= $db->photos->count("*") )
+		{
+			$xtpl->assign_file('BODY_FILE', 'templates/photo.html');
+			
+			$photoData = $db->photos[$photoId];
+			$photoFlickr = getPhoto( $photoData['flickr_id'], $photoId, true, 1024, 1024 );
 
-		if( $photoId-1 > 0 )
-		{
-			$xtpl->assign( 'PREV_PHOTO_URL', '/photo/'.($photoId-1) );
-		}
-		else
-		{
-			$xtpl->assign( 'PREV_PHOTO_URL', '/admin' );
-		}
+			$this->currentPhoto = $photoFlickr;
 
-		if( $photoId+1 <= $db->photos()->max('id') )
-		{
-			$xtpl->assign( 'NEXT_PHOTO_URL', '/photo/'.($photoId+1) );
-		}
-		else
-		{
-			$xtpl->assign( 'NEXT_PHOTO_URL', '/admin' );
-		}
-		
-        $xtpl->assign( 'PHOTO_ID', $photoId );
-        $xtpl->assign( 'FLICKR_ID', $photoData['flickr_id'] );
-        $xtpl->assign( 'PHOTO_TITLE', $photoFlickr->title );
-        $xtpl->assign( 'PHOTO_DATE', $photoFlickr->date );
-        
-        if( empty($photoFlickr->location) )
-        {
-            if( $this->isAuthenticated() )
-            {
-                $xtpl->assign( 'PHOTO_LOCATION', "<a target=\"_blank\" href=\"https://www.flickr.com/photos/organize/?batch_geotag=1&ids={$photoData['flickr_id']}&from_geo_ids={$photoData['flickr_id']}\">add geo data</a>" );
-            }
-            else
-            {
-                $xtpl->assign( 'PHOTO_LOCATION', '<em>No location data</em>' );
-            }
-        }
-        else
-        {
-            $xtpl->assign( 'PHOTO_LOCATION', $photoFlickr->location );
-        }
-        
-        $xtpl->assign( 'PHOTO_DESCRIPTION', $photoFlickr->description );
-        $xtpl->assign( 'FLICKR_IMG', $photoFlickr->image );
-		
-		$xtpl->assign( 'MAP_ZOOMED_OUT', $this->getZoomedOutMapUrl( $photoFlickr->location ) );
-		$xtpl->assign( 'MAP_ZOOMED_IN', $this->getZoomedInMapUrl( $photoFlickr->location ) );
-		
-        $xtpl->assign( 'IS_WALLPAPER', $photoData['wallpaper'] == 1 ? 'checked' : '' );
-		$xtpl->assign( 'IS_HIGHLIGHT', $photoData['highlight'] == 1 ? 'checked' : '' );
-        $xtpl->assign( 'IS_PHOTOFRAME', $photoData['photoframe'] == 1 ? 'checked' : '' );
-		
-        if( $this->isAuthenticated() )
-        {
-			if( !empty($photoData['photowall_id']) )
+			updatePhotoCache( $photoId, $photoFlickr, $db );
+
+			if( $photoId-1 > 0 )
 			{
-				$photoWallId = $photoData['photowall_id'];
-				$xtpl->assign( 'PHOTOWALL_ID', $photoData['photowall_id'] );
+				$xtpl->assign( 'PREV_PHOTO_URL', '/photo/'.($photoId-1) );
 			}
 			else
 			{
-				$xtpl->assign( 'NEXT_PHOTOWALL_ID', $db->photos()->max('photowall_id')+1 );
-				$xtpl->assign( 'PHOTOWALL_ID', '<em>not on the wall</em>' );
+				$xtpl->assign( 'PREV_PHOTO_URL', '/admin' );
+			}
 
+			if( $photoId+1 <= $db->photos()->max('id') )
+			{
+				$xtpl->assign( 'NEXT_PHOTO_URL', '/photo/'.($photoId+1) );
+			}
+			else
+			{
+				$xtpl->assign( 'NEXT_PHOTO_URL', '/admin' );
+			}
+
+			$xtpl->assign( 'PHOTO_ID', $photoId );
+			$xtpl->assign( 'FLICKR_ID', $photoData['flickr_id'] );
+			$xtpl->assign( 'PHOTO_TITLE', $photoFlickr->title );
+			$xtpl->assign( 'PHOTO_DATE', $photoFlickr->date );
+
+			if( empty($photoFlickr->location) )
+			{
 				if( $this->isAuthenticated() )
 				{
-					$xtpl->parse('main.body.admin_links.add_photowall');
+					$xtpl->assign( 'PHOTO_LOCATION', "<a target=\"_blank\" href=\"https://www.flickr.com/photos/organize/?batch_geotag=1&ids={$photoData['flickr_id']}&from_geo_ids={$photoData['flickr_id']}\">add geo data</a>" );
+				}
+				else
+				{
+					$xtpl->assign( 'PHOTO_LOCATION', '<em>No location data</em>' );
 				}
 			}
-			
-            $xtpl->parse('main.body.admin_links.photo_actions');
-			$xtpl->parse('main.body.admin_links');
-        }
+			else
+			{
+				$xtpl->assign( 'PHOTO_LOCATION', $photoFlickr->location );
+			}
+
+			$xtpl->assign( 'PHOTO_DESCRIPTION', $photoFlickr->description );
+			$xtpl->assign( 'FLICKR_IMG', $photoFlickr->image );
+
+			$xtpl->assign( 'MAP_ZOOMED_OUT', $this->getZoomedOutMapUrl( $photoFlickr->location ) );
+			$xtpl->assign( 'MAP_ZOOMED_IN', $this->getZoomedInMapUrl( $photoFlickr->location ) );
+
+			$xtpl->assign( 'IS_WALLPAPER', $photoData['wallpaper'] == 1 ? 'checked' : '' );
+			$xtpl->assign( 'IS_HIGHLIGHT', $photoData['highlight'] == 1 ? 'checked' : '' );
+			$xtpl->assign( 'IS_PHOTOFRAME', $photoData['photoframe'] == 1 ? 'checked' : '' );
+
+			if( $this->isAuthenticated() )
+			{
+				if( !empty($photoData['photowall_id']) )
+				{
+					$photoWallId = $photoData['photowall_id'];
+					$xtpl->assign( 'PHOTOWALL_ID', $photoData['photowall_id'] );
+				}
+				else
+				{
+					$xtpl->assign( 'NEXT_PHOTOWALL_ID', $db->photos()->max('photowall_id')+1 );
+					$xtpl->assign( 'PHOTOWALL_ID', '<em>not on the wall</em>' );
+
+					if( $this->isAuthenticated() )
+					{
+						$xtpl->parse('main.body.admin_links.add_photowall');
+					}
+				}
+
+				$xtpl->parse('main.body.admin_links.photo_actions');
+				$xtpl->parse('main.body.admin_links');
+			}
+		}
+		else
+		{
+			$xtpl->assign_file('BODY_FILE', 'templates/photo_not_found.html');
+		}
     }
     
 	public function post( $request )

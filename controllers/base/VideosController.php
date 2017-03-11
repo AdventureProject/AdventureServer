@@ -19,6 +19,11 @@ class VideosController extends BaseController
     	return 'Videos';
     }
 	
+	public function getRichDescription()
+	{
+		return 'Videos from our various Adventures';
+	}
+	
     public function getBody( $request, $todaysPhoto, $xtpl )
     {
 		$xtpl->assign_file('BODY_FILE', 'templates/videos.html');

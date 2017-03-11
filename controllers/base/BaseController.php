@@ -12,6 +12,22 @@ abstract class BaseController extends Controller
         $xtpl->assign('IMAGE', $todaysPhoto->image);
         $xtpl->assign('TITLE', $this->getTitle());
 		
+		if( $this->provideBack() === true )
+		{
+			$url = $_SERVER['HTTP_REFERER'];
+			if( $this->checkRootDomain( $url ) == false )
+			{
+				$url = '/about';
+			}
+			
+			$xtpl->assign('BACK_URL', $url);
+			$xtpl->parse('main.nav_back');
+		}
+		else
+		{
+			$xtpl->parse('main.nav_drawer');
+		}
+		
         if( $this->isAuthenticated() )
         {
             $xtpl->parse('main.authenticated');
@@ -19,6 +35,13 @@ abstract class BaseController extends Controller
         
         $this->getBody( $request, $todaysPhoto, $xtpl );
         
+		$xtpl->assign('RICH_PREVIEW_TITLE', $this->getRichTitle());
+		$xtpl->assign('RICH_PREVIEW_DESCRIPTION', $this->getRichDescription());
+		$xtpl->assign('RICH_PREVIEW_IMAGE', $this->getRichImage());
+		
+		$xtpl->assign('SEO_KEYWORDS', $this->getSeoKeywords());
+		$xtpl->assign('SEO_ROBOTS', $this->getSeoRobots());
+		
         $xtpl->parse('main');
 		$xtpl->out('main');
     }
@@ -26,6 +49,63 @@ abstract class BaseController extends Controller
     abstract public function getTitle();
     
     abstract public function getBody( $request, $todaysPhoto, $xtpl );
+	
+	public function getRichTitle()
+	{
+		return 'Adventure.Rocks - ' . $this->getTitle();
+	}
+	
+	public function getRichDescription()
+	{
+		return "A window into Adam &amp; Stacy's Adventures";
+	}
+	
+	public function getRichImage()
+	{
+		return 'http://wethinkadventure.rocks/images/default_rich_image.jpg';
+	}
+	
+	public function getSeoKeywords()
+	{
+		return 'adventure photos pictures trips mountains skiing climbing rockclimbing hiking backpacking nature outdoors backcountry';
+	}
+	
+	public function getSeoRobots()
+	{
+		return 'index,follow';
+	}
+	
+	public function provideBack()
+	{
+		return false;
+	}
+	
+	public function addNavAction( $id, $icon, $tooltip, $url, $xtpl )
+	{
+		$xtpl->assign( 'ACTION_ID', $id );
+		$xtpl->assign( 'ACTION_ICON', $icon );
+		$xtpl->assign( 'ACTION_TOOLTIP', $tooltip );
+		$xtpl->assign( 'ACTION_URL', $url );
+		$xtpl->parse('main.nav_action');
+	}
+	
+	private function checkRootDomain( $url )
+	{
+		if (!preg_match("~^(?:f|ht)tps?://~i", $url))
+		{
+			$url = "http://" . $url;
+		}
+
+		$domain = implode('.', array_slice(explode('.', parse_url($url, PHP_URL_HOST)), -2));
+		if ($domain == 'wethinkadventure.rocks')
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }
 
 ?>

@@ -21,12 +21,17 @@ class HighlightsController extends BaseController
 		return 'Highlights';
 	}
 	
+	public function getRichDescription()
+	{
+		return 'A select of some of our best photos';
+	}
+	
 	public function getBody( $request, $todaysPhoto, $xtpl )
 	{
 		$xtpl->assign_file('BODY_FILE', 'templates/highlights.html');
 		
 		$db = getDb();
-		$results = $db->photos()->select('id, cache_thumbnail, cache_orientation')->where("highlight", 1)->order('id DESC');
+		$results = $db->photos()->select('id, cache_title, cache_thumbnail, cache_orientation')->where("highlight", 1)->order('id DESC');
 		
 		while( $data = $results->fetch() )
 		{
@@ -43,6 +48,7 @@ class HighlightsController extends BaseController
 				$style = 'mdl-cell--2-col pic-card-port';
 			}
 			$xtpl->assign('PHOTO_ID',$data['id']);
+			$xtpl->assign('PHOTO_TITLE',$data['cache_title']);
 			$xtpl->assign('PHOTO_STYLE',$style);
 			
 			$xtpl->parse('main.body.highlight_style');

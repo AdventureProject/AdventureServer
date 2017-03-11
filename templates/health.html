@@ -1,35 +1,35 @@
-    <div class="mdl-grid center-items">
-		<div class="mdl-card navigation-card mdl-cell mdl-cell--2-col">
-		  <div class="mdl-card__title">
-			 <h4 class="mdl-card__title-text">Admin</h4>
-		  </div>
-			<ul class="mdl-list">
-                  <li class="mdl-list__item">
-                    <span class="mdl-list__item-primary-content">
-                      <a href="/admin/home">Admin Home</a>
-                    </span>
-                  </li>
-			</ul>
-		</div>
-		
-		<!-- BEGIN: photo_frame -->
-        <div class="mdl-card admin-card mdl-cell mdl-cell--6-col">
-			  <div class="mdl-card__title">
-				 <h4 class="mdl-card__title-text">Photo Frame: {PHOTO_FRAME_ID}</h4>
-			  </div>
-			<div class="adventure-content">
-				<strong>Owner:</strong> {PHOTO_FRAME_OWNER}<br />
-				<strong>Created:</strong> {PHOTO_FRAME_CREATED}<br />
-				<br />
-				<strong>Last Check-in:</strong> {CHECK_IN_DATE}<br />
-				<strong>Current Version:</strong> {CURRENT_VERSION}<br />
+			<div class="mdl-grid center-items">
+				<div class="mdl-card navigation-card mdl-cell mdl-cell--4-col mdl-cell--4-col-phone">
+					<div class="mdl-card__title">
+						<h4 class="mdl-card__title-text">Admin</h4>
+					</div>
+					<ul class="mdl-list">
+						<li class="mdl-list__item">
+							<span class="mdl-list__item-primary-content">
+								<a href="/admin/home">Admin Home</a>
+							</span>
+						</li>
+					</ul>
+				</div>
 
-				<br />
-				<strong>Error Logs:</strong><br />
-				<!-- BEGIN: error_log -->
-				<a href="/errorlog/{ERROR_LOG_ID}"><strong>Error Log</strong> {ERROR_LOG_DATE}</a><br />
-				<!-- END: error_log -->
+				<!-- BEGIN: photo_frame -->
+				<div class="mdl-card admin-card mdl-cell mdl-cell--6-col">
+					<div class="mdl-card__title">
+						<h4 class="mdl-card__title-text">Photo Frame: {PHOTO_FRAME_ID}</h4>
+					</div>
+					<div class="adventure-content">
+						<strong>Owner:</strong> {PHOTO_FRAME_OWNER}<br />
+						<strong>Created:</strong> {PHOTO_FRAME_CREATED}<br />
+						<br />
+						<strong>Last Check-in:</strong> {CHECK_IN_DATE}<br />
+						<strong>Current Version:</strong> {CURRENT_VERSION}<br />
+
+						<br />
+						<strong>Error Logs:</strong><br />
+						<!-- BEGIN: error_log -->
+						<a href="/errorlog/{ERROR_LOG_ID}"><strong>Error Log</strong> {ERROR_LOG_DATE}</a><br />
+						<!-- END: error_log -->
+					</div>
+				</div>
+				<!-- END: photo_frame -->
 			</div>
-		</div>
-		<!-- END: photo_frame -->
-	</div>
