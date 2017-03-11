@@ -26,6 +26,12 @@ class VideosController extends BaseController
 	
     public function getBody( $request, $todaysPhoto, $xtpl )
     {
+		$this->addCssFile( '/external/magnific-popup/magnific-popup.css', $xtpl );
+		$this->addJsFile( '/external/magnific-popup/jquery.magnific-popup.min.js', $xtpl );
+		
+		$this->addCssFile( '/css/zoom.css', $xtpl );
+		$this->addJsFile( '/js/zoom.js', $xtpl );
+		
 		$xtpl->assign_file('BODY_FILE', 'templates/videos.html');
         
         $videos = $this->getVideos();
@@ -110,7 +116,7 @@ class YouTubeVideo
     
     public function getVideoUrl()
     {
-        return "http://youtu.be/{$this->id}";
+        return "http://www.youtube.com/watch?v={$this->id}";
     }
 }
 

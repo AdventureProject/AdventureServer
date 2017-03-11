@@ -67,7 +67,7 @@ abstract class BaseController extends Controller
 	
 	public function getSeoKeywords()
 	{
-		return 'adventure photos pictures trips mountains skiing climbing rockclimbing hiking backpacking nature outdoors backcountry';
+		return 'adventure photos pictures videos gopro trips mountains skiing climbing rockclimbing hiking backpacking nature outdoors backcountry';
 	}
 	
 	public function getSeoRobots()
@@ -78,6 +78,18 @@ abstract class BaseController extends Controller
 	public function provideBack()
 	{
 		return false;
+	}
+	
+	public function addCssFile( $path, $xtpl )
+	{
+		$xtpl->assign( 'CSS_FILE', $path );
+		$xtpl->parse('main.css_file');
+	}
+	
+	public function addJsFile( $path, $xtpl )
+	{
+		$xtpl->assign( 'JS_FILE', $path );
+		$xtpl->parse('main.js_file');
 	}
 	
 	public function addSeoLocation( $latitude, $longitude, $xtpl )

@@ -1,5 +1,19 @@
-			<style>
 
+			<script>
+				$(document).ready(function() {
+					$('.popup-youtube').magnificPopup({
+						disableOn: 700,
+						type: 'iframe',
+						mainClass: 'mfp-fade',
+						removalDelay: 160,
+						preloader: false,
+
+						fixedContentPos: false
+					});
+				});
+			</script>
+
+			<style>
 				.adventure .mdl-card.intro-pic {
 					-webkit-order: 0;
 					-ms-flex-order: 0;
@@ -16,6 +30,34 @@
 				}
 				<!-- END: video_style -->
 
+				/**
+				 * Simple fade transition,
+				 */
+				.mfp-fade.mfp-bg {
+					opacity: 0;
+					-webkit-transition: all 0.15s ease-out; 
+					-moz-transition: all 0.15s ease-out; 
+					transition: all 0.15s ease-out;
+				}
+				.mfp-fade.mfp-bg.mfp-ready {
+					opacity: 0.8;
+				}
+				.mfp-fade.mfp-bg.mfp-removing {
+					opacity: 0;
+				}
+
+				.mfp-fade.mfp-wrap .mfp-content {
+					opacity: 0;
+					-webkit-transition: all 0.15s ease-out; 
+					-moz-transition: all 0.15s ease-out; 
+					transition: all 0.15s ease-out;
+				}
+				.mfp-fade.mfp-wrap.mfp-ready .mfp-content {
+					opacity: 1;
+				}
+				.mfp-fade.mfp-wrap.mfp-removing .mfp-content {
+					opacity: 0;
+				}
 			</style>
 
 			<div class="mdl-grid center-items">
@@ -41,10 +83,10 @@
 
 					<!-- BEGIN: video -->
 					<div class="mdl-card video_{VIDEO_ID} mdl-cell mdl-cell--5-col mdl-shadow--2dp">
-						<div class="mdl-card__media">
+						<div class="mdl-card__media zooming">
 							<div class="mdl-card__title mdl-color-text--grey-50">
 								<h3 class="title">{VIDEO_TITLE}</h3>
-								<a class="card_media_link" target="_blank" href="{VIDEO_URL}"></a>
+								<a class="card_media_link popup-youtube" href="{VIDEO_URL}"></a>
 							</div>
 						</div>
 						<div class="mdl-card__supporting-text meta mdl-color-text--grey-600">
@@ -55,11 +97,13 @@
 								</div>
 							</div>
 							<div class="mdl-card__actions mdl-card--border">
-								<a target="_blank" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="{VIDEO_URL}">
+								<a target="_blank" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect popup-youtube" href="{VIDEO_URL}">
 									Watch it
 								</a>
 							</div>
 						</div>
 						<!-- END: video -->
-
+						<div id="video_player">
+							
+						</div>
 					</div>
