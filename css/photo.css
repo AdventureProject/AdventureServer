@@ -1,0 +1,21 @@
+.adventure.mdl-layout .mdl-layout__content {
+	padding-top: 0px;
+}
+
+img.fill {
+	width: 100%;
+}
+
+h3.title {
+	background-color: rgba(33, 33, 33, 0.75);
+	color: #fff;
+	display: inline;
+	padding: 0.5rem;
+	-webkit-box-decoration-break: clone;
+	box-decoration-break: clone;
+}
+
+.photo_card {
+	background-color: #f9f7f2;
+	padding: 16px;
+}

@@ -1,63 +1,9 @@
-
-			<script>
-				$(document).ready(function() {
-					$('.popup-youtube').magnificPopup({
-						disableOn: 700,
-						type: 'iframe',
-						mainClass: 'mfp-fade',
-						removalDelay: 160,
-						preloader: false,
-
-						fixedContentPos: false
-					});
-				});
-			</script>
-
 			<style>
-				.adventure .mdl-card.intro-pic {
-					-webkit-order: 0;
-					-ms-flex-order: 0;
-					order: 0;
-				}
-
-				.adventure .videos-pic .mdl-card__media {
-					background-image: url('/images/videos_pic.jpg');
-				}
-
 				<!-- BEGIN: video_style -->
 				.adventure .video_{VIDEO_ID} .mdl-card__media {
 					background-image: url('{VIDEO_THUMBNAIL}');
 				}
 				<!-- END: video_style -->
-
-				/**
-				 * Simple fade transition,
-				 */
-				.mfp-fade.mfp-bg {
-					opacity: 0;
-					-webkit-transition: all 0.15s ease-out; 
-					-moz-transition: all 0.15s ease-out; 
-					transition: all 0.15s ease-out;
-				}
-				.mfp-fade.mfp-bg.mfp-ready {
-					opacity: 0.8;
-				}
-				.mfp-fade.mfp-bg.mfp-removing {
-					opacity: 0;
-				}
-
-				.mfp-fade.mfp-wrap .mfp-content {
-					opacity: 0;
-					-webkit-transition: all 0.15s ease-out; 
-					-moz-transition: all 0.15s ease-out; 
-					transition: all 0.15s ease-out;
-				}
-				.mfp-fade.mfp-wrap.mfp-ready .mfp-content {
-					opacity: 1;
-				}
-				.mfp-fade.mfp-wrap.mfp-removing .mfp-content {
-					opacity: 0;
-				}
 			</style>
 
 			<div class="mdl-grid center-items">

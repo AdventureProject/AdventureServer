@@ -17,10 +17,6 @@
 	.hide { display: none; }
 }
 
-body .adventure {
-	font-family: 'Roboto', 'Helvetica', sans-serif;
-}
-
 .adventure .adventure__location_details {
 	max-width: 900px;
 	padding: 0;
@@ -464,4 +460,17 @@ a.card_media_link {
 
 .adventure .mdl-grid.center-items {
 	justify-content: center;
+}
+
+div.mdl-layout__drawer > nav.mdl-navigation > a.mdl-navigation__link {
+	display: inline-flex;
+	vertical-align: middle;
+}
+
+div.mdl-layout__drawer > nav.mdl-navigation > a.mdl-navigation__link i {
+	margin-right: 20px;
+}
+
+body .adventure {
+	font-family: 'Roboto', 'Helvetica', sans-serif;
 }

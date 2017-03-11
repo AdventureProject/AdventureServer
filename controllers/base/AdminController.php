@@ -65,6 +65,8 @@ class AdminController extends BaseController
             }
             else
             {
+				$this->addCssFile( '/css/admin_auth.css', $xtpl );
+				$this->addJsFile( '/js/admin_auth.js', $xtpl );
                 $xtpl->assign_file('BODY_FILE', 'templates/admin_auth.html');
                 $xtpl->parse('main.body');
             }

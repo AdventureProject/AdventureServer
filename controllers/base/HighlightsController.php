@@ -28,6 +28,7 @@ class HighlightsController extends BaseController
 	
 	public function getBody( $request, $todaysPhoto, $xtpl )
 	{
+		$this->addCssFile( '/css/highlights.css', $xtpl );
 		$this->addCssFile( '/css/zoom.css', $xtpl );
 		$this->addJsFile( '/js/zoom.js', $xtpl );
 		

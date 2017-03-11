@@ -26,6 +26,8 @@ class AboutController extends BaseController
 	
     public function getBody( $request, $todaysPhoto, $xtpl )
     {
+		$this->addCssFile( '/css/about.css', $xtpl );
+		
 		$xtpl->assign_file('BODY_FILE', 'templates/about.html');
         $xtpl->parse('main.body');
     }

@@ -26,6 +26,7 @@ class AppsController extends BaseController
 	
     public function getBody( $request, $todaysPhoto, $xtpl )
     {
+		$this->addCssFile( '/css/apps.css', $xtpl );
 		$xtpl->assign_file('BODY_FILE', 'templates/apps.html');
         $xtpl->parse('main.body');
     }

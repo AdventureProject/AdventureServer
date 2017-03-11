@@ -1,0 +1,17 @@
+.app-card-square.mdl-card {
+	width: 320px;
+	height: 320px;
+}
+.app-card-square > .mdl-card__title {
+	color: #fff;
+}
+
+.android > .mdl-card__title {
+	background:
+		url('../images/android.png') bottom right 15% no-repeat #4286f4;
+}
+
+.windows > .mdl-card__title {
+	background:
+		url('../images/windows.png') bottom right 15% no-repeat #1aba18;
+}

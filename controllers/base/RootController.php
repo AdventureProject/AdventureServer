@@ -26,6 +26,8 @@ class RootController extends BaseController
 	
     public function getBody( $request, $todaysPhoto, $xtpl )
     {
+		$this->addCssFile( '/css/today.css', $xtpl );
+		
 		$xtpl->assign_file('BODY_FILE', 'templates/today.html');
 		
 		$this->addNavAction( 'about', 'help', 'What is this site?', '/about', $xtpl );

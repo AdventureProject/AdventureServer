@@ -1,0 +1,8 @@
+.auth-card-square.mdl-card {
+	width: 320px;
+	height: 320px;
+}
+.auth-card-square > .mdl-card__title {
+	color: #fff;
+	background: url('/images/lock.png') bottom right 15% no-repeat #CF5300;
+}

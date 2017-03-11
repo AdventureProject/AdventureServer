@@ -35,6 +35,7 @@ class PhotoController extends BaseController
     
     public function getBody( $request, $todaysPhoto, $xtpl )
     {
+		$this->addCssFile( '/css/photo.css', $xtpl );
 		$this->addNavAction( 'random', 'shuffle', 'Random', '/photo/random', $xtpl );
 		
         if( count($request->args) == 1 && is_numeric( $request->args[0] ) )

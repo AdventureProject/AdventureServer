@@ -1,0 +1,25 @@
+.adventure .mdl-card.intro-pic {
+	-webkit-order: 0;
+	-ms-flex-order: 0;
+	order: 0;
+}
+
+.adventure .intro-pic .mdl-card__media {
+	background-image: url('/images/intro_pic.jpg');
+}
+
+.adventure .photo-of-the-day .mdl-card__media {
+	background-image: url('/images/photo_of_the_day.jpg');
+}
+
+.adventure .flickr_pic .mdl-card__media {
+	background-image: url('/images/flickr_pic.jpg');
+}
+
+.adventure .highlights_pic .mdl-card__media {
+	background-image: url('/images/highlights_pic.jpg');
+}
+
+.adventure .videos_pic .mdl-card__media {
+	background-image: url('/images/videos_pic.jpg');
+}

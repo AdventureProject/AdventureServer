@@ -32,6 +32,8 @@ class VideosController extends BaseController
 		$this->addCssFile( '/css/zoom.css', $xtpl );
 		$this->addJsFile( '/js/zoom.js', $xtpl );
 		
+		$this->addCssFile( '/css/videos.css', $xtpl );
+		
 		$xtpl->assign_file('BODY_FILE', 'templates/videos.html');
         
         $videos = $this->getVideos();
