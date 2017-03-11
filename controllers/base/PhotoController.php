@@ -79,6 +79,10 @@ class PhotoController extends BaseController
 			$photoFlickr = getPhoto( $photoData['flickr_id'], $photoId, true, 1024, 1024 );
 
 			$this->currentPhoto = $photoFlickr;
+			
+			$locationParts = explode( ',', $photoFlickr->location );
+			
+			$this->addSeoLocation( $locationParts[0], $locationParts[1], $xtpl );
 
 			updatePhotoCache( $photoId, $photoFlickr, $db );
 

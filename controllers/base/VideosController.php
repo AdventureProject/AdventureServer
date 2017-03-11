@@ -66,7 +66,6 @@ class VideosController extends BaseController
         $playListId = 'PLW6j4j9UcGjqIw80l4pNnCja8mziF9xmw';
         $url = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=$playListId&key=$youtubeApiKey";
 
-        $context  = stream_context_create($options);
         $json = file_get_contents($url, false);
         
         $videos = array();

@@ -26,6 +26,11 @@ class AdminController extends BaseController
     	return 'Admin';
     }
 	
+	public function getSeoRobots()
+	{
+		return 'noindex, nofollow';
+	}
+	
     public function getBody( $request, $todaysPhoto, $xtpl )
     {   
         if( count($request->args) > 0 )

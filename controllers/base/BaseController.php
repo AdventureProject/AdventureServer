@@ -80,6 +80,13 @@ abstract class BaseController extends Controller
 		return false;
 	}
 	
+	public function addSeoLocation( $latitude, $longitude, $xtpl )
+	{
+		$xtpl->assign( 'SEO_LATITUDE', $latitude );
+		$xtpl->assign( 'SEO_LONGITUDE', $longitude );
+		$xtpl->parse('main.seo_location');
+	}
+	
 	public function addNavAction( $id, $icon, $tooltip, $url, $xtpl )
 	{
 		$xtpl->assign( 'ACTION_ID', $id );

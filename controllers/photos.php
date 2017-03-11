@@ -106,14 +106,15 @@ function getTodaysPhoto()
 
 function getPhotoForDay($dayOfYear)
 {
-    $wallpapers = getWallpapers();
+	$db = getDb();
+	$numWallpapers = $db->photos()->where("wallpaper", 1)->count("*");
 
     mt_srand($dayOfYear);
-    $photoIndex = mt_rand( 0, count($wallpapers) );
-    
-    $photoIds = $wallpapers[$photoIndex];
+    $photoIndex = mt_rand( 1, $numWallpapers );
 
-    return getPhoto( $photoIds['flickr_id'], $photoIds['id'] );
+	$photoData = $db->photos[$photoIndex];
+		
+	return getPhoto( $photoData['flickr_id'], $photoData['id'] );
 }
 
 function getPhoto( $flickrId, $photoId, $findSmallest = false, $minWidth = -1, $minHeight = -1 )
