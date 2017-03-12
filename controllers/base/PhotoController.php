@@ -35,7 +35,6 @@ class PhotoController extends BaseController
     
     public function getBody( $request, $todaysPhoto, $xtpl )
     {
-		$this->addCssFile( '/css/photo.css', $xtpl );
 		$this->addNavAction( 'random', 'shuffle', 'Random', '/photo/random', $xtpl );
 		
         if( count($request->args) == 1 && is_numeric( $request->args[0] ) )
@@ -60,7 +59,7 @@ class PhotoController extends BaseController
 	
 	public function getRichDescription()
 	{
-		return $this->currentPhoto->description;
+		return $this->getRichTitle() . ' - ' . $this->currentPhoto->description;
 	}
 	
 	public function getRichImage()
@@ -74,6 +73,7 @@ class PhotoController extends BaseController
 		
 		if( $photoId <= $db->photos->count("*") )
 		{
+			$this->addCssFile( '/css/photo.css', $xtpl );
 			$xtpl->assign_file('BODY_FILE', 'templates/photo.html');
 			
 			$photoData = $db->photos[$photoId];
@@ -160,6 +160,7 @@ class PhotoController extends BaseController
 		}
 		else
 		{
+			$this->addCssFile( '/css/not_found.css', $xtpl );
 			$xtpl->assign_file('BODY_FILE', 'templates/photo_not_found.html');
 		}
     }
