@@ -49,7 +49,13 @@ class AdminController extends BaseController
                 else if( $request->args[0] == 'signout' )
                 {
                     session_destroy();
-                    header('Location:/admin');
+					
+					$url = (array_key_exists('HTTP_REFERER', $_SERVER) ? $_SERVER['HTTP_REFERER']  : "");
+					if( $this->checkRootDomain( $url ) == false )
+					{
+						$url = '/admin';
+					}
+                    header("Location:$url");
                 }
             }
             else

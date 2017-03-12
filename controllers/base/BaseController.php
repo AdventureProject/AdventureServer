@@ -14,7 +14,7 @@ abstract class BaseController extends Controller
 		
 		if( $this->provideBack() === true )
 		{
-			$url = $_SERVER['HTTP_REFERER'];
+			$url = (array_key_exists('HTTP_REFERER', $_SERVER) ? $_SERVER['HTTP_REFERER']  : "");
 			if( $this->checkRootDomain( $url ) == false )
 			{
 				$url = '/about';
@@ -108,7 +108,7 @@ abstract class BaseController extends Controller
 		$xtpl->parse('main.nav_action');
 	}
 	
-	private function checkRootDomain( $url )
+	protected function checkRootDomain( $url )
 	{
 		if (!preg_match("~^(?:f|ht)tps?://~i", $url))
 		{
