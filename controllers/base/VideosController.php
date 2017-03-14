@@ -9,19 +9,54 @@ include_once('libs/xtemplate.class.php');
 
 class VideosController extends BaseController
 {
+	private $videoTitle = null;
+	private $videoDescription = null;
+	private $videoThumbnail = null;
+	
     public function __construct( $config )
     {
         parent::__construct( false, $config );
     }
 	
-    public function getTitle()
-    {
-    	return 'Videos';
+	public function getTitle()
+	{
+		return 'Videos';
+	}
+	
+	public function getRichTitle()
+	{
+		if( $this->videoTitle !== null )
+		{
+			return $this->videoTitle;
+		}
+		else
+		{
+    		return parent::getRichTitle();
+		}
     }
 	
 	public function getRichDescription()
 	{
-		return 'Videos from our various Adventures';
+		if( $this->videoDescription !== null )
+		{
+			return $this->videoDescription;
+		}
+		else
+		{
+			return 'Videos from our various Adventures';
+		}
+	}
+	
+	public function getRichImage()
+	{
+		if( $this->videoThumbnail !== null )
+		{
+			return $this->videoThumbnail;
+		}
+		else
+		{
+			return 'http://wethinkadventure.rocks/images/default_rich_image.jpg';
+		}
 	}
 	
     public function getBody( $request, $todaysPhoto, $xtpl )
@@ -42,6 +77,8 @@ class VideosController extends BaseController
 		
 		$xtpl->assign_file('BODY_FILE', 'templates/videos.html');
         
+		$playVideoId = $this->getLinkedVideoId( $request );
+		
         $videos = $this->getVideos();
         
 		foreach( $videos as $video )
@@ -54,7 +91,7 @@ class VideosController extends BaseController
 			//$xtpl->assign( 'VIDEO_DATE', $video->date->format('d M Y') );
 			
 			$description;
-			if( strlen($video->description) > 330 )
+			if( strlen( $video->description ) > 330 )
 			{
 				$description = substr( $video->description, 0, 336 );
 				$description .= '...';
@@ -68,11 +105,30 @@ class VideosController extends BaseController
 			$xtpl->assign( 'VIDEO_DESCRIPTION', $description );
 			$xtpl->assign( 'VIDEO_URL', $video->getVideoUrl() );
 			
+			if( $playVideoId != null && $playVideoId == $video->id )
+			{
+				$this->videoTitle = $video->title;
+				$this->videoDescription = substr( $video->description, 0, 299 );
+				$this->videoThumbnail = $video->thumbnail;
+			}
+			
 			$xtpl->parse('main.body.video');
 		}
         
         $xtpl->parse('main.body');
     }
+	
+	private function getLinkedVideoId( $request )
+	{
+		$videoId = null;
+		
+		if( array_key_exists( 'play', $request->params ) )
+		{
+			$videoId = $request->params['play'];
+		}
+		
+		return $videoId;
+	}
     
     public function getVideos()
     {
