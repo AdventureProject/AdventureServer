@@ -67,7 +67,7 @@ abstract class BaseController extends Controller
 	
 	public function getSeoKeywords()
 	{
-		return 'adventure photos pictures videos gopro trips mountains skiing climbing rockclimbing hiking backpacking nature outdoors backcountry';
+		return 'adam brown stacy brown adventure photos pictures videos gopro trips mountains mountain mountaineering skiing climbing rockclimbing hiking backpacking nature outdoors backcountry';
 	}
 	
 	public function getSeoRobots()
