@@ -22,6 +22,7 @@ class AddPhotoController extends BaseController
     public function getBody( $request, $todaysPhoto, $xtpl )
     {
         $xtpl->assign_file('BODY_FILE', 'templates/add_photo.html');
+		$this->addJsFile( '/js/add_photo.js', $xtpl );
         $xtpl->parse('main.body');
     }
     

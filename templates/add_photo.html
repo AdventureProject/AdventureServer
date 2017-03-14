@@ -40,12 +40,12 @@
 					</label>
 					<br /><br />
 					<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="is_photowall">
-						<input type="checkbox" id="is_photowall" name="is_photowall" class="mdl-switch__input">
+						<input type="checkbox" id="is_photowall" name="is_photowall" class="mdl-switch__input" onchange="confirmAddToPhotoWall( this )">
 						<span class="mdl-switch__label">Is PhotoWall</span>
 					</label>
 					<br /><br />
 					
-					<button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored" style="float:right;" type="submit">
+					<button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored mdl-js-ripple-effect" style="float:right;" type="submit">
 						<i class="material-icons">add</i>
 					</button>
 				</form>

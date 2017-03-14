@@ -77,8 +77,8 @@
 						<!-- BEGIN: add_photowall -->
 						<hr />
 						<br />
-						<form action="/photo/{PHOTO_ID}" method="post">
-							<button name="add_to_photowall" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit">
+						<form action="/photo/{PHOTO_ID}" method="post" onsubmit="return confirmPhotoWall(this);">
+							<button name="add_to_photowall" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored confirm_photo_wall" type="submit">
 								Add to Wall [{NEXT_PHOTOWALL_ID}]
 							</button>
 						</form>

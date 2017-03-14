@@ -74,6 +74,7 @@ class PhotoController extends BaseController
 		if( $photoId <= $db->photos->count("*") )
 		{
 			$this->addCssFile( '/css/photo.css', $xtpl );
+			$this->addJsFile( '/js/photo.js', $xtpl );
 			$xtpl->assign_file('BODY_FILE', 'templates/photo.html');
 			
 			$photoData = $db->photos[$photoId];
@@ -131,7 +132,7 @@ class PhotoController extends BaseController
 
 			$xtpl->assign( 'MAP_ZOOMED_OUT', $this->getZoomedOutMapUrl( $photoFlickr->location ) );
 			$xtpl->assign( 'MAP_ZOOMED_IN', $this->getZoomedInMapUrl( $photoFlickr->location ) );
-echo $photoData['wallpaper'];
+
 			$xtpl->assign( 'IS_WALLPAPER', $photoData['wallpaper'] == 1 ? 'checked' : '' );
 			$xtpl->assign( 'IS_HIGHLIGHT', $photoData['highlight'] == 1 ? 'checked' : '' );
 			$xtpl->assign( 'IS_PHOTOFRAME', $photoData['photoframe'] == 1 ? 'checked' : '' );
