@@ -1,11 +1,6 @@
 <?php
 
-require_once('controllers/base/BaseController.php');
-require_once('Request.php');
-
-require_once('controllers/photos.php');
-
-include_once('libs/xtemplate.class.php');
+require_once('utils/BaseController.php');
 
 class AppsController extends BaseController
 {
@@ -13,6 +8,11 @@ class AppsController extends BaseController
     {
         parent::__construct( false, $config );
     }
+	
+	public function urlStub()
+	{
+		return 'apps';
+	}
 	
     public function getTitle()
     {

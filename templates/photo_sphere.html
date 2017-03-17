@@ -1,0 +1,19 @@
+<style>
+	#panorama {
+		width: 600px;
+		height: 400px;
+	}
+</style>
+
+<div class="mdl-grid center-items">
+
+	<div class="mdl-card mdl-cell mdl-cell--10-col mdl-shadow--2dp">
+	</div>
+		
+<div id="panorama"></div>
+<script>
+pannellum.viewer('panorama', {
+    "type": "equirectangular",
+    "panorama": "http://wethinkadventure.rocks/data/360/PANO_20170215_115524.jpg"
+});
+</script>

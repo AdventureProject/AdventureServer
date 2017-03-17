@@ -1,7 +1,6 @@
 <?php
 
 require_once('Controller.php');
-require_once('Request.php');
 
 class ClientController extends Controller
 {
@@ -9,6 +8,11 @@ class ClientController extends Controller
     {
         parent::__construct( false, $config );
     }
+	
+	public function urlStub()
+	{
+		return 'client';
+	}
     
     public function get( $request )
     {

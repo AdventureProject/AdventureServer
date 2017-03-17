@@ -1,9 +1,8 @@
 <?php
 
 require_once('Controller.php');
-require_once('Request.php');
 
-require_once('photos.php');
+require_once('utils/photos.php');
 
 class RandomController extends Controller
 {
@@ -11,6 +10,11 @@ class RandomController extends Controller
     {
         parent::__construct( false, $config );
     }
+	
+	public function urlStub()
+	{
+		return 'random';
+	}
     
     public function get( $request )
     {

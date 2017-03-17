@@ -1,19 +1,18 @@
 <?php
 
-require_once('controllers/KeysUtil.php');
-
-require_once('controllers/base/BaseController.php');
-require_once('Request.php');
-
-require_once('controllers/photos.php');
-
-include_once('libs/xtemplate.class.php');
+require_once('utils/KeysUtil.php');
+require_once('utils/BaseController.php');
 
 class HighlightsController extends BaseController
 {
 	public function __construct( $config )
 	{
 		parent::__construct( false, $config );
+	}
+	
+	public function urlStub()
+	{
+		return 'highlights';
 	}
 	
 	public function getTitle()

@@ -1,11 +1,6 @@
 <?php
 
-require_once('controllers/base/BaseController.php');
-require_once('Request.php');
-
-require_once('controllers/photos.php');
-
-include_once('libs/xtemplate.class.php');
+require_once('utils/BaseController.php');
 
 class PeekController extends BaseController
 {
@@ -13,6 +8,11 @@ class PeekController extends BaseController
     {
         parent::__construct( false, $config );
     }
+	
+	public function urlStub()
+	{
+		return 'peek';
+	}
 	
     public function getTitle()
     {
@@ -31,7 +31,15 @@ class PeekController extends BaseController
         $photo = getPhotoForDay($dayOfYear+$daysForward);
 		$xtpl->assign('IMAGE', $photo->image);
 
+		$this->addCssFile( '/css/today.css', $xtpl );
+		
 		$xtpl->assign_file('BODY_FILE', 'templates/today.html');
+		
+		$this->addNavAction( 'about', 'help', 'What is this site?', '/about', $xtpl );
+		
+		$xtpl->assign('PHOTO_ID',$photo->id);
+		
+        $xtpl->parse('main.body');
     }
 }
 

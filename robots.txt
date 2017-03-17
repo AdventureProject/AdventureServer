@@ -5,3 +5,4 @@ Disallow: /controllers/
 Disallow: /libs/
 Disallow: /templates/
 Disallow: /external/
+Disallow: /data/

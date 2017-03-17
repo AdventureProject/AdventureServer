@@ -1,13 +1,7 @@
 <?php
 
-require_once('controllers/KeysUtil.php');
-
-require_once('controllers/base/BaseController.php');
-require_once('Request.php');
-
-require_once('controllers/photos.php');
-
-include_once('libs/xtemplate.class.php');
+require_once('utils/KeysUtil.php');
+require_once('utils/BaseController.php');
 
 class PhotoController extends BaseController
 {
@@ -22,6 +16,11 @@ class PhotoController extends BaseController
 
 		$this->googleMapsApiKey = $keys->google_maps_api->key;
     }
+	
+	public function urlStub()
+	{
+		return 'photo';
+	}
 	
     public function getTitle()
     {

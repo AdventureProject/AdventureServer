@@ -1,7 +1,6 @@
 <?php
 
 require_once('Controller.php');
-require_once('Request.php');
 
 class TodaysWallpaperController extends Controller
 {
@@ -9,6 +8,11 @@ class TodaysWallpaperController extends Controller
     {
         parent::__construct( false, $config );
     }
+	
+	public function urlStub()
+	{
+		return 'todayswallpaper';
+	}
     
     public function get( $request )
     {

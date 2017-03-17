@@ -5,7 +5,7 @@ require_once('Request.php');
 require_once('Controller.php');
 
 $registered_controllers = array();
-require_once('controllers/register.php');
+require_once('register.php');
 
 $request = new Request();
 

@@ -1,12 +1,8 @@
 <?php
 
 require_once('Controller.php');
-require_once('Request.php');
 
-require_once('photos.php');
-
-include_once('libs/xtemplate.class.php');
-
+require_once('utils/photos.php');
 
 class PhotoFrameErrorLogController extends Controller
 {
@@ -14,6 +10,11 @@ class PhotoFrameErrorLogController extends Controller
     {
         parent::__construct( true, $config );
     }
+	
+	public function urlStub()
+	{
+		return 'errorlog';
+	}
 	
 	public function get( $request )
     {

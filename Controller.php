@@ -1,5 +1,7 @@
 <?php
 
+require_once('Request.php');
+
 abstract class Controller
 {
     public function __construct( $requiresAuth, $config )
@@ -53,6 +55,13 @@ abstract class Controller
                 $this->delete( $request );
             }
         }
+    }
+	
+	abstract public function urlStub();
+	
+    public function isEnabled()
+    {
+        return true;
     }
     
     abstract public function get( $request );

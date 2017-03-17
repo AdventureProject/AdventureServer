@@ -1,13 +1,7 @@
 <?php
 
-require_once('controllers/KeysUtil.php');
-
-require_once('controllers/base/BaseController.php');
-require_once('Request.php');
-
-require_once('controllers/photos.php');
-
-include_once('libs/xtemplate.class.php');
+require_once('utils/KeysUtil.php');
+require_once('utils/BaseController.php');
 
 class AdminController extends BaseController
 {
@@ -20,6 +14,11 @@ class AdminController extends BaseController
 		$keys = getKeys();
 		$this->authPassword = $keys->admin->password;
     }
+	
+	public function urlStub()
+	{
+		return 'admin';
+	}
 	
     public function getTitle()
     {
