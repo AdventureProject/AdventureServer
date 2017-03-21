@@ -21,7 +21,7 @@ abstract class BaseController extends Controller
 			$url = (array_key_exists('HTTP_REFERER', $_SERVER) ? $_SERVER['HTTP_REFERER']  : "");
 			if( $this->checkRootDomain( $url ) == false )
 			{
-				$url = '/about';
+				$url = $this->getBackUrl();
 			}
 			
 			$xtpl->assign('BACK_URL', $url);
@@ -84,6 +84,11 @@ abstract class BaseController extends Controller
 		return false;
 	}
 	
+	public function getBackUrl()
+	{
+		return '/about';
+	}
+	
 	public function addCssFile( $path, $xtpl )
 	{
 		$xtpl->assign( 'CSS_FILE', $path );
@@ -103,13 +108,22 @@ abstract class BaseController extends Controller
 		$xtpl->parse('main.seo_location');
 	}
 	
-	public function addNavAction( $id, $icon, $tooltip, $url, $xtpl )
+	public function addNavAction( $id, $icon, $tooltip, $url, $xtpl, $raw = null )
 	{
 		$xtpl->assign( 'ACTION_ID', $id );
 		$xtpl->assign( 'ACTION_ICON', $icon );
 		$xtpl->assign( 'ACTION_TOOLTIP', $tooltip );
 		$xtpl->assign( 'ACTION_URL', $url );
+		if( $raw !== null )
+		{
+			$xtpl->assign( 'ACTION_RAW', $raw );
+		}
 		$xtpl->parse('main.nav_action');
+	}
+	
+	public function formatDateForDisplay( $inDate )
+	{
+		return date("j M Y - H:i", strtotime( $inDate ));
 	}
 	
 	protected function checkRootDomain( $url )

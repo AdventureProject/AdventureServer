@@ -1,19 +1,42 @@
 <style>
+	.adventure.mdl-layout .mdl-layout__content {
+		padding-top: 0px;
+	}
+	
 	#panorama {
-		width: 600px;
-		height: 400px;
+		height: calc(100vh - 65px);
+		width: 100%;
+	}
+	
+	#info_dialog {
+		z-index: 1199;
+		background-color: blue;
+		width: 500px;
+		height: 500px;
+		display: inline;
 	}
 </style>
 
-<div class="mdl-grid center-items">
-
-	<div class="mdl-card mdl-cell mdl-cell--10-col mdl-shadow--2dp">
-	</div>
-		
 <div id="panorama"></div>
+
 <script>
-pannellum.viewer('panorama', {
-    "type": "equirectangular",
-    "panorama": "http://wethinkadventure.rocks/data/360/PANO_20170215_115524.jpg"
-});
+	$.getJSON( "https://s3-us-west-2.amazonaws.com/wethinkadventurerocks/data/360photos/{FILE_ID}/config.json", function( data ) {
+		data.autoLoad = true;
+		data.autoRotate = 1;
+		data.pitch = {PITCH};
+		data.yaw = {YAW};
+		pannellum.viewer('panorama', data);
+	} );
+	
+	$('#action_info_button').click(function() {
+		swal({
+			title: "{PHOTO_TITLE}",
+			text: "{PHOTO_DESCRIPTION}",
+			imageUrl: "{PHOTO_LOCATION_URL}",
+			imageSize: "256x96",
+			showConfirmButton: false,
+			allowOutsideClick: true,
+			html: true
+		});
+	} );
 </script>

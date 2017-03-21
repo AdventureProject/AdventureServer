@@ -114,9 +114,8 @@ function getPhotoForDay($dayOfYear)
 
     mt_srand($dayOfYear);
     $photoIndex = mt_rand( 1, $numWallpapers );
-
 	$photoData = $db->photos[$photoIndex];
-		
+
 	return getPhoto( $photoData['flickr_id'], $photoData['id'] );
 }
 
@@ -138,7 +137,6 @@ function getPhoto( $flickrId, $photoId, $findSmallest = false, $minWidth = -1, $
         $todaysPhoto->title = $photoInfo['title']['_content'];
         $todaysPhoto->description = $photoInfo['description']['_content'];
         $todaysPhoto->date = $photoInfo['dates']['taken'];
-        //$todaysPhoto->url = $photoInfo['urls']['url'][0]['_content'];
         $todaysPhoto->url = "http://wethinkadventure.rocks/photo/$photoId";
         
         if( array_key_exists('location', $photoInfo) )
@@ -146,6 +144,11 @@ function getPhoto( $flickrId, $photoId, $findSmallest = false, $minWidth = -1, $
             $todaysPhoto->location = $photoInfo['location']['latitude'] . ',' . $photoInfo['location']['longitude'];
         }
     }
+	else
+	{
+		//echo 'getInfo FAILED<br />';
+		//print_r( $response );
+	}
     
     $method = 'flickr.photos.getSizes';
     $args = array('photo_id' => $flickrId);
@@ -182,6 +185,11 @@ function getPhoto( $flickrId, $photoId, $findSmallest = false, $minWidth = -1, $
 		}
         $todaysPhoto->thumbnail = $thumbnail['source'];
     }
+	else
+	{
+		//echo 'getSizes FAILED<br />';
+		//print_r( $response );
+	}
     
     return $todaysPhoto;
 }

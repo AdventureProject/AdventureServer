@@ -1,0 +1,14 @@
+.adventure .mdl-card.photo-spheres-pic {
+	-webkit-order: 0;
+	-ms-flex-order: 0;
+	order: 0;
+}
+
+.adventure .photo-spheres-pic .mdl-card__media {
+	background-image: url('/images/photo_spheres_pic.jpg');
+}
+
+.adventure .panorama {
+	height: 450px;
+	width: 100%;
+}

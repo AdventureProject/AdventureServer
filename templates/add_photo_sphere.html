@@ -1,0 +1,50 @@
+    <div class="mdl-grid center-items">
+
+		<div class="mdl-card navigation-card mdl-cell mdl-cell--4-col mdl-cell--4-col-phone">
+			<div class="mdl-card__title">
+				<h4 class="mdl-card__title-text">Admin</h4>
+			</div>
+			<ul class="mdl-list">
+				<li class="mdl-list__item">
+					<span class="mdl-list__item-primary-content">
+						<a href="/admin/home">Admin Home</a>
+					</span>
+				</li>
+			</ul>
+		</div>
+
+		<div class="mdl-card admin-card mdl-cell mdl-cell--6-col">
+			<div class="mdl-card__title">
+				<h4 class="mdl-card__title-text">Add Photo Sphere</h4>
+			</div>
+			<div class="adventure-content">
+				<form action="/utils/photo_sphere.php" enctype="multipart/form-data" method="post">
+					<div class="mdl-textfield mdl-js-textfield">
+						<input class="mdl-textfield__input" type="text" id="title" name="title">
+						<label class="mdl-textfield__label" for="title">Title</label>
+					</div>
+					<br /><br />
+					<div class="mdl-textfield mdl-js-textfield">
+						<input class="mdl-textfield__input" type="text" id="description" name="description">
+						<label class="mdl-textfield__label" for="description">Description</label>
+					</div>
+					<br /><br />
+					<div>
+						<strong>360 Source Image:</strong><br />
+						<input type="file" name="image_upload" id="image_upload">
+					</div>
+					<br /><br />
+					<div>
+						<strong>Preview Image:</strong><br />
+						<input type="file" name="preview_upload" id="preview_upload">
+					</div>
+					<br /><br />
+					
+					<button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored mdl-js-ripple-effect" style="float:right;" type="submit">
+						<i class="material-icons">add</i>
+					</button>
+				</form>
+			</div>
+		</div>
+		
+	</div>

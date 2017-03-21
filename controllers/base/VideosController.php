@@ -61,9 +61,6 @@ class VideosController extends BaseController
 	
     public function getBody( $request, $todaysPhoto, $xtpl )
     {
-		$this->addCssFile( '/external/magnific-popup/magnific-popup.css', $xtpl );
-		$this->addJsFile( '/external/magnific-popup/jquery.magnific-popup.min.js', $xtpl );
-		
 		$this->addCssFile( '/css/zoom.css', $xtpl );
 		$this->addJsFile( '/js/zoom.js', $xtpl );
 		

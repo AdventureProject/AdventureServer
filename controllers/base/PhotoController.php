@@ -108,7 +108,8 @@ class PhotoController extends BaseController
 			$xtpl->assign( 'PHOTO_ID', $photoId );
 			$xtpl->assign( 'FLICKR_ID', $photoData['flickr_id'] );
 			$xtpl->assign( 'PHOTO_TITLE', $photoFlickr->title );
-			$xtpl->assign( 'PHOTO_DATE', $photoFlickr->date );
+			$dateStr = $this->formatDateForDisplay( $photoFlickr->date );
+			$xtpl->assign( 'PHOTO_DATE', $dateStr );
 
 			if( empty($photoFlickr->location) )
 			{

@@ -2,7 +2,7 @@
 
 require_once('utils/BaseController.php');
 
-class AddPhotoController extends BaseController
+class AddPhotoSphereController extends BaseController
 {
     public function __construct( $config )
     {
@@ -11,17 +11,17 @@ class AddPhotoController extends BaseController
 	
 	public function urlStub()
 	{
-		return 'addphoto';
+		return 'add360photo';
 	}
     
     public function getTitle()
     {
-    	return 'Add Photo';
+    	return 'Add 360 Photo';
     }
     
     public function getBody( $request, $todaysPhoto, $xtpl )
     {
-        $xtpl->assign_file('BODY_FILE', 'templates/add_photo.html');
+        $xtpl->assign_file('BODY_FILE', 'templates/add_photo_sphere.html');
 		$this->addJsFile( '/js/add_photo.js', $xtpl );
         $xtpl->parse('main.body');
     }
@@ -30,9 +30,10 @@ class AddPhotoController extends BaseController
     {
         if( !empty($request->post['flickr_id']) && is_numeric($request->post['flickr_id']) )
         {
-            $db = getDb();
+            //$db = getDb();
             
-            $row = $db->photos( 'flickr_id = ?', $request->post['flickr_id'] )->fetch();
+			/*
+            $row = $db->photos( 'flickr_id = ?', $request->post['flickr_id'] )->fetch();;
 
             if( !$row )
             {
@@ -64,6 +65,7 @@ class AddPhotoController extends BaseController
             {
                 echo 'Flickr ID already exists!';
             }
+			*/
         }
     }
 }

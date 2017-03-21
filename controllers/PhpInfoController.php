@@ -16,7 +16,7 @@ class PhpInfoController extends Controller
 	
     public function isEnabled()
     {
-        return false;
+        return true;
     }
     
     public function get( $request )

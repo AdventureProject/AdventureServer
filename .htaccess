@@ -1,0 +1,13 @@
+Options -Indexes
+
+RewriteEngine On
+RewriteBase /
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?rest=$1 [NC,L,QSA]
+
+<Files "composer.*">
+	Order Allow,Deny
+	Deny from all
+</Files>
