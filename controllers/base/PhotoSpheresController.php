@@ -20,6 +20,16 @@ class PhotoSpheresController extends BaseController
     	return '360 Photos';
     }
 	
+	public function getRichDescription()
+	{
+		return 'A selection of our best photos 360 Photos';
+	}
+	
+	public function getSeoKeywords()
+	{
+		return parent::getSeoKeywords() . ' 360 panorama photosphere';
+	}
+	
     public function getBody( $request, $todaysPhoto, $xtpl )
     {
 		$this->addCssFile( '/css/photo_spheres.css', $xtpl );
@@ -31,7 +41,7 @@ class PhotoSpheresController extends BaseController
 		$db = getDb();
 		$keys = getKeys();
 		
-		$results = $db->photo_spheres()->select("*")->order('date_taken DESC');
+		$results = $db->photo_spheres()->select("*")->where('highlight', 1)->order('date_taken DESC');
 		while( $data = $results->fetch() )
 		{
 			$xtpl->assign('PHOTO_ID', $data['id']);

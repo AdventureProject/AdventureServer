@@ -42,7 +42,11 @@
 									<span>{VIDEO_DESCRIPTION}</span><br />
 								</div>
 							</div>
-						
+							<div class="mdl-card__actions mdl-card--border">
+								<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect popup-youtube" href="{VIDEO_URL}" onClick="history.pushState({},'{VIDEO_TITLE}','http://wethinkadventure.rocks/videos?play={VIDEO_ID}')">
+									<i class="material-icons">play_arrow</i> Play Video
+								</a>
+							</div>
 							<div class="mdl-card__actions mdl-card--border">
 								<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect btn" data-clipboard-text="http://wethinkadventure.rocks/videos?play={VIDEO_ID}" onClick="javascript:showCopyConfirm();">
 									<i class="material-icons">content_copy</i> Copy Link to Share

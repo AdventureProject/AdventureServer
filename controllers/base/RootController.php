@@ -24,6 +24,11 @@ class RootController extends BaseController
 		return 'Adventure.Rocks';
 	}
 	
+	public function blurBackground()
+	{
+		return false;
+	}
+	
     public function getBody( $request, $todaysPhoto, $xtpl )
     {
 		$this->addCssFile( '/css/today.css', $xtpl );

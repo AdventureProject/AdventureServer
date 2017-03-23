@@ -31,6 +31,11 @@ class PhotoController extends BaseController
 	{
 		return true;
 	}
+	
+	public function getBackUrl()
+	{
+		return '/highlights';
+	}
     
     public function getBody( $request, $todaysPhoto, $xtpl )
     {

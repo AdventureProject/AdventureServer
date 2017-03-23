@@ -5,20 +5,23 @@ require_once('utils/BaseController.php');
 
 class PhotoSphereController extends BaseController
 {
+	private $basePath = "https://s3-us-west-2.amazonaws.com/wethinkadventurerocks/data/360photos";
+	private $currentPhoto;
+	
     public function __construct( $config )
     {
         parent::__construct( false, $config );
+    }
+	
+	public function getTitle()
+    {
+    	return '360 Photo';
     }
 	
 	public function urlStub()
 	{
 		return '360photo';
 	}
-	
-    public function getTitle()
-    {
-    	return '360 Photo';
-    }
 	
 	public function provideBack()
 	{
@@ -28,6 +31,26 @@ class PhotoSphereController extends BaseController
 	public function getBackUrl()
 	{
 		return '/360photos';
+	}
+	
+	public function getRichTitle()
+	{
+		return $this->currentPhoto['title'];
+	}
+	
+	public function getRichDescription()
+	{
+		return $this->getRichTitle() . ' - ' . $this->currentPhoto['description'];
+	}
+	
+	public function getRichImage()
+	{
+		return $this->basePath . '/' . $this->currentPhoto['file_id'] . '/preview.jpg';
+	}
+	
+	public function getSeoKeywords()
+	{
+		return parent::getSeoKeywords() . ' 360 panorama photosphere';
 	}
 	
     public function getBody( $request, $todaysPhoto, $xtpl )
@@ -53,6 +76,10 @@ class PhotoSphereController extends BaseController
 			if( $requestedPhotoId > 0 && $requestedPhotoId <= $db->photo_spheres->count("*") )
 			{
 				$photoData = $db->photo_spheres[$requestedPhotoId];
+				$this->currentPhoto = $photoData;
+				$locationParts = explode( ',', $photoData['location'] );
+				$this->addSeoLocation( $locationParts[0], $locationParts[1], $xtpl );
+				
 				$xtpl->assign('FILE_ID', $photoData['file_id'] );
 				$xtpl->assign('PHOTO_TITLE', $photoData['title'] );
 				$xtpl->assign('PHOTO_DESCRIPTION', '<strong>' . $this->formatDateForDisplay( $photoData['date_taken'] ) . '</strong><br />' . $photoData['description'] );

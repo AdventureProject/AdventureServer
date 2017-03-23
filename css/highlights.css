@@ -17,6 +17,11 @@
 	}
 }
 
+.mdl-grid.mdl-grid--no-spacing>.mdl-cell.highlights-title-card {
+	margin-left: 15px;
+	margin-right: 15px;
+}
+
 .adventure .highlights-pic .mdl-card__media {
 	background-image: url('/images/highlights_pic.jpg');
 }

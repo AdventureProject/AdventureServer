@@ -13,6 +13,10 @@ abstract class BaseController extends Controller
         $todaysPhoto = getTodaysPhoto();
         
         $xtpl = new XTemplate('templates/base.html');
+		if( $this->blurBackground() )
+		{
+			$xtpl->parse('main.blur_background');
+		}
         $xtpl->assign('IMAGE', $todaysPhoto->image);
         $xtpl->assign('TITLE', $this->getTitle());
 		
@@ -20,6 +24,13 @@ abstract class BaseController extends Controller
 		{
 			$url = (array_key_exists('HTTP_REFERER', $_SERVER) ? $_SERVER['HTTP_REFERER']  : "");
 			if( $this->checkRootDomain( $url ) == false )
+			{
+				$url = $this->getBackUrl();
+			}
+			// Back arrow should take you back to the parent is the last page
+			// was also this page. This prevents long back chains preventing
+			// you from accessing the nav
+			elseif( $this->lastPageWasSame() )
 			{
 				$url = $this->getBackUrl();
 			}
@@ -42,6 +53,7 @@ abstract class BaseController extends Controller
 		$xtpl->assign('RICH_PREVIEW_TITLE', $this->getRichTitle());
 		$xtpl->assign('RICH_PREVIEW_DESCRIPTION', $this->getRichDescription());
 		$xtpl->assign('RICH_PREVIEW_IMAGE', $this->getRichImage());
+		$xtpl->assign('RICH_URL', $this->getRichUrl());
 		
 		$xtpl->assign('SEO_KEYWORDS', $this->getSeoKeywords());
 		$xtpl->assign('SEO_ROBOTS', $this->getSeoRobots());
@@ -69,6 +81,11 @@ abstract class BaseController extends Controller
 		return 'http://wethinkadventure.rocks/images/default_rich_image.jpg';
 	}
 	
+	public function getRichUrl()
+	{
+		return "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+	}
+	
 	public function getSeoKeywords()
 	{
 		return 'adam brown stacy brown adventure photos pictures videos gopro trips mountains mountain mountaineering skiing climbing rockclimbing hiking backpacking nature outdoors backcountry';
@@ -87,6 +104,11 @@ abstract class BaseController extends Controller
 	public function getBackUrl()
 	{
 		return '/about';
+	}
+	
+	public function blurBackground()
+	{
+		return true;
 	}
 	
 	public function addCssFile( $path, $xtpl )
@@ -142,6 +164,28 @@ abstract class BaseController extends Controller
 		{
 			return false;
 		}
+	}
+	
+	private function lastPageWasSame()
+	{
+		if( array_key_exists('HTTP_REFERER', $_SERVER) )
+		{
+			$url = $_SERVER[HTTP_REFERER];
+			$domain = implode('.', array_slice(explode('.', parse_url($url, PHP_URL_HOST)), -2));
+			$path = substr( $_SERVER[HTTP_REFERER], strpos( $_SERVER[HTTP_REFERER], $domain ) + strlen($domain) );
+			
+			return $this->startsWith( $path, '/'.$this->urlStub() );
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	private function startsWith($haystack, $needle)
+	{
+		 $length = strlen($needle);
+		 return (substr($haystack, 0, $length) === $needle);
 	}
 }
 

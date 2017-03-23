@@ -61,13 +61,19 @@ class VideosController extends BaseController
 	
     public function getBody( $request, $todaysPhoto, $xtpl )
     {
+		$this->addCssFile( '/external/magnific-popup/magnific-popup.css', $xtpl );
+		$this->addJsFile( '/external/magnific-popup/jquery.magnific-popup.min.js', $xtpl );
+		
 		$this->addCssFile( '/css/zoom.css', $xtpl );
 		$this->addJsFile( '/js/zoom.js', $xtpl );
 		
 		$this->addJsFile( '/external/clipboard.min.js', $xtpl );
 		
-		$this->addCssFile( '/external/sweetalert/sweetalert.css', $xtpl );
-		$this->addJsFile( '/external/sweetalert/sweetalert.min.js', $xtpl );
+		$this->addCssFile( '/external/mdl-jquery-modal-dialog/mdl-jquery-modal-dialog.css', $xtpl );
+		$this->addJsFile( '/external/mdl-jquery-modal-dialog/mdl-jquery-modal-dialog.js', $xtpl );
+		
+		//$this->addCssFile( '/external/sweetalert/sweetalert.css', $xtpl );
+		//$this->addJsFile( '/external/sweetalert/sweetalert.min.js', $xtpl );
 		
 		$this->addCssFile( '/css/videos.css', $xtpl );
 		$this->addJsFile( '/js/videos.js', $xtpl );

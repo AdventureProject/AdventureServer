@@ -17,12 +17,21 @@ $(document).ready(function() {
 		var elemId = '#video_' + $queryString.play;
 		if( $( elemId ).length > 0 )
 		{
-			$( elemId ).click();
+			window.location.href = elemId;
+			
+			 setTimeout(function() {
+			 	$( elemId ).click();
+			}, 500);
 		}
 	}
 	
 	var clipboard = new Clipboard('.btn');
 });
+
+function playVideo( elemId )
+{
+	$( elemId ).click();
+}
 
 function getQueryParams()
 {
@@ -42,11 +51,32 @@ function getQueryParams()
 
 function showCopyConfirm()
 {
+	var dialogId = "copy_confirm";
+	showDialog({
+				id: dialogId,
+				title: 'Link Copied!',
+				text: "Video link copied to your click board",
+				cancelable: true,
+				contentStyle: {
+								'margin': 'auto',
+								'position': 'absolute',
+								'top': '50%',
+								'transform': 'translateY(-50%)',
+								'left': '50%',
+								'transform': 'translateX(-50%)',
+							  },
+			});
+	setTimeout(function () {
+				hideDialog( $('#' + dialogId) );
+			}, 2500);
+	/*
 	swal({
 		title: "Link Copied!",
 		text: "Video link copied to your click board",
 		timer: 2500,
 		showConfirmButton: false,
+		allowOutsideClick: true,
 		type: "success"
 	});
+	*/
 }

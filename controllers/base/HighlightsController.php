@@ -22,7 +22,7 @@ class HighlightsController extends BaseController
 	
 	public function getRichDescription()
 	{
-		return 'A select of some of our best photos';
+		return 'A selection of some of our best photos';
 	}
 	
 	public function getBody( $request, $todaysPhoto, $xtpl )
@@ -34,7 +34,7 @@ class HighlightsController extends BaseController
 		$xtpl->assign_file('BODY_FILE', 'templates/highlights.html');
 		
 		$db = getDb();
-		$results = $db->photos()->select('id, cache_title, cache_thumbnail, cache_orientation')->where("highlight", 1)->order('id DESC');
+		$results = $db->photos()->select('id, cache_title, cache_thumbnail, cache_orientation')->where('highlight', 1)->order('id DESC');
 		
 		while( $data = $results->fetch() )
 		{

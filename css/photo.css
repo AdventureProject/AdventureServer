@@ -2,13 +2,18 @@
 	padding-top: 0px;
 }
 
-img.fill {
-	width: 100%;
-}
-
-.photo_card {
+.adventure .photo {
 	background-color: #f9f7f2;
 	padding: 16px;
+	
+	display: block;
+	margin: auto;
+	
+	width: auto;
+	height: auto;
+	
+	max-width: 85vw;
+	max-height: calc(85vh - 105px);
 }
 
 .info_fab {

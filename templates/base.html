@@ -15,6 +15,7 @@
 		<meta property="og:title" content="{RICH_PREVIEW_TITLE}" />
 		<meta property="og:description" content="{RICH_PREVIEW_DESCRIPTION}" />
 		<meta property="og:image" content="{RICH_PREVIEW_IMAGE}" />
+		<meta property="og:url" content="{RICH_URL}" />
 
 		<!-- SEO -->
 		<meta name="description" content="{RICH_PREVIEW_DESCRIPTION}" />
@@ -62,11 +63,43 @@
 		
 		<style>
 			html {
+				background-color: #fcfcfc;
+			}
+			
+			#todays_photo_background {
+				display: block;
+				position: absolute;
+				
+				overflow: hidden;
+
+				height: 100vh;
+				width: 100vw;
+			}
+			
+			#todays_photo_background:after {
+				content: "";
+				
+				position: absolute;
+				z-index: -1;
+				
+				height: 100vh;
+				width: 100vw;
+				
 				background: url({IMAGE}) no-repeat center center fixed;
 				-webkit-background-size: cover;
 				-moz-background-size: cover;
 				-o-background-size: cover;
 				background-size: cover;
+				
+				<!-- BEGIN: blur_background -->
+				transform: scale(1.05);
+					
+				-webkit-filter: blur(10px);
+				-moz-filter: blur(10px);
+				-o-filter: blur(10px);
+				-ms-filter: blur(10px);
+				filter: blur(10px);
+				<!-- END: blur_background -->
 			}
 		</style>
 		
@@ -76,6 +109,9 @@
 	</head>
 
 	<body>
+		<div id="todays_photo_background">
+		</div>
+		
 		<!-- Always shows a header, even in smaller screens. -->
 		<div class="adventure mdl-layout mdl-js-layout mdl-layout--fixed-header has-drawer is-upgraded">
 			<header class="mdl-layout__header">

@@ -12,6 +12,8 @@ use Aws\S3\S3Client;
 $sdk = new Aws\Sdk( getCredentials() );
 $s3Client = $sdk->createS3();
 
+$basePath = "https://s3-us-west-2.amazonaws.com/wethinkadventurerocks/data/360photos";
+
 $script = 'generate.py';
 
 chdir('../external/pannellum/tools');
@@ -48,14 +50,15 @@ if( !$row )
 		echo 'Inserting into Database...<br />';
 		
 		$exif = exif_read_data( $target_file );
-		$location = get_location( $exif );
+		$latitude = gps($exif["GPSLatitude"], $exif['GPSLatitudeRef']);
+		$longitude = gps($exif["GPSLongitude"], $exif['GPSLongitudeRef']);
 		
 		$timestamp = date("Y-m-d H:i:s", strtotime( $exif['DateTime'] ));
 		
 		$item['file_id'] = $imageName;
 		$item['title'] = $_POST['title'];
 		$item['description'] = $_POST['description'];
-		$item['location'] = $location['lat'] . ', ' . $location['long'];
+		$item['location'] = $latitude . ', ' . $longitude;
 		$item['date_taken'] = $timestamp;
 
 		$newRow = $db->photo_spheres()->insert( $item );
@@ -65,7 +68,7 @@ if( !$row )
 		$configFile = 'output/config.json';
 		$json = json_decode( file_get_contents( $configFile ), true);
 
-		$json['basePath'] = "https://s3-us-west-2.amazonaws.com/wethinkadventurerocks/data/360photos/{$imageName}";
+		$json['basePath'] = "$basePath/$imageName";
 		$json['title'] = $_POST['title'];
 		$json['preview'] = "/preview.$previewExt";
 
@@ -105,30 +108,27 @@ else
 
 ob_implicit_flush(false);
 
-function get_location( $exif )
+function gps($coordinate, $hemisphere)
 {
-	$location = array();
-	
-	$degLong = $exif['GPSLongitude'][0];
-	$minLong = $exif['GPSLongitude'][1];
-	$secLong = $exif['GPSLongitude'][2];
-	$refLong = $exif['GPSLongitudeRef'];
-
-	$degLat = $exif['GPSLatitude'][0];
-	$minLat = $exif['GPSLatitude'][1];
-	$secLat = $exif['GPSLatitude'][2];
-	$refLat = $exif['GPSLatitudeRef'];
-
-	$location['lat']  = to_decimal($degLat, $minLat, $secLat, $refLat);
-	$location['long'] = to_decimal($degLong, $minLong, $secLong, $refLong);
-	
-	return $location;
-}
-
-function to_decimal($deg, $min, $sec, $hem)
-{
-	$d = $deg + ((($min/60) + ($sec/3600)/100));
-	return ($hem =='S' || $hem=='W') ?  $d*=-1 : $d;
+	for ($i = 0; $i < 3; $i++)
+	{
+		$part = explode('/', $coordinate[$i]);
+		if (count($part) == 1)
+		{
+			$coordinate[$i] = $part[0];
+		}
+		else if (count($part) == 2)
+		{
+			$coordinate[$i] = floatval($part[0])/floatval($part[1]);
+		}
+		else
+		{
+			$coordinate[$i] = 0;
+		}
+	}
+	list($degrees, $minutes, $seconds) = $coordinate;
+	$sign = ($hemisphere == 'W' || $hemisphere == 'S') ? -1 : 1;
+	return $sign * ($degrees + $minutes/60 + $seconds/3600);
 }
 
 function cleanUpOutput( $dir )
