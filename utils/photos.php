@@ -101,22 +101,41 @@ function getPhotoframes()
     return $photos;
 }
 
-function getTodaysPhoto()
+function getTodaysPhotoLocal()
 {
-    $dayOfYear = date("z");
-    return getPhotoForDay( $dayOfYear );
+	$dayOfYear = date("z");
+	return getPhotoForDayLocal( $dayOfYear );
 }
 
-function getPhotoForDay($dayOfYear)
+function getPhotoForDayLocal( $dayOfYear )
 {
 	$db = getDb();
 	$numWallpapers = $db->photos()->where("wallpaper", 1)->count("*");
-
-    mt_srand($dayOfYear);
+	
+	mt_srand($dayOfYear);
     $photoIndex = mt_rand( 1, $numWallpapers );
 	$photoData = $db->photos[$photoIndex];
+	
+	return $photoData;
+}
 
-	return getPhoto( $photoData['flickr_id'], $photoData['id'] );
+function getTodaysPhoto( $minWidth = 1900, $minHeight = 1080 ) // These sizes are good for full fidelity
+{
+    $dayOfYear = date("z");
+    return getPhotoForDay( $dayOfYear, $minWidth, $minHeight );
+}
+
+function getPhotoForDay($dayOfYear, $minWidth = -1, $minHeight = -1)
+{
+	$photoData = getPhotoForDayLocal( $dayOfYear );
+
+	$findSmallest = false;
+	if( $minWidth > -1 || $minHeight > -1 )
+	{
+		$findSmallest = true;
+	}
+	
+	return getPhoto( $photoData['flickr_id'], $photoData['id'], $findSmallest, $minWidth, $minHeight );
 }
 
 function getPhoto( $flickrId, $photoId, $findSmallest = false, $minWidth = -1, $minHeight = -1 )

@@ -13,11 +13,18 @@ abstract class BaseController extends Controller
         $todaysPhoto = getTodaysPhoto();
         
         $xtpl = new XTemplate('templates/base.html');
+        $xtpl->assign('IMAGE', $todaysPhoto->image);
+		$xtpl->assign('TODAYS_IMAGE_ID', $todaysPhoto->id);
+		
 		if( $this->blurBackground() )
 		{
 			$xtpl->parse('main.blur_background');
 		}
-        $xtpl->assign('IMAGE', $todaysPhoto->image);
+		else
+		{
+			$xtpl->parse('main.normal_background');
+		}
+		
         $xtpl->assign('TITLE', $this->getTitle());
 		
 		if( $this->provideBack() === true )

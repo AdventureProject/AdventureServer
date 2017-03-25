@@ -11,3 +11,8 @@ RewriteRule ^(.*)$ index.php?rest=$1 [NC,L,QSA]
 	Order Allow,Deny
 	Deny from all
 </Files>
+
+<Files ~ ".gitignore$">
+	Order allow,deny
+	Deny from all
+</Files>
