@@ -222,6 +222,18 @@ class PhotoController extends BaseController
 				}
 			}
         }
+		else
+		{
+			if( count($request->args) == 1
+			   && is_numeric( $request->args[0] ) )
+			{
+				$photoId = $request->args[0];
+			}
+			else
+			{
+				echo 'No photo id provided';
+			}
+		}
     }
 	
 	private function getZoomedOutMapUrl( $location )

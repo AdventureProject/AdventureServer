@@ -138,6 +138,14 @@ function getPhotoForDay($dayOfYear, $minWidth = -1, $minHeight = -1)
 	return getPhoto( $photoData['flickr_id'], $photoData['id'], $findSmallest, $minWidth, $minHeight );
 }
 
+function getPhotoById( $photoId, $findSmallest = false, $minWidth = -1, $minHeight = -1 )
+{
+	$db = getDb();
+    $row = $db->photos()->select('id, flickr_id')->where("id", $photoId)->fetch();
+	
+	return getPhoto( $row['flickr_id'], $photoId, $findSmallest, $minWidth, $minHeight );
+}
+
 function getPhoto( $flickrId, $photoId, $findSmallest = false, $minWidth = -1, $minHeight = -1 )
 {
     global $flickr;

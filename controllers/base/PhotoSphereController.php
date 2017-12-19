@@ -80,6 +80,8 @@ class PhotoSphereController extends BaseController
 				$locationParts = explode( ',', $photoData['location'] );
 				$this->addSeoLocation( $locationParts[0], $locationParts[1], $xtpl );
 				
+				$this->addNavAction( 'download_button', 'file_download', 'Download this photo', "https://s3-us-west-2.amazonaws.com/wethinkadventurerocks/data/360photos/{$photoData['file_id']}/{$photoData['file_id']}.jpg", $xtpl, 'download' );
+				
 				$xtpl->assign('FILE_ID', $photoData['file_id'] );
 				$xtpl->assign('PHOTO_TITLE', $photoData['title'] );
 				$xtpl->assign('PHOTO_DESCRIPTION', '<strong>' . $this->formatDateForDisplay( $photoData['date_taken'] ) . '</strong><br />' . $photoData['description'] );

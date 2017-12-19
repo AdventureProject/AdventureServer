@@ -18,14 +18,24 @@ class PhotoFrameController extends Controller
     
     public function get( $request )
     {
-        // Use this to differentiate photo frames
-        $photoFrameId = $request->args[0];
-        
-        $photoFramePhotoIds = getPhotoframes();
+        if( count($request->args) == 1 )
+		{
+			// Use this to differentiate photo frames
+        	$photoFrameId = $request->args[0];
+			
+			$photoFramePhotoIds = getPhotoframes();
 
-        $photo = $photoFramePhotoIds[array_rand( $photoFramePhotoIds )];
+			$photo = $photoFramePhotoIds[array_rand( $photoFramePhotoIds )];
 
-        echo json_encode( getPhoto( $photo['flickr_id'], $photo['id'], true, 800, 480 ) );
+			echo json_encode( getPhoto( $photo['flickr_id'], $photo['id'], true, 800, 480 ) );
+		}
+		else if( count($request->args) == 2 )
+		{
+			$photoFrameId = $request->args[0];
+			$photoId = $request->args[1];
+
+			echo json_encode( getPhotoById( $photoId, true, 800, 480 ) );
+		}
     }
 }
 

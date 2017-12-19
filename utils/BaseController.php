@@ -177,9 +177,9 @@ abstract class BaseController extends Controller
 	{
 		if( array_key_exists('HTTP_REFERER', $_SERVER) )
 		{
-			$url = $_SERVER[HTTP_REFERER];
+			$url = $_SERVER['HTTP_REFERER'];
 			$domain = implode('.', array_slice(explode('.', parse_url($url, PHP_URL_HOST)), -2));
-			$path = substr( $_SERVER[HTTP_REFERER], strpos( $_SERVER[HTTP_REFERER], $domain ) + strlen($domain) );
+			$path = substr( $_SERVER['HTTP_REFERER'], strpos( $_SERVER['HTTP_REFERER'], $domain ) + strlen($domain) );
 			
 			return $this->startsWith( $path, '/'.$this->urlStub() );
 		}

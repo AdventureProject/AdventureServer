@@ -55,7 +55,7 @@ class BlurBackgroundController extends Controller
 				}
 			}
 			
-			$this->caching_headers ( $localFile, $localFile );
+			$this->caching_headers( $localFile, filemtime($localFile) );
 			
 			header('Content-Type: image/jpeg');
 			header('Content-Length: ' . filesize($localFile));
@@ -63,7 +63,7 @@ class BlurBackgroundController extends Controller
         }
     }
 	
-	function caching_headers ($file, $timestamp) {
+	function caching_headers($file, $timestamp) {
 		$gmt_mtime = gmdate('r', $timestamp);
 		header('ETag: "'.md5($timestamp.$file).'"');
 		header('Last-Modified: '.$gmt_mtime);

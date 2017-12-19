@@ -1,0 +1,65 @@
+    <div class="mdl-grid center-items">
+
+		<div class="mdl-card navigation-card mdl-cell mdl-cell--4-col mdl-cell--4-col-phone">
+			<div class="mdl-card__title">
+				<h4 class="mdl-card__title-text">Admin</h4>
+			</div>
+			<ul class="mdl-list">
+				<li class="mdl-list__item">
+					<span class="mdl-list__item-primary-content">
+						<a href="/admin/home">Admin Home</a>
+					</span>
+				</li>
+			</ul>
+		</div>
+
+		<div class="mdl-card admin-card mdl-cell mdl-cell--6-col">
+			<div class="mdl-card__title">
+				<h4 class="mdl-card__title-text">Send Personal Message</h4>
+			</div>
+			<div class="adventure-content">
+				<form action="/sendpm" method="post">
+					<div class="mdl-textfield mdl-js-textfield">
+						<input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="photoframe_id" name="photoframe_id">
+						<label class="mdl-textfield__label" for="photoframe_id">PhotoFrame Id</label>
+					</div>
+					<br />
+					<div class="mdl-textfield mdl-js-textfield">
+						<input class="mdl-textfield__input" type="text" id="recipient" name="recipient">
+						<label class="mdl-textfield__label" for="recipient">Recipient</label>
+					</div>
+					<br />
+					<div class="mdl-textfield mdl-js-textfield">
+						<input class="mdl-textfield__input" type="text" id="message" name="message">
+						<label class="mdl-textfield__label" for="message">Message</label>
+					</div>
+					<br />
+					<div class="mdl-textfield mdl-js-textfield">
+						<input class="mdl-textfield__input" type="text" id="author" name="author">
+						<label class="mdl-textfield__label" for="author">Author</label>
+					</div>
+					<br /><br />
+					
+					<button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored mdl-js-ripple-effect" style="float:right;" type="submit">
+						<i class="material-icons">send</i>
+					</button>
+				</form>
+			</div>
+		</div>
+		
+		<div class="mdl-card admin-card mdl-cell mdl-cell--6-col">
+			<div class="mdl-card__title">
+				<h4 class="mdl-card__title-text">Photo Frames</h4>
+			</div>
+			<div class="adventure-content">
+				<table>
+					<!-- BEGIN: photo_frame -->
+					<tr>
+						<td>{PHOTO_FRAME_OWNER}</td>
+						<td><strong>{PHOTO_FRAME_ID}</strong></td>
+					</tr>
+					<!-- END: photo_frame -->
+				</table>
+			</div>
+		</div>
+	</div>

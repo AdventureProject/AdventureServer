@@ -39,63 +39,72 @@ if( !$row )
 		echo 'Cleaning old output...';
 		cleanUpOutput( 'output' );
 	}
+	
+	list($previewWidth, $previewHeight) = getimagesize( $preview_file );
 
-	echo 'Processing image...<br />';
-	passthru( "python $script $target_file", $return_code );
-
-	if( $return_code === 0 )
+	if( $previewWidth == 800 && $previewHeight == 600 )
 	{
-		echo '<br />Image generation complete.<br />';
+		echo 'Processing image...<br />';
+		passthru( "python $script $target_file", $return_code );
 
-		echo 'Inserting into Database...<br />';
-		
-		$exif = exif_read_data( $target_file );
-		$latitude = gps($exif["GPSLatitude"], $exif['GPSLatitudeRef']);
-		$longitude = gps($exif["GPSLongitude"], $exif['GPSLongitudeRef']);
-		
-		$timestamp = date("Y-m-d H:i:s", strtotime( $exif['DateTime'] ));
-		
-		$item['file_id'] = $imageName;
-		$item['title'] = $_POST['title'];
-		$item['description'] = $_POST['description'];
-		$item['location'] = $latitude . ', ' . $longitude;
-		$item['date_taken'] = $timestamp;
+		if( $return_code === 0 )
+		{
+			echo '<br />Image generation complete.<br />';
 
-		$newRow = $db->photo_spheres()->insert( $item );
+			echo 'Inserting into Database...<br />';
 
-		echo 'Updating config...<br />';
+			$exif = exif_read_data( $target_file );
+			$latitude = gps($exif["GPSLatitude"], $exif['GPSLatitudeRef']);
+			$longitude = gps($exif["GPSLongitude"], $exif['GPSLongitudeRef']);
 
-		$configFile = 'output/config.json';
-		$json = json_decode( file_get_contents( $configFile ), true);
+			$timestamp = date("Y-m-d H:i:s", strtotime( $exif['DateTime'] ));
 
-		$json['basePath'] = "$basePath/$imageName";
-		$json['title'] = $_POST['title'];
-		$json['preview'] = "/preview.$previewExt";
+			$item['file_id'] = $imageName;
+			$item['title'] = htmlentities( $_POST['title'] );
+			$item['description'] = htmlentities( $_POST['description'] );
+			$item['location'] = $latitude . ', ' . $longitude;
+			$item['date_taken'] = $timestamp;
 
-		file_put_contents( $configFile, json_encode( $json ) );
+			$newRow = $db->photo_spheres()->insert( $item );
 
-		echo 'Uploading to S3...<br />';
-		$baseUploadDir = 'data/360photos/'.$imageName;
+			echo 'Updating config...<br />';
 
-		// Upload the source image
-		$mimeType = mime_content_type( $target_file );
-		uploadFile( $target_file, $baseUploadDir, $image, $mimeType, $s3Client );
-		
-		// Upload the preview image
-		$mimeType = mime_content_type( $preview_file );
-		$previewExt = pathinfo( $previewName, PATHINFO_EXTENSION );
-		uploadFile( $preview_file, $baseUploadDir, "preview.$previewExt", $mimeType, $s3Client );
-		
-		// Upload our processed ouput
-		uploadDirectory( 'output', $baseUploadDir, $s3Client );
+			$configFile = 'output/config.json';
+			$json = json_decode( file_get_contents( $configFile ), true);
 
-		echo 'Upload complete<br />';
-		
-		echo "<a href='/360photo/{$newRow["id"]}'>Go to PhotoSphere</a><br />";
+			$json['basePath'] = "$basePath/$imageName";
+			$json['title'] = $_POST['title'];
+			$json['preview'] = "/preview.$previewExt";
+
+			file_put_contents( $configFile, json_encode( $json ) );
+
+			echo 'Uploading to S3...<br />';
+			$baseUploadDir = 'data/360photos/'.$imageName;
+
+			// Upload the source image
+			$mimeType = mime_content_type( $target_file );
+			uploadFile( $target_file, $baseUploadDir, $image, $mimeType, $s3Client );
+
+			// Upload the preview image
+			$mimeType = mime_content_type( $preview_file );
+			$previewExt = pathinfo( $previewName, PATHINFO_EXTENSION );
+			uploadFile( $preview_file, $baseUploadDir, "preview.$previewExt", $mimeType, $s3Client );
+
+			// Upload our processed ouput
+			uploadDirectory( 'output', $baseUploadDir, $s3Client );
+
+			echo 'Upload complete<br />';
+
+			echo "<a href='/360photo/{$newRow["id"]}'>Go to PhotoSphere</a><br />";
+		}
+		else
+		{
+			echo 'Image conversion failed<br />';
+		}
 	}
 	else
 	{
-		echo 'Image conversion failed<br />';
+		echo 'Preview image MUST be 800x600<br />';
 	}
 
 	echo 'Cleaning up...<br />';
