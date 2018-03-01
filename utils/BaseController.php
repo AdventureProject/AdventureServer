@@ -8,71 +8,71 @@ require_once('libs/xtemplate.class.php');
 
 abstract class BaseController extends Controller
 {
-    public function get( $request )
-    {
-        $todaysPhoto = getTodaysPhoto();
-        
-        $xtpl = new XTemplate('templates/base.html');
-        $xtpl->assign('IMAGE', $todaysPhoto->image);
-		$xtpl->assign('TODAYS_IMAGE_ID', $todaysPhoto->id);
-		
-		if( $this->blurBackground() )
-		{
-			$xtpl->parse('main.blur_background');
-		}
-		else
-		{
-			$xtpl->parse('main.normal_background');
-		}
-		
-        $xtpl->assign('TITLE', $this->getTitle());
-		
-		if( $this->provideBack() === true )
-		{
-			$url = (array_key_exists('HTTP_REFERER', $_SERVER) ? $_SERVER['HTTP_REFERER']  : "");
-			if( $this->checkRootDomain( $url ) == false )
+	public function get( $request )
+	{
+			$todaysPhoto = getTodaysPhoto();
+
+			$xtpl = new XTemplate('templates/base.html');
+			$xtpl->assign('IMAGE', $todaysPhoto->image);
+			$xtpl->assign('TODAYS_IMAGE_ID', $todaysPhoto->id);
+
+			if( $this->blurBackground() )
 			{
-				$url = $this->getBackUrl();
+				$xtpl->parse('main.blur_background');
 			}
-			// Back arrow should take you back to the parent is the last page
-			// was also this page. This prevents long back chains preventing
-			// you from accessing the nav
-			elseif( $this->lastPageWasSame() )
+			else
 			{
-				$url = $this->getBackUrl();
+				$xtpl->parse('main.normal_background');
 			}
-			
-			$xtpl->assign('BACK_URL', $url);
-			$xtpl->parse('main.nav_back');
-		}
-		else
-		{
-			$xtpl->parse('main.nav_drawer');
-		}
 		
-        if( $this->isAuthenticated() )
-        {
-            $xtpl->parse('main.authenticated');
-        }
-        
-        $this->getBody( $request, $todaysPhoto, $xtpl );
-        
-		$xtpl->assign('RICH_PREVIEW_TITLE', $this->getRichTitle());
-		$xtpl->assign('RICH_PREVIEW_DESCRIPTION', $this->getRichDescription());
-		$xtpl->assign('RICH_PREVIEW_IMAGE', $this->getRichImage());
-		$xtpl->assign('RICH_URL', $this->getRichUrl());
+			$xtpl->assign('TITLE', $this->getTitle());
 		
-		$xtpl->assign('SEO_KEYWORDS', $this->getSeoKeywords());
-		$xtpl->assign('SEO_ROBOTS', $this->getSeoRobots());
-		
-        $xtpl->parse('main');
-		$xtpl->out('main');
-    }
+			if( $this->provideBack() === true )
+			{
+				$url = (array_key_exists('HTTP_REFERER', $_SERVER) ? $_SERVER['HTTP_REFERER']  : "");
+				if( $this->checkRootDomain( $url ) == false )
+				{
+					$url = $this->getBackUrl();
+				}
+				// Back arrow should take you back to the parent is the last page
+				// was also this page. This prevents long back chains preventing
+				// you from accessing the nav
+				elseif( $this->lastPageWasSame() )
+				{
+					$url = $this->getBackUrl();
+				}
+
+				$xtpl->assign('BACK_URL', $url);
+				$xtpl->parse('main.nav_back');
+			}
+			else
+			{
+				$xtpl->parse('main.nav_drawer');
+			}
+
+			if( $this->isAuthenticated() )
+			{
+					$xtpl->parse('main.authenticated');
+			}
+
+			$this->getBody( $request, $todaysPhoto, $xtpl );
+
+			$xtpl->assign('RICH_PREVIEW_TITLE', $this->getRichTitle());
+			$xtpl->assign('RICH_PREVIEW_DESCRIPTION', $this->getRichDescription());
+			$xtpl->assign('RICH_PREVIEW_IMAGE', $this->getRichImage());
+			$xtpl->assign('RICH_URL', $this->getRichUrl());
+
+			$xtpl->assign('SEO_KEYWORDS', $this->getSeoKeywords());
+			$xtpl->assign('SEO_ROBOTS', $this->getSeoRobots());
+
+			$xtpl->parse('main');
+			$xtpl->out('main');
+	}
   
-    abstract public function getTitle();
-    
-    abstract public function getBody( $request, $todaysPhoto, $xtpl );
-	
+	abstract public function getTitle();
+
+	abstract public function getBody( $request, $todaysPhoto, $xtpl );
+
 	public function getRichTitle()
 	{
 		return 'Adventure.Rocks - ' . $this->getTitle();

@@ -177,31 +177,31 @@ function getPhoto( $flickrId, $photoId, $findSmallest = false, $minWidth = -1, $
 		//print_r( $response );
 	}
     
-    $method = 'flickr.photos.getSizes';
-    $args = array('photo_id' => $flickrId);
-    $response = $flickr->call_method($method, $args);
+	$method = 'flickr.photos.getSizes';
+	$args = array('photo_id' => $flickrId);
+	$response = $flickr->call_method($method, $args);
 
-    if( $response['stat'] == "ok" )
-    {
-        if( $findSmallest === true )
-        {
-            $selectedSize = findSmallest( $response['sizes']['size'], $minWidth, $minHeight );
-        }
-        else
-        {
-            $selectedSize = findLargest( $response['sizes']['size'] );
-        }
-        $todaysPhoto->image = $selectedSize['source'];
-        
-        $thumbnail = NULL;
-        foreach( $response['sizes']['size'] as $size )
-        {
-            if( $size['label'] === 'Medium' )
-            {
-                $thumbnail = $size;
-                break;
-            }
-        }
+	if( $response['stat'] == "ok" )
+	{
+		if( $findSmallest === true )
+		{
+			$selectedSize = findSmallest( $response['sizes']['size'], $minWidth, $minHeight );
+		}
+		else
+		{
+			$selectedSize = findLargest( $response['sizes']['size'] );
+		}
+		$todaysPhoto->image = $selectedSize['source'];
+
+		$thumbnail = NULL;
+		foreach( $response['sizes']['size'] as $size )
+		{
+			if( $size['label'] === 'Medium' )
+			{
+				$thumbnail = $size;
+				break;
+			}
+		}
 		if( $thumbnail['width'] > $thumbnail['height'] )
 		{
 			$todaysPhoto->orientation = 'land';
@@ -210,15 +210,15 @@ function getPhoto( $flickrId, $photoId, $findSmallest = false, $minWidth = -1, $
 		{
 			$todaysPhoto->orientation = 'port';
 		}
-        $todaysPhoto->thumbnail = $thumbnail['source'];
-    }
+		$todaysPhoto->thumbnail = $thumbnail['source'];
+	}
 	else
 	{
 		//echo 'getSizes FAILED<br />';
 		//print_r( $response );
 	}
     
-    return $todaysPhoto;
+	return $todaysPhoto;
 }
 
 function findLargest( $sizes )
@@ -258,29 +258,29 @@ function findSmallest( $sizes, $minWidth, $minHeight )
 
 function updatePhotoCache( $id, $flickrPhoto, $db )
 {
-    $rowUpdate = array(
-        'cache_title' => $flickrPhoto->title,
-        'cache_thumbnail' => $flickrPhoto->thumbnail,
+	$rowUpdate = array(
+		'cache_title' => $flickrPhoto->title,
+		'cache_thumbnail' => $flickrPhoto->thumbnail,
 		'cache_orientation' => $flickrPhoto->orientation,
-        'cache_location' => $flickrPhoto->location,
-        'cache_updated' => new NotORM_Literal("NOW()")
-    );
-    
-    $photoRow = $db->photos[$id];
-    $photoRow->update( $rowUpdate );
+		'cache_location' => $flickrPhoto->location,
+		'cache_updated' => new NotORM_Literal("NOW()")
+	);
+
+	$photoRow = $db->photos[$id];
+	$photoRow->update( $rowUpdate );
 }
 
 class Photo
 {
-    public $title = "";
-    public $description = "";
-    public $date = "";
-    public $image = "";
-    public $url = "";
-    public $thumbnail = "";
+	public $title = "";
+	public $description = "";
+	public $date = "";
+	public $image = "";
+	public $url = "";
+	public $thumbnail = "";
 	public $orientation = "";
-    public $location = "";
-    public $id = "";
+	public $location = "";
+	public $id = "";
 }
 
 ?>

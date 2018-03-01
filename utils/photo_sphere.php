@@ -3,16 +3,17 @@
 require_once('utils/photos.php');
 require_once('utils/file_system_util.php');
 require_once('vendor/autoload.php');
-require_once('libs/aws_config.php');
+#require_once('libs/aws_config.php');
+require_once('util/b2_util.php');
 
+#use Aws\Sdk;
+#use Aws\S3\S3Client;
 
-use Aws\Sdk;
-use Aws\S3\S3Client;
+#$sdk = new Aws\Sdk( getCredentials() );
+#$s3Client = $sdk->createS3();
 
-$sdk = new Aws\Sdk( getCredentials() );
-$s3Client = $sdk->createS3();
-
-$basePath = "https://s3-us-west-2.amazonaws.com/wethinkadventurerocks/data/360photos";
+$b2BucketId = getKeys()->b2->bucket_id;
+$basePath = $GLOBALS['b2BasePath'];
 
 $script = 'generate.py';
 
@@ -78,20 +79,20 @@ if( !$row )
 
 			file_put_contents( $configFile, json_encode( $json ) );
 
-			echo 'Uploading to S3...<br />';
+			echo 'Uploading to B2...<br />';
 			$baseUploadDir = 'data/360photos/'.$imageName;
 
 			// Upload the source image
 			$mimeType = mime_content_type( $target_file );
-			uploadFile( $target_file, $baseUploadDir, $image, $mimeType, $s3Client );
+			uploadFile( $target_file, $baseUploadDir, $image, $b2BucketId, $mimeType );
 
 			// Upload the preview image
 			$mimeType = mime_content_type( $preview_file );
 			$previewExt = pathinfo( $previewName, PATHINFO_EXTENSION );
-			uploadFile( $preview_file, $baseUploadDir, "preview.$previewExt", $mimeType, $s3Client );
+			uploadFile( $preview_file, $baseUploadDir, "preview.$previewExt", $b2BucketId, $mimeType );
 
 			// Upload our processed ouput
-			uploadDirectory( 'output', $baseUploadDir, $s3Client );
+			uploadDirectory( 'output', $baseUploadDir, $b2BucketId );
 
 			echo 'Upload complete<br />';
 
@@ -156,7 +157,7 @@ function delTree( $dir )
 	return rmdir($dir);
 }
 
-function uploadDirectory( $curDir, $baseUploadDir, $s3Client )
+function uploadDirectory( $curDir, $baseUploadDir, $b2BucketId )
 {
 	echo 'Directory: ' . $baseUploadDir . '<br />';
 	
@@ -165,34 +166,25 @@ function uploadDirectory( $curDir, $baseUploadDir, $s3Client )
 	{
 		if( is_array( $file ) )
 		{
-			uploadDirectory( $curDir . '/' . $parentDir, $baseUploadDir . '/' . $parentDir, $s3Client );
+			uploadDirectory( $curDir . '/' . $parentDir, $baseUploadDir . '/' . $parentDir, $b2BucketId );
 		}
 		else if( $file !== '.' && $file !== '..' )
 		{
 			$localFilePath = $curDir . '/' . $file;
 			$mimeType = mime_content_type( $localFilePath );
-			uploadFile( $localFilePath, $baseUploadDir, $file, $mimeType, $s3Client );
+			uploadFile( $localFilePath, $baseUploadDir, $file, $b2BucketId, $mimeType );
 		}
 	}
 	echo '<br />';
 }
 
-function uploadFile( $filepath, $baseDir, $destination, $mimeType, $s3 )
+function uploadFile( $filepath, $baseDir, $destinationFileName, $b2BucketId, $mimeType )
 {
 	$realPath = realpath( $filepath );
-	$bucket = 'wethinkadventurerocks';
 	
-	echo 'Uploading File: ' . $baseDir . '/' . $destination . '<br />';
+	echo 'Uploading File: ' . $baseDir . '/' . $destinationFileName . '<br />';
 	echo 'Mime: ' . $mimeType . '<br />'; 
 	
-	// Upload a file.
-	$result = $s3->putObject(array(
-		'Bucket'       => $bucket,
-		'Key'          => $baseDir . '/' . $destination,
-		'SourceFile'   => $realPath,
-		'ContentType'  => $mimeType,
-		'ACL'          => 'public-read',
-		'StorageClass' => 'STANDARD'
-	));
+	uploadB2File( $realPath, $baseDir . '/' . $destinationFileName, $b2BucketId );
 }
 ?>

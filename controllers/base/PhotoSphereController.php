@@ -2,10 +2,11 @@
 
 require_once('utils/KeysUtil.php');
 require_once('utils/BaseController.php');
+require_once('utils/b2_util.php');
+
 
 class PhotoSphereController extends BaseController
 {
-	private $basePath = "https://s3-us-west-2.amazonaws.com/wethinkadventurerocks/data/360photos";
 	private $currentPhoto;
 	
     public function __construct( $config )
@@ -55,6 +56,8 @@ class PhotoSphereController extends BaseController
 	
     public function getBody( $request, $todaysPhoto, $xtpl )
     {
+		$b2BasePath = $GLOBALS['b2BasePath'];
+		
 		$this->addCssFile( '/external/pannellum/pannellum.css', $xtpl );
 		$this->addJsFile( '/external/pannellum/pannellum.js', $xtpl );
 		
@@ -68,6 +71,8 @@ class PhotoSphereController extends BaseController
 		
 		$this->addNavAction( 'info_button', 'info', 'More info about this photo', '#', $xtpl );
 		
+		$xtpl->assign('B2_BASE_PATH', $b2BasePath );
+		
         if( count($request->args) == 1 && is_numeric( $request->args[0] ) )
         {
 			$db = getDb();
@@ -80,7 +85,7 @@ class PhotoSphereController extends BaseController
 				$locationParts = explode( ',', $photoData['location'] );
 				$this->addSeoLocation( $locationParts[0], $locationParts[1], $xtpl );
 				
-				$this->addNavAction( 'download_button', 'file_download', 'Download this photo', "https://s3-us-west-2.amazonaws.com/wethinkadventurerocks/data/360photos/{$photoData['file_id']}/{$photoData['file_id']}.jpg", $xtpl, 'download' );
+				$this->addNavAction( 'download_button', 'file_download', 'Download this photo', "$basePath/{$photoData['file_id']}/{$photoData['file_id']}.jpg", $xtpl, 'download' );
 				
 				$xtpl->assign('FILE_ID', $photoData['file_id'] );
 				$xtpl->assign('PHOTO_TITLE', $photoData['title'] );

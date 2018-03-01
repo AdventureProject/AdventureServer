@@ -2,6 +2,8 @@
 
 require_once('utils/KeysUtil.php');
 require_once('utils/BaseController.php');
+require_once('utils/b2_util.php');
+
 
 class PhotoSpheresController extends BaseController
 {
@@ -32,6 +34,8 @@ class PhotoSpheresController extends BaseController
 	
     public function getBody( $request, $todaysPhoto, $xtpl )
     {
+		$b2BasePath = $GLOBALS['b2BasePath'];
+		
 		$this->addCssFile( '/css/photo_spheres.css', $xtpl );
 		
 		$this->addCssFile( '/external/pannellum/pannellum.css', $xtpl );
@@ -40,6 +44,8 @@ class PhotoSpheresController extends BaseController
 		
 		$db = getDb();
 		$keys = getKeys();
+		
+		$xtpl->assign('B2_BASE_PATH', $b2BasePath);
 		
 		$results = $db->photo_spheres()->select("*")->where('highlight', 1)->order('date_taken DESC');
 		while( $data = $results->fetch() )
