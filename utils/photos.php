@@ -1,7 +1,7 @@
 <?php
 
 require_once( 'utils/KeysUtil.php' );
-
+require_once( 'utils/b2_util.php' );
 require_once( 'libs/flickr.simple.php' );
 require_once( 'libs/NotORM.php' );
 
@@ -110,13 +110,10 @@ function getTodaysPhotoLocal()
 function getPhotoForDayLocal( $dayOfYear )
 {
 	$db = getDb();
-	$numWallpapers = $db->photos()->where("wallpaper", 1)->count("*");
 	
-	mt_srand($dayOfYear);
-    $photoIndex = mt_rand( 1, $numWallpapers );
-	$photoData = $db->photos[$photoIndex];
+	$todaysPhotoData = $db->photos()->where("wallpaper", 1)->order("RAND({$dayOfYear})")->limit(1)->fetch();
 	
-	return $photoData;
+	return $todaysPhotoData;
 }
 
 function getTodaysPhoto( $minWidth = 1900, $minHeight = 1080 ) // These sizes are good for full fidelity
@@ -160,11 +157,13 @@ function getPhoto( $flickrId, $photoId, $findSmallest = false, $minWidth = -1, $
     if( $response['stat'] == "ok" )
     {
         $photoInfo = $response['photo'];
-        
+
         $todaysPhoto->title = $photoInfo['title']['_content'];
         $todaysPhoto->description = $photoInfo['description']['_content'];
         $todaysPhoto->date = $photoInfo['dates']['taken'];
         $todaysPhoto->url = "http://wethinkadventure.rocks/photo/$photoId";
+		
+		$todaysPhoto->imageType = $photoInfo['originalformat'];
         
         if( array_key_exists('location', $photoInfo) )
         {
@@ -202,14 +201,8 @@ function getPhoto( $flickrId, $photoId, $findSmallest = false, $minWidth = -1, $
 				break;
 			}
 		}
-		if( $thumbnail['width'] > $thumbnail['height'] )
-		{
-			$todaysPhoto->orientation = 'land';
-		}
-		else
-		{
-			$todaysPhoto->orientation = 'port';
-		}
+
+		$todaysPhoto->orientation = determineOrientation( $thumbnail['width'], $thumbnail['height'] );
 		$todaysPhoto->thumbnail = $thumbnail['source'];
 	}
 	else
@@ -219,6 +212,18 @@ function getPhoto( $flickrId, $photoId, $findSmallest = false, $minWidth = -1, $
 	}
     
 	return $todaysPhoto;
+}
+
+function determineOrientation( $width, $height )
+{
+	if( $width > $height )
+	{
+		return 'land';
+	}
+	else
+	{
+		return 'port';
+	}
 }
 
 function findLargest( $sizes )
@@ -259,15 +264,85 @@ function findSmallest( $sizes, $minWidth, $minHeight )
 function updatePhotoCache( $id, $flickrPhoto, $db )
 {
 	$rowUpdate = array(
-		'cache_title' => $flickrPhoto->title,
-		'cache_thumbnail' => $flickrPhoto->thumbnail,
-		'cache_orientation' => $flickrPhoto->orientation,
-		'cache_location' => $flickrPhoto->location,
-		'cache_updated' => new NotORM_Literal("NOW()")
+		'title' => $flickrPhoto->title,
+		'description' => $flickrPhoto->description,
+		'thumbnail' => $flickrPhoto->thumbnail,
+		'imagetype' => $flickrPhoto->imageType,
+		'orientation' => $flickrPhoto->orientation,
+		'location' => $flickrPhoto->location,
+		'date_taken' => $flickrPhoto->date,
+		'date_updated' => new NotORM_Literal("NOW()")
 	);
 
 	$photoRow = $db->photos[$id];
-	$photoRow->update( $rowUpdate );
+	$result = $photoRow->update( $rowUpdate );
+}
+
+function addBlurMeta( $photoId )
+{
+	$targetPath = getB2PhotoMetaPath( $photoId ) . '/' . $GLOBALS['b2InternalPath']['photo']['blurred_image'];
+	
+error_log('Photo: ' . $photoId);
+	$photo = getPhotoById( $photoId, true, 1024, 768 );
+
+	$localPath = 'data/blur';
+	$fileName = "blurred_background.jpg";
+	$localFile = $localPath . '/' . $fileName;
+
+	// Download the image from Flickr
+	file_put_contents($localFile, file_get_contents( $photo->image ));
+error_log('Downloaded Photo');
+	// Read the file and blur it
+	$image = new Imagick( $localFile );
+	if( $image )
+	{
+		$image->gaussianBlurImage(15,5);
+
+		$image->writeImage( $localFile );
+error_log('Proccessed image<br />');
+		// Upload blurred image to B2
+		uploadB2File( $localFile, $targetPath );
+error_log('Uploaded to B2<br />');
+	}
+
+	unlink( $localFile );
+error_log('Temp file deleted<br />');
+}
+
+function transferPhotoFromFlickrToB2( $id, $flickrId )
+{
+	$photo = getPhoto( $flickrId, $id );
+	
+	$flickrPath = $photo->image;
+
+	echo 'about to download ' . $flickrPath . '<br />';
+	
+	$tmpFileName = "data/temp/" . $flickrId;
+	$downloadResult = file_put_contents($tmpFileName, fopen($flickrPath, 'r'));
+	
+	if( $downloadResult )
+	{
+		echo 'file download SUCCESS' . '<br />';
+		
+		$photoExt = pathinfo( $flickrPath, PATHINFO_EXTENSION );
+		
+		$targetPath = getB2PhotoPath( $id );
+		$targetFileName = $targetPath . '/' . 'source.' . $photoExt;
+		$b2BucketId = getKeys()->b2->bucket_id;
+
+		uploadB2File( $tmpFileName, $targetFileName, $b2BucketId );
+		
+		echo 'b2 uploaded' . '<br />';
+
+		// Delete the temp file
+		unlink( $tmpFileName );
+		
+		echo 'temp file deleted' . '<br />';
+	}
+	else
+	{
+		echo 'file download failed' . '<br />';
+	}
 }
 
 class Photo
@@ -276,6 +351,7 @@ class Photo
 	public $description = "";
 	public $date = "";
 	public $image = "";
+	public $imageType = "";
 	public $url = "";
 	public $thumbnail = "";
 	public $orientation = "";

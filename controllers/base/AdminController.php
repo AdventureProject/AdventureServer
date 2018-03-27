@@ -111,10 +111,10 @@ class AdminController extends BaseController
             $xtpl->assign( 'IS_PHOTOFRAME', $photo['photoframe'] == 1 ? 'YES' : 'no' );
             $xtpl->assign( 'PHOTOWALL_ID', $photo['photowall_id'] );
 			
-			$xtpl->assign( 'PHOTO_TITLE', substr( $photo['cache_title'], 0, 48 ) );
-			$xtpl->assign( 'PHOTO_THUMBNAIL', $photo['cache_thumbnail'] );
+			$xtpl->assign( 'PHOTO_TITLE', substr( $photo['title'], 0, 48 ) );
+			$xtpl->assign( 'PHOTO_THUMBNAIL', $photo['thumbnail'] );
 			
-			$xtpl->assign( 'PHOTO_LOCATION', $photo['cache_location'] );
+			$xtpl->assign( 'PHOTO_LOCATION', $photo['location'] );
 			
 			if( $id % 2 == 0 )
 			{
@@ -125,7 +125,7 @@ class AdminController extends BaseController
 				$xtpl->parse('main.body.photo_row.default');
 			}
 			
-			if( !$photo['cache_location'] )
+			if( !$photo['location'] )
 			{
 				$xtpl->parse('main.body.photo_row.location_false');
 			}
@@ -146,7 +146,7 @@ class AdminController extends BaseController
         
         foreach ($db->photos() as $id => $photo)
         {
-        	$photoFlickr = getPhoto( $photo['flickr_id'] );
+        	$photoFlickr = getPhoto( $photo['flickr_id'], $id );
 			updatePhotoCache( $id, $photoFlickr, $db );
 			
 			usleep( 500000 ); // Wait for half a second so we don't anger Flickr

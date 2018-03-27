@@ -13,7 +13,7 @@ require_once('util/b2_util.php');
 #$s3Client = $sdk->createS3();
 
 $b2BucketId = getKeys()->b2->bucket_id;
-$basePath = $GLOBALS['b2BasePath'];
+$basePath = $GLOBALS['b2BasePath']['360photos'];
 
 $script = 'generate.py';
 

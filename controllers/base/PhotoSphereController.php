@@ -56,7 +56,7 @@ class PhotoSphereController extends BaseController
 	
     public function getBody( $request, $todaysPhoto, $xtpl )
     {
-		$b2BasePath = $GLOBALS['b2BasePath'];
+		$b2BasePath = $GLOBALS['b2BasePath']['360photos'];
 		
 		$this->addCssFile( '/external/pannellum/pannellum.css', $xtpl );
 		$this->addJsFile( '/external/pannellum/pannellum.js', $xtpl );

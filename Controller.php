@@ -18,7 +18,7 @@ abstract class Controller
     public function enforceAuth()
     {
         $isAuthed = $this->isAuthenticated();
-        if( $isAuthed )
+        if( !$isAuthed )
         {
             header('Location:'.$this->config->authUrl);
         }

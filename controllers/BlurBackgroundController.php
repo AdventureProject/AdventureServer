@@ -19,20 +19,18 @@ class BlurBackgroundController extends Controller
     {
         if( !empty( $request->args[0] ) && is_numeric( $request->args[0] ) && $request->args[0] > -1 && $request->args[0] < 1000000000 )
         {
-			$localPath = 'data/blur/';
-			$fileName = "blurred_background_{$request->args[0]}.jpg";
-			$localFile = $localPath . $fileName;
+			$photoId = $request->args[0];
 			
-			if( !file_exists( $localFile ) )
+			$targetFileName = 'blurred.jpg';
+			$targetPath = getB2PhotoMetaPath( $photoId ) . '/' . $targetFileName;
+			
+			if( !b2PhotoMetaExists( $photoId, $targetPath ) )
 			{
-				// Delete any old ones
-				$files = glob( $localPath . '*' );
-				foreach($files as $file)
-				{
-					if(is_file($file))
-						unlink($file); // delete file
-				}
 				
+				$localPath = 'data/blur/';
+				$fileName = "blurred_background_{$request->args[0]}.jpg";
+				$localFile = $localPath . $fileName;
+					
 				// Now make the new one
 				$todaysPhoto = getTodaysPhoto( 1024, 768 );
 				
@@ -52,14 +50,19 @@ class BlurBackgroundController extends Controller
 					$image->gaussianBlurImage(15,5);
 					
 					$image->writeImage( $localFile );
+					
+					// Upload blurred image to B2
+					uploadB2File( $localFile, $targetPath );
 				}
 			}
 			
-			$this->caching_headers( $localFile, filemtime($localFile) );
+			//$this->caching_headers( $localFile, filemtime($localFile) );
+			$remotePath = b2GetPublicBlurUrl( $photoId );
+			//$remoteFile = fopen($remotePath, 'r');
 			
 			header('Content-Type: image/jpeg');
-			header('Content-Length: ' . filesize($localFile));
-			readfile( $localFile );
+			//header('Content-Length: ' . filesize($remotePath));
+			readfile( $remotePath );
         }
     }
 	

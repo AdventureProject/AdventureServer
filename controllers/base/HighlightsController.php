@@ -2,6 +2,7 @@
 
 require_once('utils/KeysUtil.php');
 require_once('utils/BaseController.php');
+require_once('utils/b2_util.php');
 
 class HighlightsController extends BaseController
 {
@@ -34,15 +35,15 @@ class HighlightsController extends BaseController
 		$xtpl->assign_file('BODY_FILE', 'templates/highlights.html');
 		
 		$db = getDb();
-		$results = $db->photos()->select('id, cache_title, cache_thumbnail, cache_orientation')->where('highlight', 1)->order('id DESC');
+		$results = $db->photos()->select('id, title, thumbnail, orientation')->where('highlight', 1)->order('date_taken DESC');
 		
 		while( $data = $results->fetch() )
 		{
 			$xtpl->assign('PHOTO_ID',$data['id']);
-			$xtpl->assign('PHOTO_THUMBNAIL',$data['cache_thumbnail']);
+			$xtpl->assign('PHOTO_THUMBNAIL', b2GetPublicThumbnailUrl($data['id']) );
 
 			$style;
-			if( $data['cache_orientation'] == 'land' )
+			if( $data['orientation'] == 'land' )
 			{
 				$style = 'mdl-cell--3-col pic-card-land';
 			}
@@ -51,7 +52,7 @@ class HighlightsController extends BaseController
 				$style = 'mdl-cell--2-col pic-card-port';
 			}
 			$xtpl->assign('PHOTO_ID',$data['id']);
-			$xtpl->assign('PHOTO_TITLE',$data['cache_title']);
+			$xtpl->assign('PHOTO_TITLE',$data['title']);
 			$xtpl->assign('PHOTO_STYLE',$style);
 			
 			$xtpl->parse('main.body.highlight_style');

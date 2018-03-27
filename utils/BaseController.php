@@ -10,63 +10,64 @@ abstract class BaseController extends Controller
 {
 	public function get( $request )
 	{
-			$todaysPhoto = getTodaysPhoto();
+		$todaysPhoto = getTodaysPhoto();
 
-			$xtpl = new XTemplate('templates/base.html');
-			$xtpl->assign('IMAGE', $todaysPhoto->image);
-			$xtpl->assign('TODAYS_IMAGE_ID', $todaysPhoto->id);
+		$xtpl = new XTemplate('templates/base.html');
+		$xtpl->assign('IMAGE', $todaysPhoto->image);
+		$xtpl->assign('TODAYS_IMAGE_ID', $todaysPhoto->id);
 
-			if( $this->blurBackground() )
-			{
-				$xtpl->parse('main.blur_background');
-			}
-			else
-			{
-				$xtpl->parse('main.normal_background');
-			}
-		
-			$xtpl->assign('TITLE', $this->getTitle());
-		
-			if( $this->provideBack() === true )
-			{
-				$url = (array_key_exists('HTTP_REFERER', $_SERVER) ? $_SERVER['HTTP_REFERER']  : "");
-				if( $this->checkRootDomain( $url ) == false )
-				{
-					$url = $this->getBackUrl();
-				}
-				// Back arrow should take you back to the parent is the last page
-				// was also this page. This prevents long back chains preventing
-				// you from accessing the nav
-				elseif( $this->lastPageWasSame() )
-				{
-					$url = $this->getBackUrl();
-				}
+		if( $this->blurBackground() )
+		{
+			$xtpl->assign('BLURRED_BACKGROUND', b2GetPublicBlurUrl( $todaysPhoto->id ));
+			$xtpl->parse('main.blur_background');
+		}
+		else
+		{
+			$xtpl->parse('main.normal_background');
+		}
 
-				$xtpl->assign('BACK_URL', $url);
-				$xtpl->parse('main.nav_back');
-			}
-			else
+		$xtpl->assign('TITLE', $this->getTitle());
+
+		if( $this->provideBack() === true )
+		{
+			$url = (array_key_exists('HTTP_REFERER', $_SERVER) ? $_SERVER['HTTP_REFERER']  : "");
+			if( $this->checkRootDomain( $url ) == false )
 			{
-				$xtpl->parse('main.nav_drawer');
+				$url = $this->getBackUrl();
+			}
+			// Back arrow should take you back to the parent is the last page
+			// was also this page. This prevents long back chains preventing
+			// you from accessing the nav
+			elseif( $this->lastPageWasSame() )
+			{
+				$url = $this->getBackUrl();
 			}
 
-			if( $this->isAuthenticated() )
-			{
-					$xtpl->parse('main.authenticated');
-			}
+			$xtpl->assign('BACK_URL', $url);
+			$xtpl->parse('main.nav_back');
+		}
+		else
+		{
+			$xtpl->parse('main.nav_drawer');
+		}
 
-			$this->getBody( $request, $todaysPhoto, $xtpl );
+		if( $this->isAuthenticated() )
+		{
+				$xtpl->parse('main.authenticated');
+		}
 
-			$xtpl->assign('RICH_PREVIEW_TITLE', $this->getRichTitle());
-			$xtpl->assign('RICH_PREVIEW_DESCRIPTION', $this->getRichDescription());
-			$xtpl->assign('RICH_PREVIEW_IMAGE', $this->getRichImage());
-			$xtpl->assign('RICH_URL', $this->getRichUrl());
+		$this->getBody( $request, $todaysPhoto, $xtpl );
 
-			$xtpl->assign('SEO_KEYWORDS', $this->getSeoKeywords());
-			$xtpl->assign('SEO_ROBOTS', $this->getSeoRobots());
+		$xtpl->assign('RICH_PREVIEW_TITLE', $this->getRichTitle());
+		$xtpl->assign('RICH_PREVIEW_DESCRIPTION', $this->getRichDescription());
+		$xtpl->assign('RICH_PREVIEW_IMAGE', $this->getRichImage());
+		$xtpl->assign('RICH_URL', $this->getRichUrl());
 
-			$xtpl->parse('main');
-			$xtpl->out('main');
+		$xtpl->assign('SEO_KEYWORDS', $this->getSeoKeywords());
+		$xtpl->assign('SEO_ROBOTS', $this->getSeoRobots());
+
+		$xtpl->parse('main');
+		$xtpl->out('main');
 	}
   
 	abstract public function getTitle();

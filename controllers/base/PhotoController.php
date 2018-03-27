@@ -180,10 +180,12 @@ class PhotoController extends BaseController
 				$photoId = $request->args[0];
 
 				$db = getDb();
-				$photoRow = $db->photos()[$photoId];
+				$photoRow = $db->photos[$photoId];
 				if( $photoRow )
 				{
 					$success = false;
+					
+					$this->refreshCache( $photoId, $photoRow['flickr_id'] );
 
 					if( isset($request->post['add_to_photowall']) )
 					{
@@ -206,9 +208,14 @@ class PhotoController extends BaseController
 
 						$success = $photoRow->update();
 					}
-
-					if( $success )
+					
+					if( $success == 0 || $success == 1 )
 					{
+						if( $photoRow['wallpaper'] == 1 )
+						{
+							addBlurMeta( $photoId );
+						}
+						
 						header("Location:/photo/$photoId");
 					}
 					else
@@ -224,8 +231,7 @@ class PhotoController extends BaseController
         }
 		else
 		{
-			if( count($request->args) == 1
-			   && is_numeric( $request->args[0] ) )
+			if( count($request->args) == 1 && is_numeric( $request->args[0] ) )
 			{
 				$photoId = $request->args[0];
 			}
@@ -244,5 +250,13 @@ class PhotoController extends BaseController
 	private function getZoomedInMapUrl( $location )
 	{
 		return "http://maps.googleapis.com/maps/api/staticmap?center=$location&zoom=15&scale=1&size=800x800&maptype=terrain&key=$this->googleMapsApiKey&format=png&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:%7C$location";
+	}
+	
+	private function refreshCache( $id, $flickrId )
+	{
+		$db = getDb();
+
+		$photoFlickr = getPhoto( $flickrId, $id );
+		updatePhotoCache( $id, $photoFlickr, $db );
 	}
 }
