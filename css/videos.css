@@ -8,16 +8,6 @@
 	background-image: url('/images/videos_pic.jpg');
 }
 
-.zooming {
-	-webkit-transition:.3s all;
-}
-
-.zooming:hover,
-.zooming:focus {
-	transform: scale(1.05);
-	transition: all .5s;
-}
-
 /**
  * Simple fade transition,
  */
