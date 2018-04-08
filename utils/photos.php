@@ -132,84 +132,92 @@ function getPhotoForDay($dayOfYear, $minWidth = -1, $minHeight = -1)
 		$findSmallest = true;
 	}
 	
-	return getPhoto( $photoData['flickr_id'], $photoData['id'], $findSmallest, $minWidth, $minHeight );
+	return getPhoto( $photoData['id'], $findSmallest, $minWidth, $minHeight );
 }
 
 function getPhotoById( $photoId, $findSmallest = false, $minWidth = -1, $minHeight = -1 )
 {
-	$db = getDb();
-    $row = $db->photos()->select('id, flickr_id')->where("id", $photoId)->fetch();
-	
-	return getPhoto( $row['flickr_id'], $photoId, $findSmallest, $minWidth, $minHeight );
+	return getPhoto( $photoId, $findSmallest, $minWidth, $minHeight );
 }
 
-function getPhoto( $flickrId, $photoId, $findSmallest = false, $minWidth = -1, $minHeight = -1 )
+function getPossiblePhotoSizes( $photoId )
 {
-    global $flickr;
+	$minWidth = 640;
+	$minHeight = 480;
 
-    $todaysPhoto = new Photo();
-    $todaysPhoto->id = $photoId;
+	$db = getDb();
+	$row = $db->photos()->select('id, width, height', 'imagetype')->where("id", $photoId)->fetch();
 
-    $method = 'flickr.photos.getInfo';
-    $args = array('photo_id' => $flickrId);
-    $response = $flickr->call_method($method, $args);
-    
-    if( $response['stat'] == "ok" )
-    {
-        $photoInfo = $response['photo'];
+	$width = $row['width'];
+	$height = $row['height'];
 
-        $todaysPhoto->title = $photoInfo['title']['_content'];
-        $todaysPhoto->description = $photoInfo['description']['_content'];
-        $todaysPhoto->date = $photoInfo['dates']['taken'];
-        $todaysPhoto->url = "http://wethinkadventure.rocks/photo/$photoId";
-		
-		$todaysPhoto->imageType = $photoInfo['originalformat'];
-        
-        if( array_key_exists('location', $photoInfo) )
-        {
-            $todaysPhoto->location = $photoInfo['location']['latitude'] . ',' . $photoInfo['location']['longitude'];
-        }
-    }
-	else
+	$curWidth = $width;
+	$curHeight = $height;
+
+	$sizes = array();
+	$sizes['original']['width'] = $width;
+	$sizes['original']['height'] = $height;
+
+	$sizes['sizes'] = array();
+
+	while( true )
 	{
-		//echo 'getInfo FAILED<br />';
-		//print_r( $response );
-	}
-    
-	$method = 'flickr.photos.getSizes';
-	$args = array('photo_id' => $flickrId);
-	$response = $flickr->call_method($method, $args);
-
-	if( $response['stat'] == "ok" )
-	{
-		if( $findSmallest === true )
+		if( $curWidth > $minWidth && $curHeight > $minHeight
+		  	&& is_numeric( $curWidth ) && is_numeric( $curHeight ) )
 		{
-			$selectedSize = findSmallest( $response['sizes']['size'], $minWidth, $minHeight );
+			$size = array();
+			$size['width'] = $curWidth;
+			$size['height'] = $curHeight;
+
+			$sizes['sizes'][] = $size;
+			
+			$curWidth = floor( $curWidth / 2 );
+			$curHeight = floor( $curHeight / 2 );
 		}
 		else
 		{
-			$selectedSize = findLargest( $response['sizes']['size'] );
+			break;
 		}
-		$todaysPhoto->image = $selectedSize['source'];
-
-		$thumbnail = NULL;
-		foreach( $response['sizes']['size'] as $size )
-		{
-			if( $size['label'] === 'Medium' )
-			{
-				$thumbnail = $size;
-				break;
-			}
-		}
-
-		$todaysPhoto->orientation = determineOrientation( $thumbnail['width'], $thumbnail['height'] );
-		$todaysPhoto->thumbnail = $thumbnail['source'];
 	}
-	else
+
+	return $sizes;
+}
+
+function getPhoto( $photoId, $findSmallest = false, $minWidth = -1, $minHeight = -1 )
+{
+	$db = getDb();
+	$photoRow = $db->photos()->select('*')->where("id", $photoId)->fetch();
+
+    $todaysPhoto = new Photo();
+    $todaysPhoto->id = $photoId;
+	$todaysPhoto->title = $photoRow['title'];
+	$todaysPhoto->description = $photoRow['description'];
+	$todaysPhoto->date = $photoRow['date_taken'];
+	$todaysPhoto->url = "http://wethinkadventure.rocks/photo/$photoId";
+	$todaysPhoto->orientation = $photoRow['orientation'];
+	$todaysPhoto->imageType = $photoRow['imagetype'];
+
+	if( !empty( $photoRow['location'] ) )
 	{
-		//echo 'getSizes FAILED<br />';
-		//print_r( $response );
+		$todaysPhoto->location = $photoRow['location'];
 	}
+
+	$possibleSizes = getPossiblePhotoSizes( $photoId );
+
+	if( $possibleSizes )
+	{
+		if( $findSmallest === true )
+		{
+			$selectedSize = findSmallest( $possibleSizes, $minWidth, $minHeight, $photoRow['imagetype'], $photoId );
+		}
+		else
+		{
+			$selectedSize = b2GetPublicPhotoOriginalUrl( $photoId );
+		}
+		$todaysPhoto->image = $selectedSize;
+	}
+
+	$todaysPhoto->thumbnail = b2GetPublicThumbnailUrl( $photoId );
     
 	return $todaysPhoto;
 }
@@ -226,39 +234,95 @@ function determineOrientation( $width, $height )
 	}
 }
 
-function findLargest( $sizes )
-{
-    $largestSize = NULL;
-    foreach( $sizes as $size )
-    {
-        $curLargestSize = ~PHP_INT_MAX;
-        $totalSize = $size['width'] * $size['height'];
-        if( $totalSize > $curLargestSize )
-        {
-            $curLargestSize = $totalSize;
-            $largestSize = $size;
-        }
-    }
-
-    return $largestSize;
-}
-
-function findSmallest( $sizes, $minWidth, $minHeight )
+function findSmallest( $sizes, $minWidth, $minHeight, $imageType, $photoId )
 {
     $smallestSize = NULL;
 
     $curSmallestSize = PHP_INT_MAX;
-    foreach( $sizes as $size )
+
+    foreach( $sizes['sizes'] as $size )
     {
         $totalSize = $size['width'] * $size['height'];
-        if( $totalSize < $curSmallestSize && ($size['width']>=$minWidth && $size['height']>=$minHeight) )
+        if( $totalSize < $curSmallestSize && ($size['width'] >= $minWidth && $size['height'] >= $minHeight) )
         {
             $curSmallestSize = $totalSize;
             $smallestSize = $size;
         }
     }
 
-    return $smallestSize;
+	error_log($photoId . " final smallest size: " . $smallestSize['width'] . ' ' . $smallestSize['height']);
+
+	$resizedUrl = NULL;
+    if( is_numeric( $smallestSize['width']  ) && is_numeric( $smallestSize['height'] )
+		&& $smallestSize['width'] != $sizes['original']['width']
+	    && $smallestSize['height'] != $sizes['original']['height'] )
+    {
+		$resizedUrl = b2GetPublicResizedUrl($photoId, $smallestSize['width'], $smallestSize['height'], $imageType);
+
+		$rowValues = array("photo_id" => $photoId, "width" => $smallestSize['width'], "height" => $smallestSize['height']);
+
+		$db = getDb();
+		$photoSizeRow = $db->photo_sizes()->select('*')->where($rowValues)->fetch();
+
+		// If it doesn't already exist, we must make it!
+		if (!$photoSizeRow)
+		{
+			error_log('Resized file does NOT exist!');
+
+			$originalSizeUrl = b2GetPublicPhotoOriginalUrl($photoId);
+			error_log('source ' . $originalSizeUrl);
+			$localPath = 'data/resize';
+			$fileName = "resize_" . $photoId . '_' . $smallestSize['width'] . '_' . $smallestSize['height'] . '.' . $imageType;
+			$localFile = $localPath . '/' . $fileName;
+
+			// Download the original image
+			file_put_contents($localFile, file_get_contents($originalSizeUrl));
+
+			error_log('local: ' . $localFile);
+			error_log('downloaded original');
+			$image = new Imagick($localFile);
+			if ($image)
+			{
+				$image->resizeImage($smallestSize['width'], $smallestSize['height'], Imagick::FILTER_LANCZOS, 1);
+				error_log('resized!');
+				$image->writeImage($localFile);
+
+				error_log('Proccessed image');
+
+				$targetPath = getB2PhotoMetaResizedPath($photoId, $smallestSize['width'], $smallestSize['height'], $imageType);
+				// Upload resized image to B2
+				uploadB2File($localFile, $targetPath);
+
+				$db->photo_sizes()->insert($rowValues);
+
+				error_log('uploaded');
+			}
+
+			unlink($localFile);
+		}
+		else
+		{
+			error_log('Resized file does exist :D');
+		}
+	}
+	else
+	{
+		$resizedUrl = b2GetPublicPhotoOriginalUrl( $photoId );
+	}
+
+    return $resizedUrl;
+}
+
+function remoteFileExists( $theURL )
+{
+	$code = getHttpResponseCode( $theURL );
+	return $code == 200;
+}
+
+function getHttpResponseCode( $theURL )
+{
+	$headers = @get_headers($theURL);
+	return substr($headers[0], 9, 3);
 }
 
 function updatePhotoCache( $id, $flickrPhoto, $db )
@@ -282,7 +346,7 @@ function addBlurMeta( $photoId )
 {
 	$targetPath = getB2PhotoMetaPath( $photoId ) . '/' . $GLOBALS['b2InternalPath']['photo']['blurred_image'];
 	
-error_log('Photo: ' . $photoId);
+	error_log('Photo: ' . $photoId);
 	$photo = getPhotoById( $photoId, true, 1024, 768 );
 
 	$localPath = 'data/blur';
@@ -291,7 +355,7 @@ error_log('Photo: ' . $photoId);
 
 	// Download the image from Flickr
 	file_put_contents($localFile, file_get_contents( $photo->image ));
-error_log('Downloaded Photo');
+	error_log('Downloaded Photo');
 	// Read the file and blur it
 	$image = new Imagick( $localFile );
 	if( $image )
@@ -299,50 +363,93 @@ error_log('Downloaded Photo');
 		$image->gaussianBlurImage(15,5);
 
 		$image->writeImage( $localFile );
-error_log('Proccessed image<br />');
+		error_log('Proccessed image');
 		// Upload blurred image to B2
 		uploadB2File( $localFile, $targetPath );
-error_log('Uploaded to B2<br />');
+		error_log('Uploaded to B2');
 	}
 
 	unlink( $localFile );
-error_log('Temp file deleted<br />');
+	error_log('Temp file deleted');
 }
 
-function transferPhotoFromFlickrToB2( $id, $flickrId )
+function transferPhotoFromFlickrToB2( $id, $flickrId, $flickrUrl )
 {
-	$photo = getPhoto( $flickrId, $id );
-	
-	$flickrPath = $photo->image;
-
-	echo 'about to download ' . $flickrPath . '<br />';
+	error_log( 'about to download ' . $flickrUrl );
 	
 	$tmpFileName = "data/temp/" . $flickrId;
-	$downloadResult = file_put_contents($tmpFileName, fopen($flickrPath, 'r'));
+	$downloadResult = file_put_contents($tmpFileName, fopen($flickrUrl, 'r'));
 	
 	if( $downloadResult )
 	{
-		echo 'file download SUCCESS' . '<br />';
+		error_log( 'file download SUCCESS' );
+
+		// If the photo has an orientation set, rotate it
+		$exif = exif_read_data( $tmpFileName );
+		if( array_key_exists( 'Orientation', $exif ) && $exif['Orientation'] != 1 )
+		{
+			error_log( 'rotation required' );
+
+			$image = new Imagick($tmpFileName);
+			autorotateImage($image);
+			$image->writeImage();
+		}
 		
-		$photoExt = pathinfo( $flickrPath, PATHINFO_EXTENSION );
+		$photoExt = pathinfo( $flickrUrl, PATHINFO_EXTENSION );
 		
 		$targetPath = getB2PhotoPath( $id );
 		$targetFileName = $targetPath . '/' . 'source.' . $photoExt;
 		$b2BucketId = getKeys()->b2->bucket_id;
 
 		uploadB2File( $tmpFileName, $targetFileName, $b2BucketId );
-		
-		echo 'b2 uploaded' . '<br />';
+
+		error_log( 'b2 uploaded' );
 
 		// Delete the temp file
 		unlink( $tmpFileName );
-		
-		echo 'temp file deleted' . '<br />';
+
+		error_log( 'temp file deleted' );
 	}
 	else
 	{
-		echo 'file download failed' . '<br />';
+		error_log( 'file download failed' );
 	}
+}
+
+function autorotateImage(Imagick $image)
+{
+	switch ($image->getImageOrientation()) {
+		case Imagick::ORIENTATION_TOPLEFT:
+			break;
+		case Imagick::ORIENTATION_TOPRIGHT:
+			$image->flopImage();
+			break;
+		case Imagick::ORIENTATION_BOTTOMRIGHT:
+			$image->rotateImage("#000", 180);
+			break;
+		case Imagick::ORIENTATION_BOTTOMLEFT:
+			$image->flopImage();
+			$image->rotateImage("#000", 180);
+			break;
+		case Imagick::ORIENTATION_LEFTTOP:
+			$image->flopImage();
+			$image->rotateImage("#000", -90);
+			break;
+		case Imagick::ORIENTATION_RIGHTTOP:
+			$image->rotateImage("#000", 90);
+			break;
+		case Imagick::ORIENTATION_RIGHTBOTTOM:
+			$image->flopImage();
+			$image->rotateImage("#000", 90);
+			break;
+		case Imagick::ORIENTATION_LEFTBOTTOM:
+			$image->rotateImage("#000", -90);
+			break;
+		default: // Invalid orientation
+			break;
+	}
+	$image->setImageOrientation(Imagick::ORIENTATION_TOPLEFT);
+	return $image;
 }
 
 class Photo

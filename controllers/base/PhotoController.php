@@ -80,9 +80,9 @@ class PhotoController extends BaseController
 			$this->addCssFile( '/css/photo.css', $xtpl );
 			$this->addJsFile( '/js/photo.js', $xtpl );
 			$xtpl->assign_file('BODY_FILE', 'templates/photo.html');
-			
+
 			$photoData = $db->photos[$photoId];
-			$photoFlickr = getPhoto( $photoData['flickr_id'], $photoId, true, 1024, 1024 );
+			$photoFlickr = getPhoto( $photoId, true, 1024, 1024 );
 
 			$this->currentPhoto = $photoFlickr;
 			
@@ -94,20 +94,32 @@ class PhotoController extends BaseController
 
 			if( $photoId-1 > 0 )
 			{
+				$xtpl->assign( 'HAS_PREV_PHOTO', 'true' );
 				$xtpl->assign( 'PREV_PHOTO_URL', '/photo/'.($photoId-1) );
+			}
+			else if( $this->isAuthenticated() )
+			{
+				$xtpl->assign( 'HAS_PREV_PHOTO', 'false' );
+				$xtpl->assign( 'PREV_PHOTO_URL', '/admin' );
 			}
 			else
 			{
-				$xtpl->assign( 'PREV_PHOTO_URL', '/admin' );
+				$xtpl->assign( 'HAS_PREV_PHOTO', 'false' );
 			}
 
 			if( $photoId+1 <= $db->photos()->max('id') )
 			{
+				$xtpl->assign( 'HAS_NEXT_PHOTO', 'true' );
 				$xtpl->assign( 'NEXT_PHOTO_URL', '/photo/'.($photoId+1) );
+			}
+			else if( $this->isAuthenticated() )
+			{
+				$xtpl->assign( 'HAS_NEXT_PHOTO', 'false' );
+				$xtpl->assign( 'NEXT_PHOTO_URL', '/admin' );
 			}
 			else
 			{
-				$xtpl->assign( 'NEXT_PHOTO_URL', '/admin' );
+				$xtpl->assign( 'HAS_NEXT_PHOTO', 'false' );
 			}
 
 			$xtpl->assign( 'PHOTO_ID', $photoId );

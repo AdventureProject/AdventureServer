@@ -64,9 +64,6 @@ class VideosController extends BaseController
 		$this->addCssFile( '/external/magnific-popup/magnific-popup.css', $xtpl );
 		$this->addJsFile( '/external/magnific-popup/jquery.magnific-popup.min.js', $xtpl );
 		
-		$this->addCssFile( '/css/zoom.css', $xtpl );
-		$this->addJsFile( '/js/zoom.js', $xtpl );
-		
 		$this->addJsFile( '/external/clipboard.min.js', $xtpl );
 		
 		$this->addCssFile( '/external/mdl-jquery-modal-dialog/mdl-jquery-modal-dialog.css', $xtpl );

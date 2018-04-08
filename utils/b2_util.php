@@ -19,11 +19,17 @@ $GLOBALS['b2InternalPath']['photo']['source'] = 'source.jpg';
 $GLOBALS['b2InternalPath']['photo']['meta'] = 'meta';
 $GLOBALS['b2InternalPath']['photo']['blurred_image'] = 'blurred.jpg';
 $GLOBALS['b2InternalPath']['photo']['thumbnail_image'] = 'thumbnail.jpg';
+$GLOBALS['b2InternalPath']['photo']['resized_base'] = 'resized_';
 
 function getB2Client()
 {
 	$keys = getKeys();
 	return new B2Service($keys->b2->account_id, $keys->b2->application_id);
+}
+
+function b2GetPublicPhotoOriginalUrl( $id )
+{
+	return $GLOBALS['b2BasePath']['photos'] . '/' . $id . '/' . $GLOBALS['b2InternalPath']['photo']['source'];
 }
 
 function b2GetPublicThumbnailUrl( $id )
@@ -36,6 +42,18 @@ function b2GetPublicBlurUrl( $id )
 	return $GLOBALS['b2BasePath']['photos'] . '/' . $id . '/' . $GLOBALS['b2InternalPath']['photo']['meta'] . '/' . $GLOBALS['b2InternalPath']['photo']['blurred_image'];
 }
 
+function b2GetPublicResizedUrl( $id, $width, $height, $imageType )
+{
+	return $GLOBALS['b2BasePath']['photos'] . '/' . $id . '/' . $GLOBALS['b2InternalPath']['photo']['meta'] . '/'
+		. $GLOBALS['b2InternalPath']['photo']['resized_base'] . $width . '_' . $height . '.' .  $imageType;
+}
+
+function getB2PhotoMetaResizedPath( $id, $width, $height, $imageType )
+{
+	return getB2PhotoMetaPath( $id ) . '/' . $GLOBALS['b2InternalPath']['photo']['resized_base'] . $width . '_' . $height . '.' .  $imageType;
+}
+
+/*
 function b2PhotoExists( $id,  $targetBucketId = null )
 {
 	if( $targetBucketId == null )
@@ -65,6 +83,7 @@ function b2PhotoMetaExists( $id, $fileName,  $targetBucketId = null )
 	//return $file != null;
 	return $b2Client->exists( $targetBucketId, $fileName );
 }
+*/
 
 function getB2ThumbnailFilename( $id )
 {

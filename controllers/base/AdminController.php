@@ -112,7 +112,7 @@ class AdminController extends BaseController
             $xtpl->assign( 'PHOTOWALL_ID', $photo['photowall_id'] );
 			
 			$xtpl->assign( 'PHOTO_TITLE', substr( $photo['title'], 0, 48 ) );
-			$xtpl->assign( 'PHOTO_THUMBNAIL', $photo['thumbnail'] );
+			$xtpl->assign( 'PHOTO_THUMBNAIL', b2GetPublicThumbnailUrl( $id ) );
 			
 			$xtpl->assign( 'PHOTO_LOCATION', $photo['location'] );
 			

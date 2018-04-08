@@ -27,7 +27,7 @@ class PhotoFrameController extends Controller
 
 			$photo = $photoFramePhotoIds[array_rand( $photoFramePhotoIds )];
 
-			echo json_encode( getPhoto( $photo['flickr_id'], $photo['id'], true, 800, 480 ) );
+			echo json_encode( getPhoto( $photo['id'], true, 800, 480 ) );
 		}
 		else if( count($request->args) == 2 )
 		{

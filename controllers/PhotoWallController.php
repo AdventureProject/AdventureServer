@@ -43,7 +43,7 @@ class PhotoWallController extends Controller
 
             if( $photoId > 0 )
             {
-				$photoFrameId = 4934; // Hard coded for now
+				$photoFrameId = 7511; // Hard coded for now
 				header( "Location: http://wethinkadventure.rocks/photowallnfc/$photoFrameId/$photoId" );
             }
             else

@@ -73,7 +73,18 @@ class AddPhotoController extends BaseController
 				$item['title'] = $responseInfo['photo']['title']['_content'];
 				$item['description'] = $responseInfo['photo']['description']['_content'];
 				$item['location'] = $responseInfo['photo']['location']['latitude'] . ',' . $responseInfo['photo']['location']['longitude'];
-				
+
+				$hadRotation = null;
+				$rotation = $responseInfo['photo']['rotation'];
+				if( $rotation == 90 || $rotation == 180 )
+				{
+					$hadRotation = true;
+				}
+				else
+				{
+					$hadRotation = false;
+				}
+
 				$item['date_taken'] = $responseInfo['photo']['dates']['taken'];
 				
 				////////////////////////////////////////////////////////
@@ -101,11 +112,19 @@ class AddPhotoController extends BaseController
 						$thumbnailUrl = $size['source'];
 					}
 				}
-				
-				$item['orientation'] = determineOrientation( $width, $height );
-				
-				$item['width'] = $width;
-				$item['height'] = $height;
+
+				if( $hadRotation )
+				{
+					$item['width'] = $height;
+					$item['height'] = $width;
+				}
+				else
+				{
+					$item['width'] = $width;
+					$item['height'] = $height;
+				}
+
+				$item['orientation'] = determineOrientation( $item['width'], $item['height'] );
 				
 				////////////////////////////////////////////////////////
 				// Insert to DB
@@ -114,7 +133,7 @@ class AddPhotoController extends BaseController
                 
                 if( $newRow )
                 {
-					transferPhotoFromFlickrToB2( $newRow['id'], $newRow['flickr_id'] );
+					transferPhotoFromFlickrToB2( $newRow['id'], $newRow['flickr_id'], $flickrUrl );
 					
 					if( $thumbnailUrl != null )
 					{
@@ -122,8 +141,6 @@ class AddPhotoController extends BaseController
 						$downloadResult = file_put_contents($tmpFileName, fopen($thumbnailUrl, 'r'));
 						if( $downloadResult )
 						{
-							b2PhotoMetaExists( $newRow['id'], $tmpFileName );
-
 							$targetPath = getB2PhotoMetaPath( $newRow['id'] ) . '/' . 'thumbnail.jpg';
 							uploadB2File( $tmpFileName, $targetPath );
 						}

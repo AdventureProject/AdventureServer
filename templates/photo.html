@@ -11,6 +11,38 @@
 				}
 			</style>
 
+			<script>
+				function leftArrowPressed()
+				{
+					if( {HAS_PREV_PHOTO} )
+					{
+						window.location.href = '{PREV_PHOTO_URL}';
+					}
+				}
+
+				function rightArrowPressed()
+				{
+					if( {HAS_NEXT_PHOTO} )
+					{
+						window.location.href = '{NEXT_PHOTO_URL}';
+					}
+				}
+
+				document.onkeydown = function(evt)
+				{
+					evt = evt || window.event;
+					switch (evt.keyCode)
+					{
+						case 37:
+							leftArrowPressed();
+							break;
+						case 39:
+							rightArrowPressed();
+							break;
+					}
+				};
+			</script>
+
 			<div class="mdl-grid center-items">
 
 			<!-- BEGIN: admin_links -->

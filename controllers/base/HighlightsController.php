@@ -35,14 +35,14 @@ class HighlightsController extends BaseController
 		$xtpl->assign_file('BODY_FILE', 'templates/highlights.html');
 		
 		$db = getDb();
-		$results = $db->photos()->select('id, title, thumbnail, orientation')->where('highlight', 1)->order('date_taken DESC');
+		$results = $db->photos()->select('id, title, orientation')->where('highlight', 1)->order('date_taken DESC');
 		
 		while( $data = $results->fetch() )
 		{
 			$xtpl->assign('PHOTO_ID',$data['id']);
 			$xtpl->assign('PHOTO_THUMBNAIL', b2GetPublicThumbnailUrl($data['id']) );
 
-			$style;
+			$style = NULL;
 			if( $data['orientation'] == 'land' )
 			{
 				$style = 'mdl-cell--3-col pic-card-land';
