@@ -30,7 +30,6 @@ class HighlightsController extends BaseController
 	{
 		$this->addCssFile( '/css/highlights.css', $xtpl );
 		$this->addCssFile( '/css/zoom.css', $xtpl );
-		$this->addJsFile( '/js/zoom.js', $xtpl );
 		
 		$xtpl->assign_file('BODY_FILE', 'templates/highlights.html');
 		

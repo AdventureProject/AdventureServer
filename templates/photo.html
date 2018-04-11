@@ -45,92 +45,18 @@
 
 			<div class="mdl-grid center-items">
 
-			<!-- BEGIN: admin_links -->
-			<div class="mdl-card navigation-card mdl-cell mdl-cell--4-col mdl-cell--4-col-phone">
-				<div class="mdl-card__title">
-					<h4 class="mdl-card__title-text">Admin</h4>
-				</div>
-				<ul class="mdl-list">
-					<li class="mdl-list__item">
-						<span class="mdl-list__item-primary-content">
-							<a href="/admin/home">Admin Home</a>
-						</span>
-					</li>
-					<li class="mdl-list__item">
-						<span class="mdl-list__item-primary-content">
-							<a href="/addphoto">Add Photo</a>
-						</span>
-					</li>
-				</ul>
-			</div>
-				
-			<div class="mdl-card admin-card mdl-cell mdl-cell--8-col mdl-cell--4-col-phone">
-				<div class="mdl-card__title">
-					<h4 class="mdl-card__title-text">Edit Photo</h4>
-				</div>
-					<div style="padding: 15px;">
-						<!-- BEGIN: photo_actions -->
-						<button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" onclick="location.href='{PREV_PHOTO_URL}';">
-							<i class="material-icons">arrow_back</i>
-						</button>
-						
-						<button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" onclick="location.href='{NEXT_PHOTO_URL}';" style="float:right;">
-							<i class="material-icons">arrow_forward</i>
-						</button>
-						<br /><br />
-						<b>Photo ID:</b> {PHOTO_ID}<br />
-						<b>PhotoWall ID:</b> {PHOTOWALL_ID}<br />
-						<b>Flickr ID:</b> {FLICKR_ID}<br />
-						<b>Location:</b> {PHOTO_LOCATION}<br />
-						<br />
-						<form action="/photo/{PHOTO_ID}" method="post">
-							<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="is_wallpaper">
-								<input type="checkbox" id="is_wallpaper" name="is_wallpaper" class="mdl-switch__input" {IS_WALLPAPER} />
-								<span class="mdl-switch__label">Is Wallpaper</span>
-							</label>
-							<br /><br />
-							<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="is_highlight">
-								<input type="checkbox" id="is_highlight" name="is_highlight" class="mdl-switch__input" {IS_HIGHLIGHT} />
-								<span class="mdl-switch__label">Is Highlight</span>
-							</label>
-							<br /><br />
-							<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="is_photoframe">
-								<input type="checkbox" id="is_photoframe" name="is_photoframe" class="mdl-switch__input" {IS_PHOTOFRAME} />
-								<span class="mdl-switch__label">Is Photoframe</span>
-							</label>
-							<br /><br />
-							<br />
-							<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit">
-								Update
-							</button><br>
-						</form>
-						<!-- END: photo_actions -->
+                <div class="mdl-cell mdl-cell--12-col">
+                    <img class="photo mdl-shadow--2dp" src="{FLICKR_IMG}" />
+                </div>
 
-						<!-- BEGIN: add_photowall -->
-						<hr />
-						<br />
-						<form action="/photo/{PHOTO_ID}" method="post" onsubmit="return confirmPhotoWall(this);">
-							<button name="add_to_photowall" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored confirm_photo_wall" type="submit">
-								Add to Wall [{NEXT_PHOTOWALL_ID}]
-							</button>
-						</form>
-						<!-- END: add_photowall -->
-					</div>
-			</div>
-			<!-- END: admin_links -->
-
-			<div class="mdl-cell mdl-cell--12-col">
-				<img class="photo mdl-shadow--2dp" src="{FLICKR_IMG}" />
-			</div>
-
-			<div id="info_card" class="mdl-card photo_title title-card-wide mdl-cell mdl-cell--6-col mdl-shadow--2dp">
-				<div class="mdl-card__media">
-					<div class="mdl-card__title mdl-color-text--grey-50">
-						<h3 class="title">{PHOTO_TITLE}</h3>
-					</div>
-				</div>
-				<div class="mdl-card__supporting-text meta mdl-color-text--grey-600">
-					<img src="/images/photo_info_icon.png" class="comment__avatar">
+                    <div id="info_card" class="mdl-card photo_title title-card-wide mdl-cell mdl-cell--6-col mdl-shadow--2dp">
+                    <div class="mdl-card__media">
+                        <div class="mdl-card__title mdl-color-text--grey-50">
+                            <h3 class="title">{PHOTO_TITLE}</h3>
+                        </div>
+                    </div>
+                    <div class="mdl-card__supporting-text meta mdl-color-text--grey-600">
+					    <img src="/images/photo_info_icon.png" class="comment__avatar">
 						<div>
 							<span>
 								<b>Date:</b> {PHOTO_DATE}<br />
@@ -162,7 +88,86 @@
 						</div>
 					</div>
 				</div>
-				
+
+                <!-- BEGIN: admin_links -->
+                <div class="mdl-card navigation-card mdl-cell mdl-cell--2-col mdl-cell--4-col-phone">
+                    <div class="mdl-card__title">
+                        <h4 class="mdl-card__title-text">Admin</h4>
+                    </div>
+                    <ul class="mdl-list">
+                        <li class="mdl-list__item">
+						<span class="mdl-list__item-primary-content">
+							<a href="/admin/home">Admin Home</a>
+						</span>
+                        </li>
+                        <li class="mdl-list__item">
+						<span class="mdl-list__item-primary-content">
+							<a href="/addphoto">Add Photo</a>
+						</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="mdl-card admin-card mdl-cell mdl-cell--4-col mdl-cell--4-col-phone">
+                    <div class="mdl-card__title">
+                        <h4 class="mdl-card__title-text">Edit Photo</h4>
+                    </div>
+                    <div style="padding: 15px;">
+                        <!-- BEGIN: photo_actions -->
+                        <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" onclick="location.href='{PREV_PHOTO_URL}';">
+                            <i class="material-icons">arrow_back</i>
+                        </button>
+
+                        <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" onclick="location.href='{NEXT_PHOTO_URL}';" style="float:right;">
+                            <i class="material-icons">arrow_forward</i>
+                        </button>
+                        <br /><br />
+                        <b>Photo ID:</b> {PHOTO_ID}<br />
+                        <b>PhotoWall ID:</b> {PHOTOWALL_ID}<br />
+                        <b>Flickr ID:</b> {FLICKR_ID}<br />
+                        <b>Location:</b> {PHOTO_LOCATION}<br />
+                        <br />
+                        <form action="/photo/{PHOTO_ID}" method="post">
+                            <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="is_wallpaper">
+                                <input type="checkbox" id="is_wallpaper" name="is_wallpaper" class="mdl-switch__input" {IS_WALLPAPER} />
+                                <span class="mdl-switch__label">Is Wallpaper</span>
+                            </label>
+                            <br /><br />
+                            <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="is_highlight">
+                                <input type="checkbox" id="is_highlight" name="is_highlight" class="mdl-switch__input" {IS_HIGHLIGHT} />
+                                <span class="mdl-switch__label">Is Highlight</span>
+                            </label>
+                            <br /><br />
+                            <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="is_photoframe">
+                                <input type="checkbox" id="is_photoframe" name="is_photoframe" class="mdl-switch__input" {IS_PHOTOFRAME} />
+                                <span class="mdl-switch__label">Is Photoframe</span>
+                            </label>
+                            <br /><br />
+                            <br />
+                            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit">
+                                Update
+                            </button><br />
+                            <br />
+                        </form>
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" onclick="location.href='/photo/{PHOTO_ID}?regenerate=thumbnail';">
+                            Regenerate Thumbnail
+                        </button>
+                        <img src="{THUMBNAIL_URL}" style="height:64px; width:auto;">
+                        <!-- END: photo_actions -->
+
+                        <!-- BEGIN: add_photowall -->
+                        <hr />
+                        <br />
+                        <form action="/photo/{PHOTO_ID}" method="post" onsubmit="return confirmPhotoWall(this);">
+                            <button name="add_to_photowall" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored confirm_photo_wall" type="submit">
+                                Add to Wall [{NEXT_PHOTOWALL_ID}]
+                            </button>
+                        </form>
+                        <!-- END: add_photowall -->
+                    </div>
+                </div>
+                <!-- END: admin_links -->
+
 			</div>
 
 			<a id="info_button" href="#info_card" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored info_fab"><i class="material-icons">arrow_downward</i></a>

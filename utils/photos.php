@@ -416,6 +416,57 @@ function transferPhotoFromFlickrToB2( $id, $flickrId, $flickrUrl )
 	}
 }
 
+function transferThumbnailFromFlickrToB2( $photoId )
+{
+	error_log( 'transferThumbnailFromFlickrToB2 photoId: ' . $photoId );
+
+	$photoRow = getDb()->photos()->select('flickr_id')->where("id", $photoId)->fetch();
+	$flickrId = $photoRow['flickr_id'];
+
+	$keys = getKeys();
+
+	$key = $keys->flickr_api->key;
+	$secret = $keys->flickr_api->secret;
+	$flickr = new Flickr($key, $secret);
+
+	////////////////////////////////////////////////////////
+	// Flickr Sizes
+
+	$method = 'flickr.photos.getSizes';
+	$args = array('photo_id' => $flickrId);
+	$responseSizes = $flickr->call_method($method, $args);
+
+	$thumbnailUrl = null;
+
+	foreach( $responseSizes['sizes']['size'] as $size )
+	{
+		if( $size['label'] == 'Medium' )
+		{
+			$thumbnailUrl = $size['source'];
+			break;
+		}
+	}
+
+	if( $thumbnailUrl != null )
+	{
+		error_log( 'thumbnailUrl: ' . $thumbnailUrl );
+
+		$tmpFileName = "data/temp/" . $photoId . '_thumbnail';
+		$downloadResult = file_put_contents($tmpFileName, fopen($thumbnailUrl, 'r'));
+		if( $downloadResult )
+		{
+			error_log( 'thumbnail downloaded' );
+
+			$targetPath = getB2PhotoMetaPath( $photoId ) . '/' . 'thumbnail.jpg';
+			uploadB2File( $tmpFileName, $targetPath );
+
+			error_log( 'thumbnail uploaded' );
+		}
+		unlink( $tmpFileName );
+		error_log( 'thumbnail temp deleted' );
+	}
+}
+
 function autorotateImage(Imagick $image)
 {
 	switch ($image->getImageOrientation()) {

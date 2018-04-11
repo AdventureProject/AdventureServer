@@ -73,8 +73,6 @@ class VideosController extends BaseController
 		//$this->addJsFile( '/external/sweetalert/sweetalert.min.js', $xtpl );
 		
 		$this->addCssFile( '/css/videos.css', $xtpl );
-		$this->addJsFile( '/js/videos.js', $xtpl );
-		
 		$this->addCssFile( '/css/zoom.css', $xtpl );
 		
 		$xtpl->assign_file('BODY_FILE', 'templates/videos.html');

@@ -43,7 +43,24 @@ class PhotoController extends BaseController
 		
         if( count($request->args) == 1 && is_numeric( $request->args[0] ) )
         {
-            $this->renderPhoto( $xtpl, $request->args[0] );
+			if( array_key_exists('regenerate', $request->params) )
+			{
+				error_log( 'regenerate: ' . $request->params['regenerate'] );
+
+				if( $request->params['regenerate'] == 'thumbnail' )
+				{
+					error_log( 'regenerate thumbnail ' );
+
+					transferThumbnailFromFlickrToB2( $request->args[0] );
+				}
+
+				header( 'Location: /photo/' . $request->args[0] );
+			}
+			// Default normal photo request
+			else
+			{
+				$this->renderPhoto( $xtpl, $request->args[0] );
+			}
         }
 		else
 		{
@@ -127,6 +144,8 @@ class PhotoController extends BaseController
 			$xtpl->assign( 'PHOTO_TITLE', $photoFlickr->title );
 			$dateStr = $this->formatDateForDisplay( $photoFlickr->date );
 			$xtpl->assign( 'PHOTO_DATE', $dateStr );
+
+			$xtpl->assign( 'THUMBNAIL_URL', b2GetPublicThumbnailUrl( $photoId ) );
 
 			if( empty($photoFlickr->location) )
 			{
