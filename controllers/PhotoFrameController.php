@@ -22,10 +22,8 @@ class PhotoFrameController extends Controller
 		{
 			// Use this to differentiate photo frames
         	$photoFrameId = $request->args[0];
-			
-			$photoFramePhotoIds = getPhotoframes();
 
-			$photo = $photoFramePhotoIds[array_rand( $photoFramePhotoIds )];
+			$photo = getPhotoframePhoto();
 
 			echo json_encode( getPhoto( $photo['id'], true, 800, 480 ) );
 		}

@@ -49,9 +49,15 @@ class PhotoController extends BaseController
 
 				if( $request->params['regenerate'] == 'thumbnail' )
 				{
-					error_log( 'regenerate thumbnail ' );
+					error_log( 'regenerate thumbnail ' . $request->args[0] );
 
-					transferThumbnailFromFlickrToB2( $request->args[0] );
+					transferThumbnailFromFlickrToB2( $request->args[0], true );
+				}
+				else if( $request->params['regenerate'] == 'info' )
+				{
+					error_log( 'regenerate info ' . $request->args[0] );
+					
+					$this->refreshInfoFromFlickr( $request->args[0] );
 				}
 
 				header( 'Location: /photo/' . $request->args[0] );
@@ -106,8 +112,6 @@ class PhotoController extends BaseController
 			$locationParts = explode( ',', $photoFlickr->location );
 			
 			$this->addSeoLocation( $locationParts[0], $locationParts[1], $xtpl );
-
-			updatePhotoCache( $photoId, $photoFlickr, $db );
 
 			if( $photoId-1 > 0 )
 			{
@@ -190,8 +194,20 @@ class PhotoController extends BaseController
 						$xtpl->parse('main.body.admin_links.add_photowall');
 					}
 				}
-
+				
 				$xtpl->parse('main.body.admin_links.photo_actions');
+				
+				$metaFiles = listMetaFiles( $photoId );
+				if( $metaFiles && count( $metaFiles ) > 0 )
+				{
+					foreach( $metaFiles as $fileName )
+					{
+						$xtpl->assign( 'META_FILE_NAME', $fileName );
+						$xtpl->assign( 'META_FILE_URL', b2GetPublicMetaUrl( $photoId, $fileName ) );
+						$xtpl->parse('main.body.admin_links.meta_file');
+					}
+				}
+				
 				$xtpl->parse('main.body.admin_links');
 			}
 		}
@@ -216,8 +232,6 @@ class PhotoController extends BaseController
 				{
 					$success = false;
 					
-					$this->refreshCache( $photoId, $photoRow['flickr_id'] );
-
 					if( isset($request->post['add_to_photowall']) )
 					{
 						if( empty($photoRow['photowall_id']) )
@@ -283,11 +297,11 @@ class PhotoController extends BaseController
 		return "http://maps.googleapis.com/maps/api/staticmap?center=$location&zoom=15&scale=1&size=800x800&maptype=terrain&key=$this->googleMapsApiKey&format=png&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:%7C$location";
 	}
 	
-	private function refreshCache( $id, $flickrId )
+	private function refreshInfoFromFlickr( $id )
 	{
 		$db = getDb();
+		$flickrId = $db->photos[$id]['flickr_id'];
 
-		$photoFlickr = getPhoto( $flickrId, $id );
-		updatePhotoCache( $id, $photoFlickr, $db );
+		updatePhotoInfoFromFlickr( $id, $flickrId, $db );
 	}
 }

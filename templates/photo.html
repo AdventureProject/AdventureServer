@@ -149,11 +149,24 @@
                             </button><br />
                             <br />
                         </form>
+						<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" onclick="location.href='/photo/{PHOTO_ID}?regenerate=info';">
+                            Re-fetch info from Flickr
+                        </button>
+						<br />
                         <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" onclick="location.href='/photo/{PHOTO_ID}?regenerate=thumbnail';">
                             Regenerate Thumbnail
                         </button>
                         <img src="{THUMBNAIL_URL}" style="height:64px; width:auto;">
-                        <!-- END: photo_actions -->
+						<!-- END: photo_actions -->
+						<h3>
+							Meta Files
+						</h3>
+						
+						<!-- BEGIN: meta_file -->
+						<img src="{META_FILE_URL}" style="height:64px; width:auto;">
+						<a href="{META_FILE_URL}">{META_FILE_NAME}</a>
+						<br />
+						<!-- END: meta_file -->
 
                         <!-- BEGIN: add_photowall -->
                         <hr />

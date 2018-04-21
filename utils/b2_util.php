@@ -3,6 +3,7 @@
 require_once('vendor/autoload.php');
 
 use B2Backblaze\B2Service;
+use B2Backblaze\B2API;
 
 require_once('utils/KeysUtil.php');
 require_once('utils/photos.php');
@@ -51,6 +52,11 @@ function b2GetPublicResizedUrl( $id, $width, $height, $imageType )
 function getB2PhotoMetaResizedPath( $id, $width, $height, $imageType )
 {
 	return getB2PhotoMetaPath( $id ) . '/' . $GLOBALS['b2InternalPath']['photo']['resized_base'] . $width . '_' . $height . '.' .  $imageType;
+}
+
+function b2GetPublicMetaUrl( $id, $fileName )
+{
+	return $GLOBALS['b2BasePath']['photos'] . '/' . $id . '/' . $GLOBALS['b2InternalPath']['photo']['meta'] . '/' . $fileName;
 }
 
 /*
@@ -113,9 +119,50 @@ function uploadB2File( $inputFilePath, $targetPath, $targetBucketId = null )
 	{
 		 $targetBucketId = getKeys()->b2->bucket_id;
 	}
-	
+
 	$fileToUpload = file_get_contents($inputFilePath);
 	$result = $b2Client->insert($targetBucketId, $fileToUpload, $targetPath);
+
+	return $result == true;
+}
+
+function listMetaFiles( $photoId )
+{
+	$keys = getKeys();
+	$client = new B2API($keys->b2->account_id, $keys->b2->application_id, 2000);
+	
+	$targetBucketId = getKeys()->b2->bucket_id;
+	
+	$authResponse = $client->b2AuthorizeAccount();
+	if ($authResponse->isOk())
+	{
+		$apiURL = $authResponse->get('apiUrl');
+		$token = $authResponse->get('authorizationToken');
+		$downloadURL = $authResponse->get('downloadUrl');
+		$minimumPartSize = $authResponse->get('minimumPartSize');
+		
+		$fileNames = array();
+		
+		//public function b2ListFileNames($URL, $token, $bucketId, $startFileName = null, $maxFileCount = 100, $prefix = null, $delimiter = null)
+		$fileNamesResponse = $client->b2ListFileNames( $apiURL, $token, $targetBucketId, $startFileName = null, $maxFileCount = 100, $prefix = getB2PhotoMetaPath( $photoId ) );
+		if( $fileNamesResponse->isOK() )
+		{
+			$data = $fileNamesResponse->getData();
+			
+			foreach( $data['files'] as $file )
+			{
+				$parts = explode( '/', $file['fileName'] );
+				$filename = end( $parts );
+				$fileNames[] = $filename;
+			}
+		}
+		
+		return $fileNames;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 ?>

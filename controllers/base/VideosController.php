@@ -90,7 +90,7 @@ class VideosController extends BaseController
 			$xtpl->assign( 'VIDEO_TITLE', $video->title );
 			//$xtpl->assign( 'VIDEO_DATE', $video->date->format('d M Y') );
 			
-			$description;
+			$description = null;
 			if( strlen( $video->description ) > 330 )
 			{
 				$description = substr( $video->description, 0, 336 );
