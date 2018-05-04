@@ -16,6 +16,7 @@
 		<meta property="og:description" content="{RICH_PREVIEW_DESCRIPTION}" />
 		<meta property="og:image" content="{RICH_PREVIEW_IMAGE}" />
 		<meta property="og:url" content="{RICH_URL}" />
+		<meta property="og:type" content="website" />
 
 		<!-- SEO -->
 		<meta name="description" content="{RICH_PREVIEW_DESCRIPTION}" />
@@ -62,20 +63,20 @@
 		</script>
 		
 		<style>
+
 			html {
-				background-color: #fcfcfc;
-				
 				<!-- BEGIN: normal_background -->
 				background: url({IMAGE}) no-repeat center center fixed;
 				<!-- END: normal_background -->
 				<!-- BEGIN: blur_background -->
-				background: url({BLURRED_BACKGROUND}) no-repeat center center fixed;
+				background: linear-gradient( rgba(150,150,150,0.0), rgba(150,150,150,0.50) ), url({BLURRED_BACKGROUND}) no-repeat center center fixed;
 				<!-- END: blur_background -->
 					
 				-webkit-background-size: cover;
 				-moz-background-size: cover;
 				-o-background-size: cover;
 				background-size: cover;
+
 			}
 
 		</style>
@@ -128,7 +129,7 @@
 					<a class="mdl-navigation__link" href="/videos"><i class="material-icons">local_movies</i> Videos</a>
 					<a class="mdl-navigation__link" href="/"><i class="material-icons">camera_alt</i> Today's Photo</a>
 					<hr />
-					<a class="mdl-navigation__link" href="/admin"><i class="material-icons">fingerprint</i> Admin</a>
+					<a class="mdl-navigation__link" href="http://admin.wethinkadventure.rocks/admin"><i class="material-icons">fingerprint</i> Admin</a>
 				</nav>
 			</div>
 			<!-- END: nav_drawer -->

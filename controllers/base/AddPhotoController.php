@@ -46,7 +46,17 @@ class AddPhotoController extends BaseController
 
         	if( $importTaskId != null )
 			{
-				processImportTask( $importTaskId );
+				error_log( 'Add Photo - Import Task OK, processing...' );
+				
+				$photoId = processImportTask( $importTaskId );
+				
+				header('Location: /photo/' . $photoId);
+			}
+			else
+			{
+				error_log( 'Add Photo - Failed to create import task' );
+				
+				header('Location: /' . $this->urlStub());
 			}
         }
     }

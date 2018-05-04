@@ -4,7 +4,7 @@ require_once('utils/photos.php');
 require_once('utils/file_system_util.php');
 require_once('vendor/autoload.php');
 #require_once('libs/aws_config.php');
-require_once('util/b2_util.php');
+require_once('utils/b2_util.php');
 
 #use Aws\Sdk;
 #use Aws\S3\S3Client;
@@ -40,7 +40,9 @@ if( !$row )
 		echo 'Cleaning old output...';
 		cleanUpOutput( 'output' );
 	}
-	
+
+	$test = getimagesize( $preview_file );
+
 	list($previewWidth, $previewHeight) = getimagesize( $preview_file );
 
 	if( $previewWidth == 800 && $previewHeight == 600 )
@@ -58,7 +60,18 @@ if( !$row )
 			$latitude = gps($exif["GPSLatitude"], $exif['GPSLatitudeRef']);
 			$longitude = gps($exif["GPSLongitude"], $exif['GPSLongitudeRef']);
 
-			$timestamp = date("Y-m-d H:i:s", strtotime( $exif['DateTime'] ));
+			if( array_key_exists( 'DateTime', $exif ) )
+			{
+				$timestamp = date("Y-m-d H:i:s", strtotime( $exif['DateTime'] ));
+			}
+			else if( array_key_exists( 'DateTimeOriginal', $exif ) )
+			{
+				$timestamp = date("Y-m-d H:i:s", strtotime( $exif['DateTimeOriginal'] ));
+			}
+			else
+			{
+				echo 'ERROR: Unable to find a DateTime field in photo exif data';
+			}
 
 			$item['file_id'] = $imageName;
 			$item['title'] = htmlentities( $_POST['title'] );
@@ -67,36 +80,42 @@ if( !$row )
 			$item['date_taken'] = $timestamp;
 
 			$newRow = $db->photo_spheres()->insert( $item );
+			if( $newRow )
+			{
+				echo 'Updating config...<br />';
 
-			echo 'Updating config...<br />';
+				$configFile = 'output/config.json';
+				$json = json_decode( file_get_contents( $configFile ), true );
 
-			$configFile = 'output/config.json';
-			$json = json_decode( file_get_contents( $configFile ), true);
+				$json['basePath'] = "$basePath/$imageName";
+				$json['title'] = $_POST['title'];
+				$json['preview'] = "/preview.$previewExt";
 
-			$json['basePath'] = "$basePath/$imageName";
-			$json['title'] = $_POST['title'];
-			$json['preview'] = "/preview.$previewExt";
+				file_put_contents( $configFile, json_encode( $json ) );
 
-			file_put_contents( $configFile, json_encode( $json ) );
+				echo 'Uploading to B2...<br />';
+				$baseUploadDir = 'data/360photos/' . $imageName;
 
-			echo 'Uploading to B2...<br />';
-			$baseUploadDir = 'data/360photos/'.$imageName;
+				// Upload the source image
+				$mimeType = mime_content_type( $target_file );
+				uploadFile( $target_file, $baseUploadDir, $image, $b2BucketId, $mimeType );
 
-			// Upload the source image
-			$mimeType = mime_content_type( $target_file );
-			uploadFile( $target_file, $baseUploadDir, $image, $b2BucketId, $mimeType );
+				// Upload the preview image
+				$mimeType = mime_content_type( $preview_file );
+				$previewExt = pathinfo( $previewName, PATHINFO_EXTENSION );
+				uploadFile( $preview_file, $baseUploadDir, "preview.$previewExt", $b2BucketId, $mimeType );
 
-			// Upload the preview image
-			$mimeType = mime_content_type( $preview_file );
-			$previewExt = pathinfo( $previewName, PATHINFO_EXTENSION );
-			uploadFile( $preview_file, $baseUploadDir, "preview.$previewExt", $b2BucketId, $mimeType );
+				// Upload our processed ouput
+				uploadDirectory( 'output', $baseUploadDir, $b2BucketId );
 
-			// Upload our processed ouput
-			uploadDirectory( 'output', $baseUploadDir, $b2BucketId );
+				echo 'Upload complete<br />';
 
-			echo 'Upload complete<br />';
-
-			echo "<a href='/360photo/{$newRow["id"]}'>Go to PhotoSphere</a><br />";
+				echo "<a href='/360photo/{$newRow["id"]}'>Go to PhotoSphere</a><br />";
+			}
+			else
+			{
+				echo 'Failed to insert row<br />';
+			}
 		}
 		else
 		{
@@ -183,7 +202,7 @@ function uploadFile( $filepath, $baseDir, $destinationFileName, $b2BucketId, $mi
 	$realPath = realpath( $filepath );
 	
 	echo 'Uploading File: ' . $baseDir . '/' . $destinationFileName . '<br />';
-	echo 'Mime: ' . $mimeType . '<br />'; 
+	//echo 'Mime: ' . $mimeType . '<br />';
 	
 	uploadB2File( $realPath, $baseDir . '/' . $destinationFileName, $b2BucketId );
 }

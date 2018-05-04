@@ -1,0 +1,48 @@
+.albums-container {
+    width: 90vw;
+    padding: 0px;
+
+    justify-content: center;
+
+    margin: auto auto 32px;
+}
+
+.adventure .albums-pic .mdl-card__media {
+    background-image: url('/images/albums_pic.jpg');
+}
+
+.album-card-image.mdl-card {
+    width: 256px;
+    height: 256px;
+    margin: 8px;
+}
+
+@media only screen and (max-width: 850px) {
+    .albums-container {
+        width: 100%;
+        padding: 0px;
+        margin: auto auto 32px;
+    }
+
+    .album-card-image.mdl-card {
+        width: 256px;
+        height: 256px;
+        margin: 8px;
+        
+        flex-shrink: 1;
+        flex-grow: 1;
+    }
+}
+
+.album-card-image > .mdl-card__actions {
+	height: auto;
+	min-height: 52px;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.album-card-image__title {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+}

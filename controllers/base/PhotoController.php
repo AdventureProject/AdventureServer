@@ -7,43 +7,79 @@ class PhotoController extends BaseController
 {
 	private $googleMapsApiKey;
 	private $currentPhoto;
-	
-    public function __construct( $config )
-    {
-        parent::__construct( false, $config );
-		
+	private $albumId = null;
+	private $albumData = null;
+
+	private $ALBUM_STUB = 'album';
+
+	public function __construct( $config )
+	{
+		parent::__construct( false, $config );
+
 		$keys = getKeys();
 
 		$this->googleMapsApiKey = $keys->google_maps_api->key;
-    }
-	
+	}
+
 	public function urlStub()
 	{
 		return 'photo';
 	}
-	
-    public function getTitle()
-    {
-    	return 'Photo';
-    }
-	
+
+	public function getTitle()
+	{
+		return 'Photo';
+	}
+
 	public function provideBack()
 	{
 		return true;
 	}
-	
+
+	public function get( $request )
+	{
+		if( is_numeric( $request->args[0] ) )
+		{
+			$photoId = $request->args[0];
+
+			$photoFlickr = getPhoto( $photoId, true, 1024, 1024 );
+
+			$this->currentPhoto = $photoFlickr;
+
+			$this->albumId = $this->getAlbumId( $request );
+
+			if( $this->albumId != null )
+			{
+				$db = getDb();
+				$this->albumData = $db->albums[$this->albumId];
+			}
+		}
+
+		parent::get( $request );
+	}
+
 	public function getBackUrl()
 	{
-		return '/highlights';
+		if( $this->albumId != null )
+		{
+			return '/album/' . $this->albumId;
+		}
+		else
+		{
+			return '/highlights';
+		}
 	}
-    
-    public function getBody( $request, $todaysPhoto, $xtpl )
-    {
+
+	public function getBody( $request, $todaysPhoto, $xtpl )
+	{
 		$this->addNavAction( 'random', 'shuffle', 'Random', '/photo/random', $xtpl );
-		
-        if( count($request->args) == 1 && is_numeric( $request->args[0] ) )
-        {
-			if( array_key_exists('regenerate', $request->params) )
+
+		$albumId = $this->getAlbumId( $request );
+
+		if( count( $request->args ) == 1 && is_numeric( $request->args[0] ) )
+		{
+			error_log( "normal path" );
+			if( array_key_exists( 'regenerate', $request->params ) )
 			{
 				error_log( 'regenerate: ' . $request->params['regenerate'] );
 
@@ -56,7 +92,7 @@ class PhotoController extends BaseController
 				else if( $request->params['regenerate'] == 'info' )
 				{
 					error_log( 'regenerate info ' . $request->args[0] );
-					
+
 					$this->refreshInfoFromFlickr( $request->args[0] );
 				}
 
@@ -67,80 +103,122 @@ class PhotoController extends BaseController
 			{
 				$this->renderPhoto( $xtpl, $request->args[0] );
 			}
-        }
+		}
+		else if( $albumId != null )
+		{
+			$photoId = $request->args[0];
+			$albumSlug = $request->args[1];
+
+			if( $albumSlug == $this->ALBUM_STUB )
+			{
+				$this->renderPhoto( $xtpl, $photoId, $albumId );
+			}
+		}
 		else
 		{
 			$photoIds = getRandomPhoto();
-			
-			header( 'Location: /photo/'.$photoIds['id'] );
+
+			header( 'Location: /photo/' . $photoIds['id'] );
 			exit();
 		}
-        
-        $xtpl->parse('main.body');
-    }
-	
+
+		$xtpl->parse( 'main.body' );
+	}
+
+	private function getAlbumId( $request )
+	{
+		if( count( $request->args ) == 3
+			&& is_numeric( $request->args[0] )
+			&& $request->args[1] == $this->ALBUM_STUB
+			&& is_numeric( $request->args[2] ) )
+		{
+			return $request->args[2];
+		}
+		else
+		{
+			return null;
+		}
+	}
+
 	public function getRichTitle()
 	{
 		return $this->currentPhoto->title;
 	}
-	
+
 	public function getRichDescription()
 	{
 		return $this->getRichTitle() . ' - ' . $this->currentPhoto->description;
 	}
-	
+
 	public function getRichImage()
 	{
 		return $this->currentPhoto->thumbnail;
 	}
-    
-    private function renderPhoto( $xtpl, $photoId )
-    {
-        $db = getDb();
-		
-		if( $photoId <= $db->photos->count("*") )
+	
+	public function getBlurredBackgroundPhotoUrl( $todaysPhoto )
+	{
+		if( $this->albumId != null )
+		{
+			return b2GetPublicBlurUrl( $this->albumData['cover_photo_id'] );
+		}
+		else
+		{
+			return parent::getBlurredBackgroundPhotoUrl( $todaysPhoto );
+		}
+	}
+
+	private function renderPhoto( $xtpl, $photoId, $albumId = null )
+	{
+		$db = getDb();
+
+		if( $photoId <= $db->photos->count( "*" ) )
 		{
 			$this->addCssFile( '/css/photo.css', $xtpl );
 			$this->addJsFile( '/js/photo.js', $xtpl );
-			$xtpl->assign_file('BODY_FILE', 'templates/photo.html');
+			$xtpl->assign_file( 'BODY_FILE', 'templates/photo.html' );
 
-			$photoData = $db->photos[$photoId];
+			$photoData = $db->photos[ $photoId ];
 			$photoFlickr = getPhoto( $photoId, true, 1024, 1024 );
 
 			$this->currentPhoto = $photoFlickr;
-			
+
 			$locationParts = explode( ',', $photoFlickr->location );
-			
+
 			$this->addSeoLocation( $locationParts[0], $locationParts[1], $xtpl );
 
-			if( $photoId-1 > 0 )
+			if( $this->albumData != null && false )// This is not ready yet, need to get actualy prev and next from album
 			{
-				$xtpl->assign( 'HAS_PREV_PHOTO', 'true' );
-				$xtpl->assign( 'PREV_PHOTO_URL', '/photo/'.($photoId-1) );
-			}
-			else if( $this->isAuthenticated() )
-			{
-				$xtpl->assign( 'HAS_PREV_PHOTO', 'false' );
-				$xtpl->assign( 'PREV_PHOTO_URL', '/admin' );
-			}
-			else
-			{
-				$xtpl->assign( 'HAS_PREV_PHOTO', 'false' );
-			}
+				if( $photoId - 1 > 0 )
+				{
+					$xtpl->assign( 'HAS_PREV_PHOTO', 'true' );
+					$xtpl->assign( 'PREV_PHOTO_URL', '/photo/' . ($photoId - 1) );
+				}
+				else if( $this->isAuthenticated() )
+				{
+					$xtpl->assign( 'HAS_PREV_PHOTO', 'false' );
+					$xtpl->assign( 'PREV_PHOTO_URL', '/admin' );
+				}
+				else
+				{
+					$xtpl->assign( 'HAS_PREV_PHOTO', 'false' );
+				}
 
-			if( $photoId+1 <= $db->photos()->max('id') )
-			{
-				$xtpl->assign( 'HAS_NEXT_PHOTO', 'true' );
-				$xtpl->assign( 'NEXT_PHOTO_URL', '/photo/'.($photoId+1) );
-			}
-			else if( $this->isAuthenticated() )
-			{
-				$xtpl->assign( 'HAS_NEXT_PHOTO', 'false' );
-				$xtpl->assign( 'NEXT_PHOTO_URL', '/admin' );
-			}
-			else
-			{
-				$xtpl->assign( 'HAS_NEXT_PHOTO', 'false' );
+				if( $photoId + 1 <= $db->photos()->max( 'id' ) )
+				{
+					$xtpl->assign( 'HAS_NEXT_PHOTO', 'true' );
+					$xtpl->assign( 'NEXT_PHOTO_URL', '/photo/' . ($photoId + 1) );
+				}
+				else if( $this->isAuthenticated() )
+				{
+					$xtpl->assign( 'HAS_NEXT_PHOTO', 'false' );
+					$xtpl->assign( 'NEXT_PHOTO_URL', '/admin' );
+				}
+				else
+				{
+					$xtpl->assign( 'HAS_NEXT_PHOTO', 'false' );
+				}
+
+				$xtpl->parse( 'main.body.photo_nav_js_controls' );
 			}
 
 			$xtpl->assign( 'PHOTO_ID', $photoId );
@@ -151,7 +229,7 @@ class PhotoController extends BaseController
 
 			$xtpl->assign( 'THUMBNAIL_URL', b2GetPublicThumbnailUrl( $photoId ) );
 
-			if( empty($photoFlickr->location) )
+			if( empty( $photoFlickr->location ) )
 			{
 				if( $this->isAuthenticated() )
 				{
@@ -179,24 +257,24 @@ class PhotoController extends BaseController
 
 			if( $this->isAuthenticated() )
 			{
-				if( !empty($photoData['photowall_id']) )
+				if( !empty( $photoData['photowall_id'] ) )
 				{
 					$photoWallId = $photoData['photowall_id'];
 					$xtpl->assign( 'PHOTOWALL_ID', $photoData['photowall_id'] );
 				}
 				else
 				{
-					$xtpl->assign( 'NEXT_PHOTOWALL_ID', $db->photos()->max('photowall_id')+1 );
+					$xtpl->assign( 'NEXT_PHOTOWALL_ID', $db->photos()->max( 'photowall_id' ) + 1 );
 					$xtpl->assign( 'PHOTOWALL_ID', '<em>not on the wall</em>' );
 
 					if( $this->isAuthenticated() )
 					{
-						$xtpl->parse('main.body.admin_links.add_photowall');
+						$xtpl->parse( 'main.body.admin_links.add_photowall' );
 					}
 				}
-				
-				$xtpl->parse('main.body.admin_links.photo_actions');
-				
+
+				$xtpl->parse( 'main.body.admin_links.photo_actions' );
+
 				$metaFiles = listMetaFiles( $photoId );
 				if( $metaFiles && count( $metaFiles ) > 0 )
 				{
@@ -204,39 +282,39 @@ class PhotoController extends BaseController
 					{
 						$xtpl->assign( 'META_FILE_NAME', $fileName );
 						$xtpl->assign( 'META_FILE_URL', b2GetPublicMetaUrl( $photoId, $fileName ) );
-						$xtpl->parse('main.body.admin_links.meta_file');
+						$xtpl->parse( 'main.body.admin_links.meta_file' );
 					}
 				}
-				
-				$xtpl->parse('main.body.admin_links');
+
+				$xtpl->parse( 'main.body.admin_links' );
 			}
 		}
 		else
 		{
 			$this->addCssFile( '/css/not_found.css', $xtpl );
-			$xtpl->assign_file('BODY_FILE', 'templates/photo_not_found.html');
+			$xtpl->assign_file( 'BODY_FILE', 'templates/photo_not_found.html' );
 		}
-    }
-    
+	}
+
 	public function post( $request )
 	{
 		if( $this->enforceAuth() )
 		{
-			if( count($request->args) == 1 && is_numeric( $request->args[0] ) )
+			if( count( $request->args ) == 1 && is_numeric( $request->args[0] ) )
 			{
 				$photoId = $request->args[0];
 
 				$db = getDb();
-				$photoRow = $db->photos[$photoId];
+				$photoRow = $db->photos[ $photoId ];
 				if( $photoRow )
 				{
 					$success = false;
-					
-					if( isset($request->post['add_to_photowall']) )
+
+					if( isset( $request->post['add_to_photowall'] ) )
 					{
-						if( empty($photoRow['photowall_id']) )
+						if( empty( $photoRow['photowall_id'] ) )
 						{
-							$photoRow['photowall_id'] = $db->photos()->max('photowall_id')+1;
+							$photoRow['photowall_id'] = $db->photos()->max( 'photowall_id' ) + 1;
 							$success = $photoRow->update();
 						}
 						else
@@ -247,21 +325,21 @@ class PhotoController extends BaseController
 					}
 					else
 					{
-						$photoRow['wallpaper'] = isset($request->post['is_wallpaper']) ? 1 : 0;
-						$photoRow['photoframe'] = isset($request->post['is_photoframe']) ? 1 : 0;
-						$photoRow['highlight'] = isset($request->post['is_highlight']) ? 1 : 0;
+						$photoRow['wallpaper'] = isset( $request->post['is_wallpaper'] ) ? 1 : 0;
+						$photoRow['photoframe'] = isset( $request->post['is_photoframe'] ) ? 1 : 0;
+						$photoRow['highlight'] = isset( $request->post['is_highlight'] ) ? 1 : 0;
 
 						$success = $photoRow->update();
 					}
-					
+
 					if( $success == 0 || $success == 1 )
 					{
 						if( $photoRow['wallpaper'] == 1 )
 						{
 							addBlurMeta( $photoId );
 						}
-						
-						header("Location:/photo/$photoId");
+
+						header( "Location:/photo/$photoId" );
 					}
 					else
 					{
@@ -273,10 +351,10 @@ class PhotoController extends BaseController
 					echo 'Could not find photo by ID';
 				}
 			}
-        }
+		}
 		else
 		{
-			if( count($request->args) == 1 && is_numeric( $request->args[0] ) )
+			if( count( $request->args ) == 1 && is_numeric( $request->args[0] ) )
 			{
 				$photoId = $request->args[0];
 			}
@@ -285,22 +363,22 @@ class PhotoController extends BaseController
 				echo 'No photo id provided';
 			}
 		}
-    }
-	
+	}
+
 	private function getZoomedOutMapUrl( $location )
 	{
 		return "http://maps.googleapis.com/maps/api/staticmap?center=$location&zoom=6&scale=1&size=700x400&maptype=terrain&key=$this->googleMapsApiKey&format=png&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%%7Clabel:%7C$location";
 	}
-	
+
 	private function getZoomedInMapUrl( $location )
 	{
 		return "http://maps.googleapis.com/maps/api/staticmap?center=$location&zoom=15&scale=1&size=800x800&maptype=terrain&key=$this->googleMapsApiKey&format=png&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:%7C$location";
 	}
-	
+
 	private function refreshInfoFromFlickr( $id )
 	{
 		$db = getDb();
-		$flickrId = $db->photos[$id]['flickr_id'];
+		$flickrId = $db->photos[ $id ]['flickr_id'];
 
 		updatePhotoInfoFromFlickr( $id, $flickrId, $db );
 	}

@@ -73,12 +73,26 @@
 				</li>
 			</ul>
 		</div>
-			
+
+        <div class="mdl-card navigation-card mdl-cell mdl-cell--4-col mdl-cell--4-col-phone">
+            <div class="mdl-card__title">
+                <h4 class="mdl-card__title-text">Stats</h4>
+            </div>
+            Photo Frame Photos: {TOTAL_PHOTO_FRAME_PHOTOS} <br />
+            Photo Wall Photos: {TOTAL_PHOTO_WALL_PHOTOS} <br />
+            Wallpaper Photos: {TOTAL_WALLPAPER_PHOTOS} <br />
+            Photos: {TOTAL_PHOTOS} <br />
+        </div>
+
 		<div class="mdl-card admin-card mdl-cell mdl-cell--10-col">
 			<div class="mdl-card__title">
 				<h4 class="mdl-card__title-text">Photos</h4>
 			</div>
 			<div class="adventure-content center-table">
+                <a href="/admin/home?browse=wallpaper">Wallpapers</a> |
+                <a href="/admin/home?browse=photowall">Photowall</a> |
+                <a href="/admin/home?browse=photoframe">Photo Frame</a>
+                <br />
 				<table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
 					<thead>
 						<tr style="background-color:rgba(0, 0, 0, 0.1);">

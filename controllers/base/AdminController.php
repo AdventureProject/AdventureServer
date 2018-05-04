@@ -38,7 +38,7 @@ class AdminController extends BaseController
             {
                 if( $request->args[0] == 'home' )
                 {
-                    $this->renderHome( $xtpl );
+                    $this->renderHome( $xtpl, $request );
                 }
 				else if( $request->args[0] == 'refreshcache' )
                 {
@@ -72,8 +72,8 @@ class AdminController extends BaseController
             {
 				$this->addCssFile( '/css/admin_auth.css', $xtpl );
 				$this->addJsFile( '/js/admin_auth.js', $xtpl );
-                $xtpl->assign_file('BODY_FILE', 'templates/admin_auth.html');
-                $xtpl->parse('main.body');
+				$xtpl->assign_file('BODY_FILE', 'templates/admin_auth.html');
+				$xtpl->parse('main.body');
             }
         }
     }
@@ -97,45 +97,76 @@ class AdminController extends BaseController
         }
     }
     
-    private function renderHome( $xtpl )
+    private function renderHome( $xtpl, $request )
     {
         $xtpl->assign_file('BODY_FILE', 'templates/admin_home.html');
         
         $db = getDb();
-        
-        foreach ($db->photos() as $id => $photo)
-        {
-            $xtpl->assign( 'PHOTO_ID', $id );
-            $xtpl->assign( 'FLICKR_ID', $photo['flickr_id'] );
-            $xtpl->assign( 'IS_WALLPAPER', $photo['wallpaper'] == 1 ? 'YES' : 'no' );
-            $xtpl->assign( 'IS_PHOTOFRAME', $photo['photoframe'] == 1 ? 'YES' : 'no' );
-            $xtpl->assign( 'PHOTOWALL_ID', $photo['photowall_id'] );
-			
-			$xtpl->assign( 'PHOTO_TITLE', substr( $photo['title'], 0, 48 ) );
-			$xtpl->assign( 'PHOTO_THUMBNAIL', b2GetPublicThumbnailUrl( $id ) );
-			
-			$xtpl->assign( 'PHOTO_LOCATION', $photo['location'] );
-			
-			if( $id % 2 == 0 )
+		$pdo = getDbPdo();
+
+		$totalPhotoFrame = $pdo->query("SELECT COUNT(id) AS total FROM `photos` WHERE `photoframe` = 1")->fetch()['total'];
+		$totalWallpaper = $pdo->query("SELECT COUNT(id) AS total FROM `photos` WHERE `wallpaper` = 1")->fetch()['total'];
+		$totalPhotoWall = $pdo->query("SELECT COUNT(id) AS total FROM `photos` WHERE `photowall_id` IS NOT NULL")->fetch()['total'];
+		$totalPhotos = $pdo->query("SELECT COUNT(id) AS total FROM `photos`")->fetch()['total'];
+
+		$pdo = null;
+
+        $xtpl->assign( 'TOTAL_PHOTO_FRAME_PHOTOS', $totalPhotoFrame );
+		$xtpl->assign( 'TOTAL_PHOTO_WALL_PHOTOS', $totalPhotoWall );
+		$xtpl->assign( 'TOTAL_WALLPAPER_PHOTOS', $totalWallpaper );
+		$xtpl->assign( 'TOTAL_PHOTOS', $totalPhotos );
+
+		$browseType = $request->params['browse'];
+		$results = null;
+		if( $browseType == 'wallpaper' )
+		{
+			$results = $db->photos("wallpaper = ?", 1);
+		}
+		else if( $browseType == 'photowall' )
+		{
+			$results = $db->photos("photowall_id IS NOT NULL");
+		}
+		else if( $browseType == 'photoframe' )
+		{
+			$results = $db->photos("photoframe = ?", 1);
+		}
+
+		if( $results != null )
+		{
+			foreach( $results as $id => $photo )
 			{
-				$xtpl->parse('main.body.photo_row.alt');
+				$xtpl->assign( 'PHOTO_ID', $id );
+				$xtpl->assign( 'FLICKR_ID', $photo['flickr_id'] );
+				$xtpl->assign( 'IS_WALLPAPER', $photo['wallpaper'] == 1 ? 'YES' : 'no' );
+				$xtpl->assign( 'IS_PHOTOFRAME', $photo['photoframe'] == 1 ? 'YES' : 'no' );
+				$xtpl->assign( 'PHOTOWALL_ID', $photo['photowall_id'] );
+
+				$xtpl->assign( 'PHOTO_TITLE', substr( $photo['title'], 0, 48 ) );
+				$xtpl->assign( 'PHOTO_THUMBNAIL', b2GetPublicThumbnailUrl( $id ) );
+
+				$xtpl->assign( 'PHOTO_LOCATION', $photo['location'] );
+
+				if( $id % 2 == 0 )
+				{
+					$xtpl->parse( 'main.body.photo_row.alt' );
+				}
+				else
+				{
+					$xtpl->parse( 'main.body.photo_row.default' );
+				}
+
+				if( !$photo['location'] )
+				{
+					$xtpl->parse( 'main.body.photo_row.location_false' );
+				}
+				else
+				{
+					$xtpl->parse( 'main.body.photo_row.location_true' );
+				}
+
+				$xtpl->parse( 'main.body.photo_row' );
 			}
-			else
-			{
-				$xtpl->parse('main.body.photo_row.default');
-			}
-			
-			if( !$photo['location'] )
-			{
-				$xtpl->parse('main.body.photo_row.location_false');
-			}
-			else
-			{
-				$xtpl->parse('main.body.photo_row.location_true');
-			}
-			
-            $xtpl->parse('main.body.photo_row');
-        }
+		}
         
         $xtpl->parse('main.body');
     }

@@ -18,7 +18,7 @@ abstract class BaseController extends Controller
 
 		if( $this->blurBackground() )
 		{
-			$xtpl->assign('BLURRED_BACKGROUND', b2GetPublicBlurUrl( $todaysPhoto->id ));
+			$xtpl->assign('BLURRED_BACKGROUND', $this->getBlurredBackgroundPhotoUrl( $todaysPhoto ));
 			$xtpl->parse('main.blur_background');
 		}
 		else
@@ -30,6 +30,7 @@ abstract class BaseController extends Controller
 
 		if( $this->provideBack() === true )
 		{
+			/* I think we may want to just keep this simple
 			$url = (array_key_exists('HTTP_REFERER', $_SERVER) ? $_SERVER['HTTP_REFERER']  : "");
 			if( $this->checkRootDomain( $url ) == false )
 			{
@@ -42,6 +43,8 @@ abstract class BaseController extends Controller
 			{
 				$url = $this->getBackUrl();
 			}
+			*/
+			$url = $this->getBackUrl();
 
 			$xtpl->assign('BACK_URL', $url);
 			$xtpl->parse('main.nav_back');
@@ -68,6 +71,11 @@ abstract class BaseController extends Controller
 
 		$xtpl->parse('main');
 		$xtpl->out('main');
+	}
+
+	public function getBlurredBackgroundPhotoUrl( $todaysPhoto )
+	{
+		return b2GetPublicBlurUrl( $todaysPhoto->id );
 	}
   
 	abstract public function getTitle();

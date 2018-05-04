@@ -28,6 +28,7 @@ class AlbumsController extends BaseController
 	
 	public function getBody( $request, $todaysPhoto, $xtpl )
 	{
+		$this->addCssFile( '/css/albums.css', $xtpl );
 		$this->addCssFile( '/css/zoom.css', $xtpl );
 		
 		$xtpl->assign_file('BODY_FILE', 'templates/albums.html');
@@ -38,6 +39,11 @@ class AlbumsController extends BaseController
 		{
 			$xtpl->assign('ALBUM_ID', $album['id']);
 			$xtpl->assign('ALBUM_TITLE', $album['title']);
+			$xtpl->assign('ALBUM_ID', $album['id']);
+			$xtpl->assign('ALBUM_IMAGE_URL', b2GetPublicThumbnailUrl( $album['cover_photo_id'] ) );
+			$xtpl->assign('ALBUM_URL', 'album/' . $album['id']);
+
+			$xtpl->parse('main.body.album_style');
 			$xtpl->parse('main.body.album');
 		}
 		

@@ -33,7 +33,7 @@ class AddPhotoAlbumController extends BaseController
     {
         if( !empty($request->post['flickr_album_id']) && is_numeric($request->post['flickr_album_id']) )
         {
-			set_time_limit( 600 );
+			set_time_limit( 1200 );
 
 			error_log('flickr album id provided' );
 			$flickrAlbumId = $request->post['flickr_album_id'];

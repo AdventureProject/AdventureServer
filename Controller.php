@@ -4,6 +4,13 @@ require_once('Request.php');
 
 abstract class Controller
 {
+	private $request = null;
+
+	public function getRequest()
+	{
+		return $this->request;
+	}
+
     public function __construct( $requiresAuth, $config )
     {
         $this->requiresAuth = $requiresAuth;
@@ -28,6 +35,8 @@ abstract class Controller
     
     public function handle_request( $request )
     {
+    	$this->request = $request;
+
         if( $this->requiresAuth && !$this->isAuthenticated() )
         {
             header('Location:'.$this->config->authUrl);

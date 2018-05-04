@@ -1,6 +1,6 @@
 function confirmPhotoWall( elem )
 {
-	return confirm('Do you really want to all this to the PhotoWall?');
+	return confirm('Do you really want to add this to the PhotoWall?');
 }
 
 $(document).ready(function() {

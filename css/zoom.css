@@ -4,7 +4,7 @@
 
 .zooming:hover,
 .zooming:focus {
-	transform: scale(1.05);
+	transform: scale(1.025);
 	transition: all .5s;
 	z-index: 999;
 }

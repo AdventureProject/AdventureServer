@@ -25,6 +25,24 @@ function getDb()
 	return $adventure;
 }
 
+function getDbPdo()
+{
+	global $keys;
+	$servername = "localhost";
+
+	try {
+		$conn = new PDO("mysql:host=$servername;dbname={$keys->mysql->database}", $keys->mysql->user, $keys->mysql->password);
+		// set the PDO error mode to exception
+		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+		return $conn;
+	}
+	catch(PDOException $e)
+	{
+		error_log( "Connection failed: " . $e->getMessage() );
+	}
+}
+
 function getRandomPhoto()
 {
 	$db = getDb();
@@ -367,7 +385,7 @@ function addBlurMeta( $photoId, $force = false )
 			$image = new Imagick( $localFile );
 			if( $image )
 			{
-				$image->gaussianBlurImage( 15, 5 );
+				$image->gaussianBlurImage( 15, 10 );
 
 				$image->writeImage( $localFile );
 				error_log( 'Proccessed image: ' . $localFile );
@@ -424,7 +442,14 @@ function createPhotoImport( $flickrId, $flickrAlbumId, $targetAlbum, $isAlbumCov
 			'is_album_cover' => $isAlbumCoverPhoto ? 1 : 0 );
 
 		$insertResult = $db->photo_import()->insert( $newImportTask );
-		$importTaskId = $insertResult['id'];
+		if( $insertResult )
+		{
+			$importTaskId = $insertResult['id'];
+		}
+		else
+		{
+			error_log('Failed to insert Import Task into DB!');
+		}
 	}
 	else
 	{
