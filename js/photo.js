@@ -4,26 +4,26 @@ function confirmPhotoWall( elem )
 }
 
 $(document).ready(function() {
-      $("#body_container").scroll(function() {
-		  var isElementInView = Utils.isElementInView($('#info_card'), true, true);
-          if( isElementInView )
-		  {
-			$("#info_button").fadeOut();
-		  }
-		  else
-		  {
-			  $("#info_button").fadeIn();
-		  }
-      });
-	
-	$("#info_button").on('click', function(e) {
-		 e.preventDefault();
-		 var target = $(this).attr('href');
-		 $('html, body, #body_container').animate({
-		   scrollTop: ($(target).offset().top)
-		 }, 500);
-	  });
-  });
+    $("#body_container").scroll(function() {
+        var isElementInView = Utils.isElementInView($('#info_card'), true, true);
+        if( isElementInView )
+        {
+            $("#info_button").fadeOut();
+        }
+        else
+        {
+            $("#info_button").fadeIn();
+        }
+    });
+
+    $("#info_button").on('click', function(e) {
+        e.preventDefault();
+        var target = $(this).attr('href');
+        $('html, body, #body_container').animate({
+            scrollTop: ($(target).offset().top)
+        }, 500);
+    });
+});
 
 function Utils() {
 

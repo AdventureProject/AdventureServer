@@ -76,7 +76,17 @@ class PhotoController extends BaseController
 
 		$albumId = $this->getAlbumId( $request );
 
-		if( count( $request->args ) == 1 && is_numeric( $request->args[0] ) )
+		if( $albumId != null )
+		{
+			$photoId = $request->args[0];
+			$albumSlug = $request->args[1];
+
+			if( $albumSlug == $this->ALBUM_STUB )
+			{
+				$this->renderPhoto( $xtpl, $photoId, $albumId );
+			}
+		}
+		else if( is_numeric( $request->args[0] ) )
 		{
 			error_log( "normal path" );
 			if( array_key_exists( 'regenerate', $request->params ) )
@@ -102,16 +112,6 @@ class PhotoController extends BaseController
 			else
 			{
 				$this->renderPhoto( $xtpl, $request->args[0] );
-			}
-		}
-		else if( $albumId != null )
-		{
-			$photoId = $request->args[0];
-			$albumSlug = $request->args[1];
-
-			if( $albumSlug == $this->ALBUM_STUB )
-			{
-				$this->renderPhoto( $xtpl, $photoId, $albumId );
 			}
 		}
 		else
@@ -173,8 +173,12 @@ class PhotoController extends BaseController
 
 		if( $photoId <= $db->photos->count( "*" ) )
 		{
+			$this->addCssFile( '/external/magnific-popup/magnific-popup.css', $xtpl );
+			$this->addJsFile( '/external/magnific-popup/jquery.magnific-popup.min.js', $xtpl );
+
 			$this->addCssFile( '/css/photo.css', $xtpl );
 			$this->addJsFile( '/js/photo.js', $xtpl );
+
 			$xtpl->assign_file( 'BODY_FILE', 'templates/photo.html' );
 
 			$photoData = $db->photos[ $photoId ];
@@ -219,6 +223,12 @@ class PhotoController extends BaseController
 				}
 
 				$xtpl->parse( 'main.body.photo_nav_js_controls' );
+			}
+
+			$request = $this->getRequest();
+			if( end($request->args ) == 'lightbox' )
+			{
+				$xtpl->parse( 'main.body.start_zoomed' );
 			}
 
 			$xtpl->assign( 'PHOTO_ID', $photoId );
