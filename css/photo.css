@@ -1,21 +1,5 @@
 .adventure.mdl-layout .mdl-layout__content {
-	padding-top: 0px;
-}
-
-.adventure .photo {
-	background-color: #f9f7f2;
-	padding: 16px;
-
-    position: relative;          /* where the next element will be automatically positioned */
-    display: inline-block;       /* causes element width to shrink to fit content */
-    left: 50%;                   /* moves left side of image/element to center of parent element */
-    transform: translate(-50%);  /* centers image/element on "left: 50%" position */
-	
-	width: auto;
-	height: auto;
-	
-	max-width: 85vw;
-	max-height: calc(85vh - 105px);
+	padding-top: 0;
 }
 
 .info_fab {
@@ -25,8 +9,31 @@
 	z-index: 99;
 }
 
+#photo_container {
+	background-color: #f9f7f2;
+	padding: 16px;
+	margin: auto;
+
+	width: auto;
+	height: auto;
+
+	position: relative;          /* where the next element will be automatically positioned */
+    display: inline-block;       /* causes element width to shrink to fit content */
+    left: 50%;                   /* moves left side of image/element to center of parent element */
+    transform: translate(-50%);  /* centers image/element on "left: 50%" position */
+}
+
 #primary_image {
-    cursor: zoom-in;
+	width: auto;
+	height: auto;
+
+	max-width: 85vw;
+	max-height: calc(85vh - 105px);
+
+    min-width: 256px;
+    min-height: 256px;
+
+	cursor: zoom-in;
 }
 
 .mfp-with-zoom .mfp-container,
