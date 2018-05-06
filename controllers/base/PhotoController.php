@@ -51,7 +51,7 @@ class PhotoController extends BaseController
 			if( $this->albumId != null )
 			{
 				$db = getDb();
-				$this->albumData = $db->albums[$this->albumId];
+				$this->albumData = $db->albums[ $this->albumId ];
 			}
 		}
 
@@ -76,7 +76,7 @@ class PhotoController extends BaseController
 		{
 			$photoId = $request->args[0];
 			$albumSlug = $request->args[1];
-			
+
 			if( $albumSlug == $this->ALBUM_STUB )
 			{
 				$this->renderPhoto( $xtpl, $photoId, $this->albumId );
@@ -85,7 +85,7 @@ class PhotoController extends BaseController
 		else if( is_numeric( $request->args[0] ) )
 		{
 			$this->addNavAction( 'random', 'shuffle', 'Random', '/photo/random', $xtpl );
-			
+
 			if( array_key_exists( 'regenerate', $request->params ) )
 			{
 				error_log( 'regenerate: ' . $request->params['regenerate'] );
@@ -149,14 +149,14 @@ class PhotoController extends BaseController
 
 	public function getRichDescription()
 	{
-		return $this->getRichTitle() . ' - ' . $this->currentPhoto->description;
+		return $this->currentPhoto->description;
 	}
 
 	public function getRichImage()
 	{
 		return $this->currentPhoto->thumbnail;
 	}
-	
+
 	public function getBlurredBackgroundPhotoUrl( $todaysPhoto )
 	{
 		if( $this->albumId != null )
@@ -201,21 +201,21 @@ class PhotoController extends BaseController
 							( SELECT photos.id FROM photos, album_photos
 								WHERE photos.id = album_photos.photos_id AND album_photos.albums_id = '$albumId' AND photos.date_taken < '$dateTaken' ORDER BY id DESC LIMIT 1 ) AS prevId
 							LIMIT 1";
-				
+
 				$pdo = getDbPdo();
-				$sequenceResult = $pdo->query($sql)->fetch();
+				$sequenceResult = $pdo->query( $sql )->fetch();
 				$PDO = null;
-				
+
 				$nextId = $sequenceResult['nextId'];
 				$prevId = $sequenceResult['prevId'];
-	
+
 				if( $prevId != null )
 				{
 					$url = '/photo/' . $prevId . '/album/' . $albumId;
-					
+
 					$xtpl->assign( 'HAS_PREV_PHOTO', 'true' );
-					$xtpl->assign( 'PREV_PHOTO_URL',  $url );
-					
+					$xtpl->assign( 'PREV_PHOTO_URL', $url );
+
 					$this->addNavAction( 'previous', 'keyboard_arrow_left', 'Previous', $url, $xtpl );
 				}
 				else
@@ -226,10 +226,10 @@ class PhotoController extends BaseController
 				if( $nextId != null )
 				{
 					$url = '/photo/' . $nextId . '/album/' . $albumId;
-					
+
 					$xtpl->assign( 'HAS_NEXT_PHOTO', 'true' );
 					$xtpl->assign( 'NEXT_PHOTO_URL', $url );
-					
+
 					$this->addNavAction( 'next', 'keyboard_arrow_right', 'Next', $url, $xtpl );
 				}
 				else
@@ -241,7 +241,7 @@ class PhotoController extends BaseController
 			}
 
 			$request = $this->getRequest();
-			if( end($request->args ) == 'lightbox' )
+			if( end( $request->args ) == 'lightbox' )
 			{
 				$xtpl->parse( 'main.body.start_zoomed' );
 			}
@@ -264,19 +264,24 @@ class PhotoController extends BaseController
 				{
 					$xtpl->assign( 'PHOTO_LOCATION', '<em>No location data</em>' );
 				}
-				
+
 				$xtpl->assign( 'MAP_ZOOMED_OUT', '/images/no_location_out.jpg' );
 				$xtpl->assign( 'MAP_ZOOMED_IN', '/images/no_location_in.jpg' );
 			}
 			else
 			{
 				$xtpl->assign( 'PHOTO_LOCATION', $photoFlickr->location );
-				
+
 				$xtpl->assign( 'MAP_ZOOMED_OUT', $this->getZoomedOutMapUrl( $photoFlickr->location ) );
 				$xtpl->assign( 'MAP_ZOOMED_IN', $this->getZoomedInMapUrl( $photoFlickr->location ) );
 			}
 
-			$xtpl->assign( 'PHOTO_DESCRIPTION', $photoFlickr->description );
+			if( $photoFlickr->description != null && !empty( $photoFlickr->description ) )
+			{
+				$xtpl->assign( 'PHOTO_DESCRIPTION', $photoFlickr->description );
+				$xtpl->parse( 'main.body.description' );
+			}
+
 			$xtpl->assign( 'FLICKR_IMG', $photoFlickr->image );
 
 			$xtpl->assign( 'IS_WALLPAPER', $photoData['wallpaper'] == 1 ? 'checked' : '' );

@@ -1,6 +1,5 @@
 {
     "require": {
-        "aws/aws-sdk-php": "3.*",
         "kamilZ/b2backblaze": "0.1.*"
     }
 }

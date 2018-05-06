@@ -13,13 +13,6 @@
     min-height: 1000px;
 }
 
-.album-header-card span.date {
-    font-weight: bold;
-    font-size: 18pt;
-	margin-top: 16px;
-    margin-bottom: 16px;
-}
-
 .album-header-card span.description {
     font-size: 14pt;
 	font-style: italic;
@@ -27,13 +20,13 @@
 }
 
 .album-header-card .mdl-card__media {
-	padding: 0px;
+	padding: 0;
 }
 
 .album-header-card div.mdl-card__title {
 	width: 100%;
 	height: 100%;
-	margin: 0px;
+	margin: 0;
 	
 	display: flex;
   	justify-content: center;
@@ -108,4 +101,43 @@
 
 h2.title {
 	text-align: center;
+}
+
+.album_day_separator {
+    flex: 1 0 100%;
+    display: inline-block;
+    width: 100%;
+
+    margin-left: 8px;
+    margin-right: 8px;
+
+    color: white;
+ }
+
+.album_day_separator > h1 {
+    margin-bottom: 0;
+    font-size: calc(2vw + 2vh + 1vmin);
+}
+
+.album_day_separator > hr {
+    margin-top: -16px;
+
+    border: none;
+    height: 4px;
+    background-color: #FFFFFF;
+}
+
+.album_time_separator {
+    flex: 1 0 100%;
+    display: inline-block;
+    width: 100%;
+
+    margin-left: 8px;
+    margin-right: 8px;
+
+    color: white;
+}
+
+.album_time_separator > h3 {
+    margin-bottom: 0;
 }

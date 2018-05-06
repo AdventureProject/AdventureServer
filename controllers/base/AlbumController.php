@@ -85,17 +85,68 @@ class AlbumController extends BaseController
 			$album = $db->albums[$albumId];
 			$coverPhoto = getPhotoById( $album['cover_photo_id'], true, 1024, 768 );
 
+            $timeLineMode = $album['timeline_mode'];
+            if( array_key_exists('timeline', $request->params)
+                && is_numeric($request-params['timeline'])
+                && $request-params['timeline']> 0 & $request-params['timeline'] < 3)
+            {
+                $timeLineMode = $request->params['timeline'];
+            }
+
+            switch( $timeLineMode )
+            {
+                case 0:
+                    $this->addNavAction( 'timelinemode', 'av_timer', 'Timeline Mode Light', '?timeline=1', $xtpl );
+                    break;
+                case 1:
+                    $this->addNavAction( 'timelinemode', 'av_timer', 'Timeline Mode Full', '?timeline=2', $xtpl );
+                    break;
+                case 2:
+                    $this->addNavAction( 'timelinemode', 'av_timer', 'No Timeline Mode', '?timeline=0', $xtpl );
+                    break;
+            }
+
 			$xtpl->assign('ALBUM_TITLE', $album['title']);
 			$xtpl->assign('ALBUM_DESCRIPTION', $album['description']);
 			$albumDate = date("F j, Y", strtotime( $album['date'] ));
 			$xtpl->assign('ALBUM_DATE', $albumDate );
 			$xtpl->assign('ALBUM_PIC_URL', $coverPhoto->image );
 			$xtpl->parse('main.body.album_header');
-			
-			$albumPhotoResults = $db->photos()->select('photos.id, photos.title, photos.orientation')->where('album_photos:albums_id', $albumId)->order('date_taken ASC');
-			
+
+			$albumPhotoResults = $db->photos()->select('photos.id, photos.title, photos.date_taken, photos.orientation')->where('album_photos:albums_id', $albumId)->order('date_taken ASC');
+
+			$currentDayOfYear = null;
+			$currentHourOfDay = null;
 			while( $photo = $albumPhotoResults->fetch() )
 			{
+			    if( $timeLineMode > 0 )
+			    {
+                    $newDayOfYear = date("z", strtotime($photo['date_taken']));
+
+                    if ($currentDayOfYear != $newDayOfYear)
+                    {
+                        $currentDayOfYear = $newDayOfYear;
+
+                        $dayStr = date("l, F j", strtotime($photo['date_taken']));
+                        $xtpl->assign('ALBUM_DAY_SEPARATOR', $dayStr);
+                        $xtpl->parse('main.body.photo.day_separator');
+                    }
+
+                    if( $timeLineMode > 1 )
+                    {
+                        $newHourOfDay = date("H", strtotime($photo['date_taken']));
+
+                        if( $currentHourOfDay != $newHourOfDay )
+                        {
+                            $currentHourOfDay = $newHourOfDay;
+
+                            $timeStr = date("g A", strtotime($photo['date_taken']));
+                            $xtpl->assign('ALBUM_TIME_SEPARATOR', $timeStr);
+                            $xtpl->parse('main.body.photo.time_separator');
+                        }
+                    }
+                }
+
 				$xtpl->assign('PHOTO_ID', $photo['id']);
 				$xtpl->assign('PHOTO_URL', '/photo/' . $photo['id'] . '/album/' . $albumId );
 				$xtpl->assign('PHOTO_IMAGE_URL', b2GetPublicThumbnailUrl($photo['id']));

@@ -101,12 +101,15 @@
                             <h3 class="title">{PHOTO_TITLE}</h3>
                         </div>
                     </div>
-                    <div class="mdl-card__supporting-text meta mdl-color-text--grey-600">
+                    <div class="mdl-card__supporting-text meta">
 					    <img src="/images/photo_info_icon.png" class="comment__avatar">
 						<div>
 							<span>
-								<b>Date:</b> {PHOTO_DATE}<br />
-								<b>Description:</b> {PHOTO_DESCRIPTION}<br />
+                                <span class="mdl-color-text--grey-600 date">{PHOTO_DATE}</span>
+                                <!-- BEGIN: description -->
+                                <br /><br />
+                                <span class="description">{PHOTO_DESCRIPTION}</span>
+                                <!-- END: description -->
 							</span>
 						</div>
 					</div>
@@ -128,8 +131,10 @@
 					<div class="mdl-card__supporting-text meta mdl-color-text--grey-600">
 						<img src="/images/map_location_icon.png" class="comment__avatar">
 						<div>
-							<span>
-								<b>Coordinates:</b> {PHOTO_LOCATION}<br />
+							<span class="location">
+								<b>Coordinates:</b>
+                                <br />
+                                {PHOTO_LOCATION}
 							</span>
 						</div>
 					</div>

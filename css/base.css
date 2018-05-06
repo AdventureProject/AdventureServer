@@ -474,3 +474,10 @@ div.mdl-layout__drawer > nav.mdl-navigation > a.mdl-navigation__link i {
 body .adventure {
 	font-family: 'Roboto', 'Helvetica', sans-serif;
 }
+
+.adventure span.date {
+    font-weight: bold;
+    font-size: 18pt;
+    margin-top: 16px;
+    margin-bottom: 16px;
+}

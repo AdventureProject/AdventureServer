@@ -16,10 +16,6 @@
 
 	width: auto;
 	height: auto;
-	
-	/* This just gives us a slightly nicer initial size before the image loads in */
-	min-width: 150px;
-	min-height: 150px;
 
 	position: relative;          /* where the next element will be automatically positioned */
     display: inline-block;       /* causes element width to shrink to fit content */
@@ -44,6 +40,19 @@
 	background-position: center; 
 	background-image: url('/images/loading.gif');
 	*/
+}
+
+.adventure span.description {
+    color: black;
+    font-size: 14pt;
+}
+
+.adventure span.location {
+    font-size: 18pt;
+    margin-top: 16px;
+    margin-bottom: 16px;
+
+    line-height: 1em;
 }
 
 .mfp-with-zoom .mfp-container,
