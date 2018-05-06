@@ -31,6 +31,8 @@
 			}
 		</style>
 
+		<div class="mdl-grid center-items">
+		
 		<div class="mdl-card navigation-card mdl-cell mdl-cell--4-col mdl-cell--4-col-phone">
 			<div class="mdl-card__title">
 				<h4 class="mdl-card__title-text">Admin</h4>
@@ -66,11 +68,13 @@
 						<a href="/health">Health Monitor</a>
 					</span>
 				</li>
+				<!--
 				<li class="mdl-list__item">
 					<span class="mdl-list__item-primary-content">
 						<a href="/admin/refreshcache">Refresh Cache<br />(<em>will take several minutes</em>)</a>
 					</span>
 				</li>
+				-->
 			</ul>
 		</div>
 
@@ -81,7 +85,9 @@
             Photo Frame Photos: {TOTAL_PHOTO_FRAME_PHOTOS} <br />
             Photo Wall Photos: {TOTAL_PHOTO_WALL_PHOTOS} <br />
             Wallpaper Photos: {TOTAL_WALLPAPER_PHOTOS} <br />
+			Missing Location: {TOTAL_MISSING_LOCATION}<br />
             Photos: {TOTAL_PHOTOS} <br />
+			Albums: {TOTAL_ALBUMS} <br />
         </div>
 
 		<div class="mdl-card admin-card mdl-cell mdl-cell--10-col">
@@ -91,8 +97,19 @@
 			<div class="adventure-content center-table">
                 <a href="/admin/home?browse=wallpaper">Wallpapers</a> |
                 <a href="/admin/home?browse=photowall">Photowall</a> |
+				<a href="/admin/home?browse=missing_location">Missing Location</a> |
                 <a href="/admin/home?browse=photoframe">Photo Frame</a>
                 <br />
+				<form action="/admin/home" method="get">
+					Browse by Album ID: 
+					<input type="number" name="album_id" />
+					<input type="hidden" name="browse" value="album" />
+					<button type="submit">
+						GO
+					</button>
+				</form>
+				<br />
+				Total Results: {BROWSE_COUNT}<br />
 				<table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
 					<thead>
 						<tr style="background-color:rgba(0, 0, 0, 0.1);">
@@ -129,3 +146,4 @@
 					</table>
 				</div>
 			</div>
+		</div>

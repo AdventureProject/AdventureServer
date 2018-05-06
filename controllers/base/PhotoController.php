@@ -72,23 +72,20 @@ class PhotoController extends BaseController
 
 	public function getBody( $request, $todaysPhoto, $xtpl )
 	{
-		$this->addNavAction( 'random', 'shuffle', 'Random', '/photo/random', $xtpl );
-
-		$albumId = $this->getAlbumId( $request );
-
-		if( $albumId != null )
+		if( $this->albumId != null )
 		{
 			$photoId = $request->args[0];
 			$albumSlug = $request->args[1];
-
+			
 			if( $albumSlug == $this->ALBUM_STUB )
 			{
-				$this->renderPhoto( $xtpl, $photoId, $albumId );
+				$this->renderPhoto( $xtpl, $photoId, $this->albumId );
 			}
 		}
 		else if( is_numeric( $request->args[0] ) )
 		{
-			error_log( "normal path" );
+			$this->addNavAction( 'random', 'shuffle', 'Random', '/photo/random', $xtpl );
+			
 			if( array_key_exists( 'regenerate', $request->params ) )
 			{
 				error_log( 'regenerate: ' . $request->params['regenerate'] );
@@ -114,12 +111,17 @@ class PhotoController extends BaseController
 				$this->renderPhoto( $xtpl, $request->args[0] );
 			}
 		}
-		else
+		else if( $request->args[0] == 'random' )
 		{
 			$photoIds = getRandomPhoto();
 
 			header( 'Location: /photo/' . $photoIds['id'] );
 			exit();
+		}
+		else
+		{
+			$this->addCssFile( '/css/not_found.css', $xtpl );
+			$xtpl->assign_file( 'BODY_FILE', 'templates/photo_not_found.html' );
 		}
 
 		$xtpl->parse( 'main.body' );
@@ -171,7 +173,8 @@ class PhotoController extends BaseController
 	{
 		$db = getDb();
 
-		if( $photoId <= $db->photos->count( "*" ) )
+		$photoData = $db->photos[ $photoId ];
+		if( $photoData != null )
 		{
 			$this->addCssFile( '/external/magnific-popup/magnific-popup.css', $xtpl );
 			$this->addJsFile( '/external/magnific-popup/jquery.magnific-popup.min.js', $xtpl );
@@ -181,7 +184,6 @@ class PhotoController extends BaseController
 
 			$xtpl->assign_file( 'BODY_FILE', 'templates/photo.html' );
 
-			$photoData = $db->photos[ $photoId ];
 			$photoFlickr = getPhoto( $photoId, true, 1024, 1024 );
 
 			$this->currentPhoto = $photoFlickr;
@@ -190,32 +192,45 @@ class PhotoController extends BaseController
 
 			$this->addSeoLocation( $locationParts[0], $locationParts[1], $xtpl );
 
-			if( $this->albumData != null && false )// This is not ready yet, need to get actualy prev and next from album
+			if( $this->albumData != null )
 			{
-				if( $photoId - 1 > 0 )
+				$dateTaken = $photoData['date_taken'];
+				$sql = "SELECT 
+							( SELECT photos.id FROM photos, album_photos
+								WHERE photos.id = album_photos.photos_id AND album_photos.albums_id = '$albumId' AND photos.date_taken > '$dateTaken' LIMIT 1 ) AS nextId,
+							( SELECT photos.id FROM photos, album_photos
+								WHERE photos.id = album_photos.photos_id AND album_photos.albums_id = '$albumId' AND photos.date_taken < '$dateTaken' ORDER BY id DESC LIMIT 1 ) AS prevId
+							LIMIT 1";
+				
+				$pdo = getDbPdo();
+				$sequenceResult = $pdo->query($sql)->fetch();
+				$PDO = null;
+				
+				$nextId = $sequenceResult['nextId'];
+				$prevId = $sequenceResult['prevId'];
+	
+				if( $prevId != null )
 				{
+					$url = '/photo/' . $prevId . '/album/' . $albumId;
+					
 					$xtpl->assign( 'HAS_PREV_PHOTO', 'true' );
-					$xtpl->assign( 'PREV_PHOTO_URL', '/photo/' . ($photoId - 1) );
-				}
-				else if( $this->isAuthenticated() )
-				{
-					$xtpl->assign( 'HAS_PREV_PHOTO', 'false' );
-					$xtpl->assign( 'PREV_PHOTO_URL', '/admin' );
+					$xtpl->assign( 'PREV_PHOTO_URL',  $url );
+					
+					$this->addNavAction( 'previous', 'keyboard_arrow_left', 'Previous', $url, $xtpl );
 				}
 				else
 				{
 					$xtpl->assign( 'HAS_PREV_PHOTO', 'false' );
 				}
 
-				if( $photoId + 1 <= $db->photos()->max( 'id' ) )
+				if( $nextId != null )
 				{
+					$url = '/photo/' . $nextId . '/album/' . $albumId;
+					
 					$xtpl->assign( 'HAS_NEXT_PHOTO', 'true' );
-					$xtpl->assign( 'NEXT_PHOTO_URL', '/photo/' . ($photoId + 1) );
-				}
-				else if( $this->isAuthenticated() )
-				{
-					$xtpl->assign( 'HAS_NEXT_PHOTO', 'false' );
-					$xtpl->assign( 'NEXT_PHOTO_URL', '/admin' );
+					$xtpl->assign( 'NEXT_PHOTO_URL', $url );
+					
+					$this->addNavAction( 'next', 'keyboard_arrow_right', 'Next', $url, $xtpl );
 				}
 				else
 				{

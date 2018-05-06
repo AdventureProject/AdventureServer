@@ -99,6 +99,8 @@ class AdminController extends BaseController
     
     private function renderHome( $xtpl, $request )
     {
+		$this->addCssFile( '/css/admin_home.css', $xtpl );
+		
         $xtpl->assign_file('BODY_FILE', 'templates/admin_home.html');
         
         $db = getDb();
@@ -107,16 +109,22 @@ class AdminController extends BaseController
 		$totalPhotoFrame = $pdo->query("SELECT COUNT(id) AS total FROM `photos` WHERE `photoframe` = 1")->fetch()['total'];
 		$totalWallpaper = $pdo->query("SELECT COUNT(id) AS total FROM `photos` WHERE `wallpaper` = 1")->fetch()['total'];
 		$totalPhotoWall = $pdo->query("SELECT COUNT(id) AS total FROM `photos` WHERE `photowall_id` IS NOT NULL")->fetch()['total'];
+		$totalMissingLocation = $pdo->query("SELECT COUNT(id) AS total FROM `photos` WHERE `location` = ','")->fetch()['total'];
 		$totalPhotos = $pdo->query("SELECT COUNT(id) AS total FROM `photos`")->fetch()['total'];
+		$totalAlbums = $pdo->query("SELECT COUNT(id) AS total FROM `albums`")->fetch()['total'];
 
 		$pdo = null;
 
         $xtpl->assign( 'TOTAL_PHOTO_FRAME_PHOTOS', $totalPhotoFrame );
 		$xtpl->assign( 'TOTAL_PHOTO_WALL_PHOTOS', $totalPhotoWall );
 		$xtpl->assign( 'TOTAL_WALLPAPER_PHOTOS', $totalWallpaper );
+		$xtpl->assign( 'TOTAL_MISSING_LOCATION', $totalMissingLocation );
 		$xtpl->assign( 'TOTAL_PHOTOS', $totalPhotos );
+		$xtpl->assign( 'TOTAL_ALBUMS', $totalAlbums );
 
 		$browseType = $request->params['browse'];
+		$albumId = $request->params['album_id'];
+		
 		$results = null;
 		if( $browseType == 'wallpaper' )
 		{
@@ -130,9 +138,20 @@ class AdminController extends BaseController
 		{
 			$results = $db->photos("photoframe = ?", 1);
 		}
+		else if( $browseType == 'missing_location' )
+		{
+			$results = $db->photos("location = ?", ',');
+		}
+		else if( $browseType == 'album' )
+		{
+			$results = $db->photos("location = ?", ',');
+			$results = $db->photos()->select('photos.*')->where('album_photos:albums_id', $albumId)->order('date_taken ASC');
+		}
 
 		if( $results != null )
 		{
+			$resultCount = $results->count();
+			$xtpl->assign( 'BROWSE_COUNT', $resultCount );
 			foreach( $results as $id => $photo )
 			{
 				$xtpl->assign( 'PHOTO_ID', $id );
