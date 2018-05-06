@@ -101,10 +101,12 @@
                 <a href="/admin/home?browse=photoframe">Photo Frame</a>
                 <br />
 				<form action="/admin/home" method="get">
-					Browse by Album ID: 
-					<input type="number" name="album_id" />
+					<div class="mdl-textfield mdl-js-textfield">
+						<input type="number" name="album_id" class="mdl-textfield__input" />
+						<label class="mdl-textfield__label" for="album_id">Browse by Album ID</label>
+					</div>
 					<input type="hidden" name="browse" value="album" />
-					<button type="submit">
+					<button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">
 						GO
 					</button>
 				</form>

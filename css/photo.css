@@ -16,6 +16,10 @@
 
 	width: auto;
 	height: auto;
+	
+	/* This just gives us a slightly nicer initial size before the image loads in */
+	min-width: 150px;
+	min-height: 150px;
 
 	position: relative;          /* where the next element will be automatically positioned */
     display: inline-block;       /* causes element width to shrink to fit content */
@@ -30,10 +34,16 @@
 	max-width: 85vw;
 	max-height: calc(85vh - 105px);
 
-    min-width: 256px;
-    min-height: 256px;
-
 	cursor: zoom-in;
+	
+	/* Show loading
+	min-width: 256px;
+    min-height: 256px;
+	
+	background-repeat: no-repeat;
+	background-position: center; 
+	background-image: url('/images/loading.gif');
+	*/
 }
 
 .mfp-with-zoom .mfp-container,

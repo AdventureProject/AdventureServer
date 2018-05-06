@@ -33,7 +33,7 @@ class PhotoController extends BaseController
 
 	public function provideBack()
 	{
-		return true;
+		return ($this->albumId != null);
 	}
 
 	public function get( $request )
