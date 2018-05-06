@@ -254,7 +254,7 @@ class PhotoController extends BaseController
 
 			$xtpl->assign( 'THUMBNAIL_URL', b2GetPublicThumbnailUrl( $photoId ) );
 
-			if( empty( $photoFlickr->location ) )
+			if( empty( $photoFlickr->location ) || $photoFlickr->location == ',' )
 			{
 				if( $this->isAuthenticated() )
 				{
@@ -264,17 +264,20 @@ class PhotoController extends BaseController
 				{
 					$xtpl->assign( 'PHOTO_LOCATION', '<em>No location data</em>' );
 				}
+				
+				$xtpl->assign( 'MAP_ZOOMED_OUT', '/images/no_location_out.jpg' );
+				$xtpl->assign( 'MAP_ZOOMED_IN', '/images/no_location_in.jpg' );
 			}
 			else
 			{
 				$xtpl->assign( 'PHOTO_LOCATION', $photoFlickr->location );
+				
+				$xtpl->assign( 'MAP_ZOOMED_OUT', $this->getZoomedOutMapUrl( $photoFlickr->location ) );
+				$xtpl->assign( 'MAP_ZOOMED_IN', $this->getZoomedInMapUrl( $photoFlickr->location ) );
 			}
 
 			$xtpl->assign( 'PHOTO_DESCRIPTION', $photoFlickr->description );
 			$xtpl->assign( 'FLICKR_IMG', $photoFlickr->image );
-
-			$xtpl->assign( 'MAP_ZOOMED_OUT', $this->getZoomedOutMapUrl( $photoFlickr->location ) );
-			$xtpl->assign( 'MAP_ZOOMED_IN', $this->getZoomedInMapUrl( $photoFlickr->location ) );
 
 			$xtpl->assign( 'IS_WALLPAPER', $photoData['wallpaper'] == 1 ? 'checked' : '' );
 			$xtpl->assign( 'IS_HIGHLIGHT', $photoData['highlight'] == 1 ? 'checked' : '' );
