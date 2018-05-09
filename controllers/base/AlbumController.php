@@ -108,13 +108,16 @@ class AlbumController extends BaseController
 
 			$xtpl->assign('ALBUM_TITLE', $album['title']);
 			$xtpl->assign('ALBUM_DESCRIPTION', $album['description']);
+			
 			$albumDate = date("F j, Y", strtotime( $album['date'] ));
 			$xtpl->assign('ALBUM_DATE', $albumDate );
 			$xtpl->assign('ALBUM_PIC_URL', $coverPhoto->image );
-			$xtpl->parse('main.body.album_header');
 
 			$albumPhotoResults = $db->photos()->select('photos.id, photos.title, photos.date_taken, photos.orientation')->where('album_photos:albums_id', $albumId)->order('date_taken ASC');
 
+			$xtpl->assign('ALBUM_NUM_PHOTOS', $albumPhotoResults->count());
+			$xtpl->parse('main.body.album_header');
+			
 			$currentDayOfYear = null;
 			$currentHourOfDay = null;
 			while( $photo = $albumPhotoResults->fetch() )

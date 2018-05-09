@@ -44,6 +44,9 @@ class ImportTasksController extends BaseController
 		}
 		else if( count( $request->args ) == 1 )
 		{
+			session_write_close();
+			set_time_limit( 2400 );
+			
 			if( $request->args[0] == 'all' )
 			{
 				$importTasks = $db->photo_import()->select('id')->order('id');

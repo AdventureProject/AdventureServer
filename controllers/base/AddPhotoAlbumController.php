@@ -33,7 +33,7 @@ class AddPhotoAlbumController extends BaseController
     {
         if( !empty($request->post['flickr_album_id']) && is_numeric($request->post['flickr_album_id']) )
         {
-			set_time_limit( 1200 );
+			set_time_limit( 2400 );
 
 			error_log('flickr album id provided' );
 			$flickrAlbumId = $request->post['flickr_album_id'];
@@ -78,7 +78,8 @@ class AddPhotoAlbumController extends BaseController
 
 					$method = 'flickr.photosets.getPhotos';
 					$args = array(	'photoset_id' => $flickrAlbumId,
-									'user_id' => $keys->flickr_api->user_id );
+									'user_id' => $keys->flickr_api->user_id,
+								 	'media' => 'photos' );
 					$responseAlbumPhotos = $flickr->call_method($method, $args);
 					
 					if( $flickr->ok( $responseAlbumPhotos ) )
@@ -94,6 +95,8 @@ class AddPhotoAlbumController extends BaseController
 
 							$importTaskId = createPhotoImport( $flickrPhoto['id'], $flickrAlbumId, $localAlbumId, $isCoverPhoto );
 						}
+						
+						session_write_close();
 
 						$importTasks = $db->photo_import('flickr_album_id', $flickrAlbumId);
 						while( $task = $importTasks->fetch() )

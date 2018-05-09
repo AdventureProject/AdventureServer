@@ -1,5 +1,5 @@
 .album-container {
-    width: 75vw;
+    width: 80vw;
 
     display: flex;
     flex-wrap: wrap;
@@ -45,6 +45,8 @@
     height: 400px;
     margin: 4px;
 
+    max-width: 400px;
+
     flex-shrink: 1;
     flex-grow: 1;
 }
@@ -54,10 +56,10 @@
     height: 400px;
     margin: 4px;
 
+    max-width: 800px;
+
     flex-shrink: 1;
     flex-grow: 2;
-
-    max-width: 800px;
 }
 
 .album-item:last-child{
@@ -79,12 +81,16 @@
         width: 400px;
         height: 400px;
         margin: 4px;
+
+        max-width: unset;
     }
 
     .album-item-land-card-image.mdl-card {
         width: 400px;
         height: 400px;
         margin: 4px;
+
+        max-width: unset;
     }
 }
 
@@ -117,7 +123,7 @@ h2.title {
 
 .album_day_separator > h1 {
     margin-bottom: 0;
-    font-size: calc(2vw + 2vh + 1vmin);
+    font-size: calc(4vh + 2vmin);
 }
 
 .album_day_separator > hr {
@@ -133,13 +139,16 @@ h2.title {
     display: inline-block;
     width: 100%;
 
-    margin-left: 8px;
-    margin-right: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
 
     color: white;
 }
 
 .album_time_separator > h3 {
     margin-bottom: 0;
-    font-size: calc(2vw + 2vh + 1vmin);
+}
+
+span.photo_count {
+	margin-top: 16px;
 }

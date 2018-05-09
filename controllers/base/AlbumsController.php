@@ -39,7 +39,6 @@ class AlbumsController extends BaseController
 		{
 			$xtpl->assign('ALBUM_ID', $album['id']);
 			$xtpl->assign('ALBUM_TITLE', $album['title']);
-			$xtpl->assign('ALBUM_ID', $album['id']);
 			$xtpl->assign('ALBUM_IMAGE_URL', b2GetPublicThumbnailUrl( $album['cover_photo_id'] ) );
 			$xtpl->assign('ALBUM_URL', 'album/' . $album['id']);
 

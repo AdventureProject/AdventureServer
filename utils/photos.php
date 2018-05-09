@@ -52,6 +52,9 @@ function getRandomPhoto()
 	$photoIds = array();
 	$photoIds['id'] = $data['id'];
 	$photoIds['flickr_id'] = $data['flickr_id'];
+	
+	$db->close();
+	$db = null;
 
 	return $photoIds;
 }
@@ -70,6 +73,9 @@ function getAllPhotos()
 
 		$photos[] = $photoIds;
 	}
+	
+	$db->close();
+	$db = null;
 
 	return $photos;
 }
@@ -83,6 +89,9 @@ function getRandomWallpaper()
 	$photoIds = array();
 	$photoIds['id'] = $data['id'];
 	$photoIds['flickr_id'] = $data['flickr_id'];
+	
+	$db->close();
+	$db = null;
 
 	return $photoIds;
 }
@@ -101,6 +110,9 @@ function getWallpapers()
 
 		$wallpapers[] = $photoIds;
 	}
+	
+	$db->close();
+	$db = null;
 
 	return $wallpapers;
 }
@@ -109,6 +121,8 @@ function getPhotoframePhoto()
 {
 	$db = getDb();
 	$photo = $db->photos()->select( 'id' )->where( 'photoframe', 1 )->order( "RAND()" )->limit( 1 )->fetch();
+	$db->close();
+	$db = null;
 
 	return $photo;
 }
@@ -125,6 +139,9 @@ function getPhotoForDayLocal( $dayOfYear )
 
 	$todaysPhotoData = $db->photos()->where( "wallpaper", 1 )->order( "RAND({$dayOfYear})" )->limit( 1 )->fetch();
 
+	$db->close();
+	$db = null;
+	
 	return $todaysPhotoData;
 }
 
@@ -191,6 +208,9 @@ function getPossiblePhotoSizes( $photoId )
 			break;
 		}
 	}
+	
+	$db->close();
+	$db = null;
 
 	return $sizes;
 }
@@ -230,6 +250,9 @@ function getPhoto( $photoId, $findSmallest = false, $minWidth = -1, $minHeight =
 	}
 
 	$todaysPhoto->thumbnail = b2GetPublicThumbnailUrl( $photoId );
+	
+	$db->close();
+	$db = null;
 
 	return $todaysPhoto;
 }
@@ -310,6 +333,9 @@ function findSmallest( $sizes, $minWidth, $minHeight, $imageType, $photoId )
 
 			unlink( $localFile );
 		}
+		
+		$db->close();
+		$db = null;
 	}
 	else
 	{
@@ -455,6 +481,9 @@ function createPhotoImport( $flickrId, $flickrAlbumId, $targetAlbum, $isAlbumCov
 	{
 		error_log( 'Flickr import already exists! State: ' . $existingImport['import_state'] );
 	}
+	
+	$db->close();
+	$db = null;
 
 	return $importTaskId;
 }
@@ -568,6 +597,9 @@ function processImportTask( $importTaskId )
 			}
 		}
 	}
+	
+	$db->close();
+	$db = null;
 
 	return $localId;
 }
@@ -794,8 +826,12 @@ function transferThumbnailFromFlickrToB2( $photoId, $force = false )
 	if( (!remoteFileExists( $ourThumbnailUrl ) || $force) )
 	{
 		error_log( 'transferThumbnailFromFlickrToB2 photoId: ' . $photoId );
-
-		$photoRow = getDb()->photos()->select( 'flickr_id' )->where( "id", $photoId )->fetch();
+		
+		$db = getDb();
+		$photoRow = $db->photos()->select( 'flickr_id' )->where( "id", $photoId )->fetch();
+		$db->close();
+		$db = null;
+		
 		$flickrId = $photoRow['flickr_id'];
 
 		$keys = getKeys();

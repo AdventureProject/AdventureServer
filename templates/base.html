@@ -5,7 +5,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=0">
 
 		<meta name="theme-color" content="#29388e">
 
@@ -65,8 +65,10 @@
 		<style>
 
 			html {
-				<!-- BEGIN: normal_background -->background: url({IMAGE}) no-repeat center center fixed;<!-- END: normal_background -->
-				<!-- BEGIN: blur_background -->background: linear-gradient( rgba(150,150,150,0.0), rgba(150,150,150,0.50) ), url({BLURRED_BACKGROUND}) no-repeat center center fixed;<!-- END: blur_background -->
+				<!-- BEGIN: normal_background -->background: url({IMAGE}) no-repeat center center fixed;
+				<!-- END: normal_background -->
+				<!-- BEGIN: blur_background -->background: linear-gradient( rgba(150,150,150,0.0), rgba(150,150,150,0.50) ), url({BLURRED_BACKGROUND}) no-repeat center center fixed;
+				<!-- END: blur_background -->
 					
 				-webkit-background-size: cover;
 				-moz-background-size: cover;
@@ -123,6 +125,7 @@
 					<hr />
 					<a class="mdl-navigation__link" href="/highlights"><i class="material-icons">grade</i> Highlights</a>
 					<a class="mdl-navigation__link" href="/albums"><i class="material-icons">photo_library</i> Albums</a>
+					<a class="mdl-navigation__link" href="/heatmap"><i class="material-icons">map</i> Heatmap</a>
 					<a class="mdl-navigation__link" href="/360photos"><i class="material-icons">camera</i> 360 Photos</a>
 					<a class="mdl-navigation__link" href="/videos"><i class="material-icons">local_movies</i> Videos</a>
 					<a class="mdl-navigation__link" href="/"><i class="material-icons">camera_alt</i> Today's Photo</a>

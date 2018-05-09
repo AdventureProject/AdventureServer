@@ -140,7 +140,7 @@ class AdminController extends BaseController
 		}
 		else if( $browseType == 'missing_location' )
 		{
-			$results = $db->photos("location = ?", ',');
+			$results = $db->photos()->select('*')->where("location = ?", ',')->order('date_taken DESC');
 		}
 		else if( $browseType == 'album' )
 		{
