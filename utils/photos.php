@@ -388,6 +388,41 @@ function updatePhotoInfoFromFlickr( $id, $flickrId, $db )
 	$result = $photoRow->update( $rowUpdate );
 }
 
+function deletePhoto( $photoId )
+{
+	$b2Files = listAllFilesInternal( $photoId );
+	
+	if( $b2Files )
+	{
+		foreach( $b2Files as $file )
+		{
+			$deleteResult = deleteB2File( $file );
+			echo 'Delete file ' . $file . ' Success: ' . $deleteResult . '<br />';
+		}
+	}
+
+	$db = getDb();
+	$photoResult = $db->photos[ $photoId ]->delete();
+	echo 'Photo deleted: ' . ($photoResult == true) . '<br />';
+	
+	$sizesResults = $db->photo_sizes('photo_id = ?', $photoId);
+	foreach( $sizesResults as $row )
+	{
+		$deleteResult = $row->delete();
+		echo 'Photo Size deleted: ' . ($deleteResult == true) . '<br />';
+	}
+	
+	$albumResults = $db->album_photos('photos_id = ?', $photoId);
+	foreach( $albumResults as $row )
+	{
+		$deleteResult = $row->delete();
+		echo 'Album Photo deleted: ' . ($deleteResult == true) . '<br />';
+	}
+	
+	$db->close();
+	$db = null;
+}
+
 function addBlurMeta( $photoId, $force = false )
 {
 	$success = false;

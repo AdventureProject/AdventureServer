@@ -85,6 +85,20 @@
                     <!-- BEGIN: start_zoomed -->
                     $('#primary_image').magnificPopup('open');
                     <!-- END: start_zoomed -->
+
+                    $( "#delete_button" ).click(function() {
+                        if( $( "#delete_confirm" ).val() == "DELETE" )
+                        {
+                            if(confirm('Are you sure you want to DELETE this photo and all associated data?'))
+                            {
+                                location.href='/photo/{PHOTO_ID}?delete=1';
+                            }
+                        }
+                        else
+                        {
+                            alert("Type DELETE to get started");
+                        }
+                    });
                 });
             </script>
 
@@ -200,14 +214,24 @@
                             </button><br />
                             <br />
                         </form>
+
+                        <hr />
+
 						<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" onclick="location.href='/photo/{PHOTO_ID}?regenerate=info';">
                             Re-fetch info from Flickr
                         </button>
-						<br />
+						<br /><br />
                         <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" onclick="location.href='/photo/{PHOTO_ID}?regenerate=thumbnail';">
                             Regenerate Thumbnail
                         </button>
                         <img src="{THUMBNAIL_URL}" style="height:64px; width:auto;">
+                        <br /><br />
+                        Type: DELETE to enable button
+                        <input type="text" id="delete_confirm" />
+                        <button id="delete_button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit">
+                            DELETE
+                        </button>
+                        <br /><br />
 						<!-- END: photo_actions -->
 						<h3>
 							Meta Files

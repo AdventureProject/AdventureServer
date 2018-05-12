@@ -87,8 +87,8 @@ class AlbumController extends BaseController
 
             $timeLineMode = $album['timeline_mode'];
             if( array_key_exists('timeline', $request->params)
-                && is_numeric($request-params['timeline'])
-                && $request-params['timeline']> 0 & $request-params['timeline'] < 3)
+                && is_numeric($request->params['timeline'])
+                && $request->params['timeline']> 0 & $request->params['timeline'] < 3)
             {
                 $timeLineMode = $request->params['timeline'];
             }

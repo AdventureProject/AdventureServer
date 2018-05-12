@@ -122,8 +122,8 @@ class AdminController extends BaseController
 		$xtpl->assign( 'TOTAL_PHOTOS', $totalPhotos );
 		$xtpl->assign( 'TOTAL_ALBUMS', $totalAlbums );
 
-		$browseType = $request->params['browse'];
-		$albumId = $request->params['album_id'];
+		$browseType = array_key_exists('browse', $request->params) ? $request->params['browse'] : null;
+		$albumId = array_key_exists('album_id', $request->params) ? $request->params['album_id'] : null;
 		
 		$results = null;
 		if( $browseType == 'wallpaper' )

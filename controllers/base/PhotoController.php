@@ -84,9 +84,11 @@ class PhotoController extends BaseController
 		}
 		else if( is_numeric( $request->args[0] ) )
 		{
+			$photoId = $request->args[0];
+
 			$this->addNavAction( 'random', 'shuffle', 'Random', '/photo/random', $xtpl );
 
-			if( array_key_exists( 'regenerate', $request->params ) )
+			if( $this->isAuthenticated() && array_key_exists( 'regenerate', $request->params ) )
 			{
 				error_log( 'regenerate: ' . $request->params['regenerate'] );
 
@@ -104,6 +106,17 @@ class PhotoController extends BaseController
 				}
 
 				header( 'Location: /photo/' . $request->args[0] );
+			}
+			else if( $this->isAuthenticated() && array_key_exists( 'delete', $request->params ) )
+			{
+				if( $request->params['delete'] == 1 )
+				{
+					error_log( 'Deleting photo: ' . $photoId );
+
+					deletePhoto( $photoId );
+
+					header( 'Location: /admin' );
+				}
 			}
 			// Default normal photo request
 			else
