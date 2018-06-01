@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Use correct character set. -->
+  <meta charset="utf-8">
+  <!-- Tell IE to use the latest, best version. -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <title>Hello World!</title>
+  <script src="/external/Cesium/Cesium.js"></script>
+  <style>
+      @import url(/external/Cesium/Widgets/widgets.css);
+      html, body, #cesiumContainer {
+          width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+      }
+  </style>
+</head>
+<body>
+  <div id="cesiumContainer"></div>
+  <script>
+  Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjZjNmZDBkMi03ZmQ4LTQ2ZDgtODZjNy00ZWYwYTFmYTA5MGEiLCJpZCI6MTA4NSwiaWF0IjoxNTI2OTc1NTc2fQ.81aPw_QEucEf0yMnvZnXxLcuCu14yTlbkfVqBiuknzc';
+
+	var viewer = new Cesium.Viewer('cesiumContainer',
+								  {
+		homeButton : false,
+		animation : false,
+		baseLayerPicker : false,
+		infoBox : false,
+		geocoder : false,
+	  	navigationHelpButton : false,
+	  	timeline : true,
+	  	sceneModePicker : false,
+		selectionIndicator : false,
+	  
+	  	vrButton : true
+	});
+	viewer.dataSources.show = true;
+	viewer.terrainProvider = Cesium.createWorldTerrain();
+	  
+	viewer.scene.frameState.creditDisplay.destroy();
+	  
+	var kmlOptions = {
+		camera : viewer.scene.camera,
+		canvas : viewer.scene.canvas,
+		clampToGround : true
+	};
+// Load geocache points of interest from a KML file
+	var routeDataSource = Cesium.KmlDataSource.load('/data/colchuckpeaktrack_cleaned.kml', kmlOptions);
+	  
+	routeDataSource.then(function(dataSource) {
+	
+	//viewer.scene.globe.depthTestAgainstTerrain = true;
+		
+	var flyToOptions = {
+		duration: 3.0,
+		offset: {
+			heading: 90.0,
+			pitch: -45.0,
+			range: 0.0
+		}
+	}
+	
+	var entities = dataSource.entities.values;
+console.log(dataSource);
+	for (var i = 0; i < entities.length; i++) {
+		var entity = entities[i];
+		
+		if (Cesium.defined(entity.path)) {
+			entity.path.heightReference = Cesium.HeightReference.CLAMP_TO_GROUND;
+			entity.path.height = undefined;
+		}
+	}
+	
+	// Add the new data as entities to the viewer
+    viewer.dataSources.add(dataSource);
+		
+	var route = dataSource.entities.values[0];
+	//route.followSurface = true;
+		
+  	viewer.flyTo(route, flyToOptions).then(function() {
+        viewer.trackedEntity = route;
+		
+		viewer.clock.multiplier = 40.0;
+		viewer.clock.shouldAnimate = true;
+		
+		//viewer.camera.zoomOut( 100000 );
+    });
+});
+  </script>
+</body>
+</html>

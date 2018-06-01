@@ -1,4 +1,6 @@
 <?php
+
+session_name("all_subdomains");
 session_start();
 
 require_once('Request.php');

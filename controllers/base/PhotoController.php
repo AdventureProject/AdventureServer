@@ -6,7 +6,7 @@ require_once('utils/BaseController.php');
 class PhotoController extends BaseController
 {
 	private $googleMapsApiKey;
-	private $currentPhoto;
+	private $currentPhoto = null;
 	private $albumId = null;
 	private $albumData = null;
 
@@ -199,7 +199,7 @@ class PhotoController extends BaseController
 
 			$photoFlickr = getPhoto( $photoId, true, 1024, 1024 );
 
-			$this->currentPhoto = $photoFlickr;
+			//$this->currentPhoto = $photoFlickr;
 
 			$locationParts = explode( ',', $photoFlickr->location );
 

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Use correct character set. -->
+  <meta charset="utf-8">
+  <!-- Tell IE to use the latest, best version. -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <title>3D Test</title>
+  <script src="/external/Cesium/Cesium.js"></script>
+  <style>
+	@import url(/external/Cesium/Widgets/widgets.css);
+	html, body, #cesiumContainer {
+		width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+	}
+
+	.cesium-infoBox {
+		width: 300px;
+		height: auto;
+	}
+  </style>
+</head>
+<body>
+  <div id="cesiumContainer"></div>
+  <script>
+  Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjZjNmZDBkMi03ZmQ4LTQ2ZDgtODZjNy00ZWYwYTFmYTA5MGEiLCJpZCI6MTA4NSwiaWF0IjoxNTI2OTc1NTc2fQ.81aPw_QEucEf0yMnvZnXxLcuCu14yTlbkfVqBiuknzc';
+
+	var viewer = new Cesium.Viewer('cesiumContainer',
+								  {
+		homeButton : false,
+		animation : false,
+		baseLayerPicker : false,
+		infoBox : true,
+		geocoder : false,
+	  	navigationHelpButton : false,
+	  	timeline : false,
+	  	sceneModePicker : false,
+		selectionIndicator : false,
+	  
+	  	vrButton : true
+	});
+
+	viewer.dataSources.show = true;
+	viewer.terrainProvider = Cesium.createWorldTerrain();
+	//viewer.scene.globe.depthTestAgainstTerrain = true;
+	viewer.scene.frameState.creditDisplay.destroy();
+	  
+	  
+  Cesium.GeoJsonDataSource.clampToGround = true;
+	var photosDataSource = Cesium.GeoJsonDataSource.load('/data/photos_geojson.json');
+	  
+	photosDataSource.then(function(photosDataSource) {
+		
+		var entities = photosDataSource.entities.values; 
+		for (var i = 0; i < entities.length; i++) { 
+			var entity = entities[i];
+
+			// Snap to terrain
+			if (Cesium.defined(entity.position)) {
+				entity.position.heightReference = Cesium.HeightReference.CLAMP_TO_GROUND;
+				entity.position.height = undefined;
+			}
+			
+			// Setup for infobox
+			var props = entity.properties;
+
+			var contents = '<strong>' + props['date'] + '</strong><br />';
+			contents += props['description'] + '<br /><br />';
+
+			contents += '<a href="' + props['photo_url'] + '" target="_blank">';
+			contents += '<img style="width: 150px; height: auto;" src="' + props['thumbnail_url'] + '"><br />';
+			contents += '</a><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />';
+
+
+			entity.description = contents;
+		} 
+
+	//viewer.scene.globe.depthTestAgainstTerrain = true;
+	viewer.infoBox.frame.removeAttribute('sandbox');
+
+	// Add the new data as entities to the viewer
+    viewer.dataSources.add(photosDataSource);
+});
+  </script>
+</body>
+</html>

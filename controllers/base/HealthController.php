@@ -66,36 +66,60 @@ class HealthController extends BaseController
     
     public function post( $request )
     {
-			if( count($request->args) == 1 && is_numeric($request->args[0]) && is_numeric($request->params['version']) )
+		if( count($request->args) == 1
+		   && is_numeric($request->args[0])
+		   && is_numeric($request->params['version']) )
+		{
+			$photoFrameId = $request->args[0];
+			
+			$deviceId = null;
+			if( array_key_exists('deviceId', $request->params) )
 			{
-				$photoFrameId = $request->args[0];
+				$deviceId = $request->params['deviceId'];
+			}
 
-				$db = getDb();
-				$row = $db->photo_frame[$photoFrameId];
-				// Register unregistered photo frames
+			$db = getDb();
+			$row = $db->photo_frame[$photoFrameId];
+			// Register unregistered photo frames
+			if( !$row )
+			{
+				// Try to get it by device_id if we couldnt get it by 
+				$row = $db->photo_frame()->select('*')->where('device_id = ?', $deviceId)->fetch();
 				if( !$row )
 				{
 					$item['id'] = $photoFrameId;
 					$item['owner'] = 'unregistered';
-					$db->photo_frame()->insert( $item );
+					$row = $db->photo_frame()->insert( $item );
 				}
-
-				$photoFrameVersion = $request->params['version'];
-
-				$errors = "none";
-				if( isset( $request->post['errors'] ) )
+				else
 				{
-					$errors = $request->post['errors'];
+					$row['id'] = $photoFrameId;
+					$row->update();
 				}
-
-				$item['photo_frame'] = $photoFrameId;
-				$item['version'] = $photoFrameVersion;
-				$item['errors'] = $errors;
-
-				$row = $db->health_monitor()->insert( $item );
-
-				echo $row;
 			}
+			
+			if( $deviceId != null )
+			{
+				$row['device_id'] = $deviceId;
+				$row->update();
+			}
+			
+			if( array_key_exists('update_channel', $request->post) )
+			{
+				$updateChannel = $request->post['update_channel'];
+				$row['update_channel'] = $updateChannel;
+				$row->update();
+			}
+
+			$photoFrameVersion = $request->params['version'];
+
+			$item['photo_frame'] = $photoFrameId;
+			$item['version'] = $photoFrameVersion;
+
+			$row = $db->health_monitor()->insert( $item );
+
+			echo $row;
+		}
     }
 }
 

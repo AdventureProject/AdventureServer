@@ -21,7 +21,7 @@ class PhotoFrameController extends Controller
         if( count($request->args) == 1 )
 		{
 			// Use this to differentiate photo frames
-        	$photoFrameId = $request->args[0];
+        	$deviceId = $request->args[0];
 
 			$photo = getPhotoframePhoto();
 
@@ -29,7 +29,7 @@ class PhotoFrameController extends Controller
 		}
 		else if( count($request->args) == 2 )
 		{
-			$photoFrameId = $request->args[0];
+			$deviceId = $request->args[0];
 			$photoId = $request->args[1];
 
 			echo json_encode( getPhotoById( $photoId, true, 800, 480 ) );
