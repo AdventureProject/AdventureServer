@@ -28,6 +28,7 @@ class HighlightsController extends BaseController
 	
 	public function getBody( $request, $todaysPhoto, $xtpl )
 	{
+		$this->addCssFile( '/css/album_container.css', $xtpl );
 		$this->addCssFile( '/css/highlights.css', $xtpl );
 		$this->addCssFile( '/css/zoom.css', $xtpl );
 		
@@ -40,23 +41,33 @@ class HighlightsController extends BaseController
 		{
 			$xtpl->assign('PHOTO_ID',$data['id']);
 			$xtpl->assign('PHOTO_THUMBNAIL', b2GetPublicThumbnailUrl($data['id']) );
-
-			$style = NULL;
-			if( $data['orientation'] == 'land' )
+			$xtpl->assign('PHOTO_TITLE',$data['title']);
+			
+			$albumResult = $db->album_photos()->select('*')->where('photos_id', $data['id'])->limit(1)->fetch();
+			if( $albumResult )
 			{
-				$style = 'mdl-cell--3-col pic-card-land';
+				$albumId = $albumResult['albums_id'];
+				$xtpl->assign('PHOTO_URL', '/photo/' . $data['id'] . '/album/'. $albumId);
 			}
 			else
 			{
-				$style = 'mdl-cell--2-col pic-card-port';
+				$xtpl->assign('PHOTO_URL', '/photo/' . $data['id']);
 			}
-			$xtpl->assign('PHOTO_ID',$data['id']);
-			$xtpl->assign('PHOTO_TITLE',$data['title']);
-			$xtpl->assign('PHOTO_STYLE',$style);
+			
+			if( $data['orientation'] == 'land' )
+			{
+				$xtpl->parse('main.body.highlight.photo_element_land');
+			}
+			else
+			{
+				$xtpl->parse('main.body.highlight.photo_element_port');
+			}
 			
 			$xtpl->parse('main.body.highlight_style');
 			$xtpl->parse('main.body.highlight');
 		}
+		
+		$db->close();
 		
 		$xtpl->parse('main.body');
 	}

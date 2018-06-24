@@ -54,6 +54,16 @@
                                 verticalFit: true
                             }
                         },
+						callbacks: {
+							open: function() {
+								var viewport_meta = document.getElementById('viewport-meta');
+								viewport_meta.setAttribute( 'content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=1' );
+							},
+							close: function() {
+								var viewport_meta = document.getElementById('viewport-meta');
+								viewport_meta.setAttribute( 'content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=0' );
+							}
+						},
                         fixedContentPos: true,
                         closeOnContentClick: true,
                         closeBtnInside: false,

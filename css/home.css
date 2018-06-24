@@ -1,0 +1,141 @@
+.adventure.mdl-layout .mdl-layout__content {
+	padding-top: 0;
+}
+
+#action-container {
+	margin: 64px;
+}
+
+.album-container-background {
+	width: 100%;
+	padding-bottom: 32px;
+	background-color: #ffffff11;
+}
+
+.adventure-title > h1 {
+	font-size: calc(3vh + 2vmin);
+}
+
+.item-card-square.mdl-card {
+	width: 256px;
+	height: 256px;
+	margin: 16px;
+}
+
+.item-card-square > .mdl-card__title {
+  color: #fff;
+}
+
+#about-card > .mdl-card__title {
+  background:
+    url('/images/info_icon.png') bottom right 15% no-repeat #4286f4;
+}
+
+#heatmap-card > .mdl-card__title {
+  background:
+    url('/images/heatmap_icon.png') bottom right 15% no-repeat #c19797;
+}
+
+#photospheres-card > .mdl-card__title {
+  background:
+    url('/images/photo_spheres_icon.png') bottom right 15% no-repeat #00c46f;
+}
+
+#videos-card > .mdl-card__title {
+  background:
+    url('/images/videos_icon.png') bottom right 15% no-repeat #ddba08;
+}
+
+.album-item-port-card-image.mdl-card {
+    width: calc(100% * (1/4) - 10px - 1px);
+    height: 150px;
+	
+	max-width: 250px;
+	
+	margin: 1px;
+}
+
+.album-item-land-card-image.mdl-card {
+    width: calc(100% * (1/4) - 10px - 1px);
+    height: 150px;
+	
+	max-width: 400px;
+	
+	margin: 1px;
+}
+
+.album-item:last-child {
+    flex-grow: 1;
+}
+
+.adventure .hide-on-mobile {
+	visibility: visible;
+}
+
+@media screen and (max-width: 640px) {
+	.adventure.mdl-layout .mdl-layout__content {
+		padding-top: 0;
+	}
+	
+	.album-container-background {
+		background-color: transparent;
+	}
+	
+	.page-content {
+		margin-left: 0;
+		margin-right: 0;
+	}
+	
+	.adventure.mdl-layout .mdl-layout__content {
+		padding-left: 15px;
+		padding-right: 15px;
+	}
+	
+    .album-container {
+        width: 100%;
+
+        display: flex;
+        flex-wrap: wrap;
+        align-content: flex-start;
+
+        margin: 0 auto;
+    }
+
+    .album-item-port-card-image.mdl-card {
+        width: calc(100% * (1/4) - 10px - 1px);
+        height: 150px;
+        margin: 0px;
+
+        max-width: unset;
+		min-height: unset;
+    }
+
+    .album-item-land-card-image.mdl-card {
+        width: calc(100% * (1/4) - 10px - 1px);
+        height: 150px;
+        margin: 0px;
+
+        max-width: unset;
+		min-height: unset;
+    }
+	
+	#action-container {
+		margin-top: 64px;
+		margin-left: 0;
+		margin-right: 0;
+	}
+
+	
+	.item-card-square.mdl-card {
+		width: 100%;
+		height: 256px;
+		margin-top: 16px;
+		margin-bottom: 16px;
+		margin-left: 0;
+		margin-right: 0;
+	}
+	
+	.adventure .hide-on-mobile {
+		display: none;
+	}
+}

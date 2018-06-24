@@ -134,7 +134,7 @@ class VideosController extends BaseController
     {
         $youtubeApiKey = 'AIzaSyA66Bgo8cpoYAU_ATgEhr5ccnrpLt7C_Js';
         $playListId = 'PLW6j4j9UcGjqIw80l4pNnCja8mziF9xmw';
-        $url = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=$playListId&key=$youtubeApiKey";
+        $url = "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=$playListId&key=$youtubeApiKey&maxResults=50";
 
         $json = file_get_contents($url, false);
         

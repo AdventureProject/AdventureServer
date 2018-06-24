@@ -142,7 +142,7 @@ class PhotoController extends BaseController
 
 	private function getAlbumId( $request )
 	{
-		if( count( $request->args ) == 3
+		if( count( $request->args ) >= 3
 			&& is_numeric( $request->args[0] )
 			&& $request->args[1] == $this->ALBUM_STUB
 			&& is_numeric( $request->args[2] ) )

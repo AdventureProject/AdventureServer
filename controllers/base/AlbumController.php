@@ -73,6 +73,7 @@ class AlbumController extends BaseController
 	public function getBody( $request, $todaysPhoto, $xtpl )
 	{
 		$this->addCssFile( '/css/album.css', $xtpl );
+		$this->addCssFile( '/css/album_container.css', $xtpl );
 		$this->addCssFile( '/css/zoom.css', $xtpl );
 		
 		$xtpl->assign_file('BODY_FILE', 'templates/album.html');

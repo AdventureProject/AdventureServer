@@ -1,0 +1,131 @@
+		<style>
+			<!-- BEGIN: highlight_style -->
+			.album-item-card-image-{PHOTO_ID}.mdl-card {
+				background: url('{PHOTO_THUMBNAIL}') center / cover;
+
+			}
+			<!-- END: highlight_style -->
+		</style>
+
+		<style>
+			.album-card-image-view-more.mdl-card {
+				background: url('/images/no_location_in.jpg') center / cover;
+			}
+			
+			<!-- BEGIN: album_style -->
+			.album-card-image-{ALBUM_ID}.mdl-card {
+				background: url('{ALBUM_IMAGE_URL}') center / cover;
+			}
+			<!-- END: album_style -->
+		</style>
+
+		<div class="album-container-background">
+			<div class="album-container">
+
+				<div class="album_major_separator adventure-title">
+					<h1>Share in our Adventures</h1>
+				</div>
+
+				 <!-- BEGIN: highlight -->
+
+				<!-- BEGIN: photo_element_port -->
+				<div class="album-item album-item-port-card-image album-item-card-image-{PHOTO_ID} mdl-card mdl-shadow--2dp zooming">
+				<!-- END: photo_element_port -->
+				<!-- BEGIN: photo_element_land -->
+				<div class="album-item album-item-land-card-image album-item-card-image-{PHOTO_ID} mdl-card mdl-shadow--2dp zooming">
+				<!-- END: photo_element_land -->
+					<div class="mdl-card__title mdl-card--expand mdl-js-ripple-effect"></div>
+					<!-- <a href="{PHOTO_URL}" class="card_media_link"></a> -->
+					<a id="highlight_{PHOTO_ID}" href="/highlights" class="card_media_link"></a>
+				</div>
+				<div class="mdl-tooltip mdl-tooltip--large" for="highlight_{PHOTO_ID}">
+					See more Highlights
+				</div>
+
+				<!-- END: highlight -->
+			</div>
+		</div>
+			
+		<div id="action-container" class="mdl-grid center-items">
+			
+			<div id="about-card" class="item-card-square mdl-card mdl-shadow--2dp">
+			  <div class="mdl-card__title mdl-card--expand">
+				<h2 class="mdl-card__title-text">What is this?</h2>
+			  </div>
+			  <div class="mdl-card__supporting-text">
+				Learn more about this site
+			  </div>
+			  <div class="mdl-card__actions mdl-card--border">
+				<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="/about">
+				  About
+				</a>
+			  </div>
+			</div>
+			
+			<div id="heatmap-card" class="item-card-square mdl-card mdl-shadow--2dp hide-on-mobile">
+			  <div class="mdl-card__title mdl-card--expand">
+				<h2 class="mdl-card__title-text">Heatmap</h2>
+			  </div>
+			  <div class="mdl-card__supporting-text">
+				View a map of our photos from the last decade.
+			  </div>
+			  <div class="mdl-card__actions mdl-card--border">
+				<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="/heatmap">
+				  Heatmap
+				</a>
+			  </div>
+			</div>
+			
+			<div id="photospheres-card" class="item-card-square mdl-card mdl-shadow--2dp hide-on-mobile">
+			  <div class="mdl-card__title mdl-card--expand">
+				<h2 class="mdl-card__title-text">360 Photos</h2>
+			  </div>
+			  <div class="mdl-card__supporting-text">
+				See our 360 photos taken in remote locations.
+			  </div>
+			  <div class="mdl-card__actions mdl-card--border">
+				<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="/360photos">
+				  360 Photos
+				</a>
+			  </div>
+			</div>
+			
+			<div id="videos-card" class="item-card-square mdl-card mdl-shadow--2dp hide-on-mobile">
+			  <div class="mdl-card__title mdl-card--expand">
+				<h2 class="mdl-card__title-text">Videos</h2>
+			  </div>
+			  <div class="mdl-card__supporting-text">
+				Watch videos from various trips we've been on.
+			  </div>
+			  <div class="mdl-card__actions mdl-card--border">
+				<a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="/videos">
+				  Videos
+				</a>
+			  </div>
+			</div>
+		</div>
+		
+		<div class="mdl-grid albums-container">
+			<div class="album_major_separator">
+				<h1>Recent Albums</h1>
+				<br /><hr />
+			</div>
+			
+			<!-- BEGIN: album -->
+			<div class="album-card-image album-card-image-{ALBUM_ID} mdl-card mdl-shadow--2dp zooming">
+				<div class="mdl-card__title mdl-card--expand mdl-js-ripple-effect"></div>
+				<div class="mdl-card__actions">
+					<span class="album-card-image__title">{ALBUM_TITLE}</span>
+				</div>
+				<a href="{ALBUM_URL}" class="card_media_link"></a>
+			</div>
+			<!-- END: album -->
+			
+			<div class="album-card-image album-card-image-view-more mdl-card mdl-shadow--2dp zooming">
+				<div class="mdl-card__title mdl-card--expand mdl-js-ripple-effect"></div>
+				<div class="mdl-card__actions">
+					<span class="album-card-image__title">View More Albums...</span>
+				</div>
+				<a href="/albums" class="card_media_link"></a>
+			</div>
+		</div>

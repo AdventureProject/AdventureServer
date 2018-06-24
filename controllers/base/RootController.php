@@ -11,7 +11,7 @@ class RootController extends BaseController
 	
 	public function urlStub()
 	{
-		return 'root';
+		return 'todaysphoto';
 	}
   
     public function getTitle()
