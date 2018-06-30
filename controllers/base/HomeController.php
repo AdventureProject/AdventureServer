@@ -53,7 +53,6 @@ class HomeController extends BaseController
 				$xtpl->parse('main.body.highlight.photo_element_port');
 			}
 			
-			$xtpl->parse('main.body.highlight_style');
 			$xtpl->parse('main.body.highlight');
 		}
 		
@@ -65,7 +64,6 @@ class HomeController extends BaseController
 			$xtpl->assign('ALBUM_IMAGE_URL', b2GetPublicThumbnailUrl( $album['cover_photo_id'] ) );
 			$xtpl->assign('ALBUM_URL', 'album/' . $album['id']);
 
-			$xtpl->parse('main.body.album_style');
 			$xtpl->parse('main.body.album');
 		}
 		

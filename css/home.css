@@ -139,3 +139,7 @@
 		display: none;
 	}
 }
+
+.album-card-image-view-more.mdl-card {
+	background: url('/images/no_location_in.jpg') center / cover;
+}

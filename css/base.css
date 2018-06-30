@@ -17,6 +17,24 @@
 	.hide { display: none; }
 }
 
+.adventure .mdl-layout__header {
+	position: fixed;
+	top: 0;
+}
+
+main.adventure.mdl-layout__content,
+.mdl-layout {
+	overflow: visible;
+}
+
+body {
+	padding-top: 48px;
+}
+
+.mdl-layout__header {
+	min-height: unset !important;
+}
+
 .adventure .adventure__location_details {
 	max-width: 900px;
 	padding: 0;

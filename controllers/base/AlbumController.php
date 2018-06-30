@@ -156,8 +156,6 @@ class AlbumController extends BaseController
 				$xtpl->assign('PHOTO_IMAGE_URL', b2GetPublicThumbnailUrl($photo['id']));
 				$xtpl->assign('PHOTO_TITLE', $photo['title']);
 
-				$xtpl->parse('main.body.photo_style');
-
 				if( $photo['orientation'] == 'land' )
 				{
 					$xtpl->parse('main.body.photo.photo_element_land');

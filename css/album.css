@@ -41,3 +41,8 @@ h2.title {
 span.photo_count {
 	margin-top: 16px;
 }
+
+.adventure .album-pic .mdl-card__media {
+	height: 50vh;
+	max-height: 760px;
+}

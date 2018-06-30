@@ -42,7 +42,6 @@ class AlbumsController extends BaseController
 			$xtpl->assign('ALBUM_IMAGE_URL', b2GetPublicThumbnailUrl( $album['cover_photo_id'] ) );
 			$xtpl->assign('ALBUM_URL', 'album/' . $album['id']);
 
-			$xtpl->parse('main.body.album_style');
 			$xtpl->parse('main.body.album');
 		}
 		

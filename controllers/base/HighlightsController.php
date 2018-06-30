@@ -63,7 +63,6 @@ class HighlightsController extends BaseController
 				$xtpl->parse('main.body.highlight.photo_element_port');
 			}
 			
-			$xtpl->parse('main.body.highlight_style');
 			$xtpl->parse('main.body.highlight');
 		}
 		
