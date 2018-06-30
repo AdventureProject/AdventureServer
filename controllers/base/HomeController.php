@@ -34,15 +34,25 @@ class HomeController extends BaseController
 		
 		$xtpl->assign_file('BODY_FILE', 'templates/home.html');
 		
-		$db = getDb();
-		$results = $db->photos()->select('id, title, orientation')->where('highlight', 1)->order('rand()')->limit(4);
+		$NUM_HIGHLIGHTS = 4;
 		
+		$db = getDb();
+		$results = $db->photos()->select('id, title, orientation')->where('highlight', 1)->order('rand()')->limit( $NUM_HIGHLIGHTS );
+		
+		$ii = 0;
 		while( $data = $results->fetch() )
 		{
+			++$ii;
+			
 			$xtpl->assign('PHOTO_ID',$data['id']);
 			$xtpl->assign('PHOTO_THUMBNAIL', b2GetPublicThumbnailUrl($data['id']) );
 			$xtpl->assign('PHOTO_TITLE',$data['title']);
 			$xtpl->assign('PHOTO_URL', '/photo/' . $data['id']);
+			
+			if( $ii == $NUM_HIGHLIGHTS )
+			{
+				$xtpl->assign('PHOTO_HIDE_LAST', 'hide-on-mobile');
+			}
 			
 			if( $data['orientation'] == 'land' )
 			{

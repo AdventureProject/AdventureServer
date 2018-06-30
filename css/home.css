@@ -14,6 +14,7 @@
 
 .adventure-title > h1 {
 	font-size: calc(3vh + 2vmin);
+	text-shadow: 1px 1px #555555;
 }
 
 .item-card-square.mdl-card {
@@ -102,7 +103,7 @@
     }
 
     .album-item-port-card-image.mdl-card {
-        width: calc(100% * (1/4) - 10px - 1px);
+        width: calc(100% * (1/3) - 10px - 1px);
         height: 150px;
         margin: 0px;
 
@@ -111,7 +112,7 @@
     }
 
     .album-item-land-card-image.mdl-card {
-        width: calc(100% * (1/4) - 10px - 1px);
+        width: calc(100% * (1/3) - 10px - 1px);
         height: 150px;
         margin: 0px;
 

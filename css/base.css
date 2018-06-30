@@ -14,7 +14,17 @@
 	(min-width: 2049px) and (max-resolution: 1.5dppx);
 
 @media screen and (max-width: 640px) {
-	.hide { display: none; }
+	.hide { display: none !important; }
+}
+
+body {
+	padding-top: 64px;
+}
+
+@media screen and (max-width: 1024px) {
+	body {
+		padding-top: 56px;
+	}
 }
 
 .adventure .mdl-layout__header {
@@ -25,14 +35,6 @@
 main.adventure.mdl-layout__content,
 .mdl-layout {
 	overflow: visible;
-}
-
-body {
-	padding-top: 48px;
-}
-
-.mdl-layout__header {
-	min-height: unset !important;
 }
 
 .adventure .adventure__location_details {
