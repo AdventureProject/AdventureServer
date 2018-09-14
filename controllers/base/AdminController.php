@@ -31,8 +31,25 @@ class AdminController extends BaseController
 	}
 	
     public function getBody( $request, $todaysPhoto, $xtpl )
-    {   
-        if( count($request->args) > 0 )
+    {
+		$subdomain = explode('.', $_SERVER['HTTP_HOST'])[0];
+		if( $subdomain != 'admin' )
+		{
+			header('Location: http://admin.wethinkadventure.rocks/admin');
+			exit();
+		}
+		
+		if( is_numeric( $request->params['updatealbum'] ) )
+		{
+			$albumId = $request->params['updatealbum'];
+
+			error_log( 'Updating album: ' . $albumId );
+
+			$this->updateAlbum( $albumId );
+
+			header("Location:/admin/home?browse=album?album_id=$albumId");
+		}
+        else if( count($request->args) > 0 )
         {
             if( $this->isAuthenticated() )
             {
@@ -96,6 +113,20 @@ class AdminController extends BaseController
             }
         }
     }
+	
+	private function updateAlbum( $albumId )
+	{
+		$db = getDb();
+
+		$albumPhotoResults = $db->photos()->select('photos.id, photos.flickr_id')->where('album_photos:albums_id', $albumId)->order('date_taken ASC');
+		foreach( $albumPhotoResults as $photo )
+		{
+			$flickrId = $photo['flickr_id'];
+			$id = $photo['id'];
+			
+			updatePhotoInfoFromFlickr( $id, $flickrId, $db );
+		}
+	}
     
     private function renderHome( $xtpl, $request )
     {
@@ -109,7 +140,7 @@ class AdminController extends BaseController
 		$totalPhotoFrame = $pdo->query("SELECT COUNT(id) AS total FROM `photos` WHERE `photoframe` = 1")->fetch()['total'];
 		$totalWallpaper = $pdo->query("SELECT COUNT(id) AS total FROM `photos` WHERE `wallpaper` = 1")->fetch()['total'];
 		$totalPhotoWall = $pdo->query("SELECT COUNT(id) AS total FROM `photos` WHERE `photowall_id` IS NOT NULL")->fetch()['total'];
-		$totalMissingLocation = $pdo->query("SELECT COUNT(id) AS total FROM `photos` WHERE `location` = ','")->fetch()['total'];
+		$totalMissingLocation = $pdo->query("SELECT COUNT(id) AS total FROM `photos` WHERE `location` = ',' OR `location` IS NULL")->fetch()['total'];
 		$totalPhotos = $pdo->query("SELECT COUNT(id) AS total FROM `photos`")->fetch()['total'];
 		$totalAlbums = $pdo->query("SELECT COUNT(id) AS total FROM `albums`")->fetch()['total'];
 
@@ -140,10 +171,14 @@ class AdminController extends BaseController
 		}
 		else if( $browseType == 'missing_location' )
 		{
-			$results = $db->photos()->select('*')->where("location = ?", ',')->order('date_taken DESC');
+			$results = $db->photos()->select('*')->where('location = ?', ',')->or('location IS NULL')->order('date_taken DESC');
 		}
 		else if( $browseType == 'album' )
 		{
+			//album_id
+			$xtpl->assign( 'ALBUM_ID', $albumId );
+			$xtpl->parse( 'main.body.update_album' );
+			
 			$results = $db->photos("location = ?", ',');
 			$results = $db->photos()->select('photos.*')->where('album_photos:albums_id', $albumId)->order('date_taken ASC');
 		}

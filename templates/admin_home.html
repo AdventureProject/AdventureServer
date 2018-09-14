@@ -97,7 +97,7 @@
 			<div class="adventure-content center-table">
                 <a href="/admin/home?browse=wallpaper">Wallpapers</a> |
                 <a href="/admin/home?browse=photowall">Photowall</a> |
-				<a href="/admin/home?browse=missing_location">Missing Location</a> |
+				<a href="/admin/home?browse=missing_location">Missing Location ({TOTAL_MISSING_LOCATION})</a> |
                 <a href="/admin/home?browse=photoframe">Photo Frame</a>
                 <br />
 				<form action="/admin/home" method="get">
@@ -111,6 +111,10 @@
 					</button>
 				</form>
 				<br />
+				<!-- BEGIN: update_album -->
+				<a href="?updatealbum={ALBUM_ID}">Re-fetch All album photo info from Flickr</a>
+				<br /><br />
+				<!-- END: update_album -->
 				Total Results: {BROWSE_COUNT}<br />
 				<table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp">
 					<thead>

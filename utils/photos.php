@@ -386,6 +386,8 @@ function updatePhotoInfoFromFlickr( $id, $flickrId, $db )
 
 	$photoRow = $db->photos[ $id ];
 	$result = $photoRow->update( $rowUpdate );
+	
+	error_log('updating photo info: ' . $id . ' flickr: ' . $flickrId);
 }
 
 function deletePhoto( $photoId )

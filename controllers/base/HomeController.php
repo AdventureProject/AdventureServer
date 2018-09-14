@@ -54,15 +54,6 @@ class HomeController extends BaseController
 				$xtpl->assign('PHOTO_HIDE_LAST', 'hide-on-mobile');
 			}
 			
-			if( $data['orientation'] == 'land' )
-			{
-				$xtpl->parse('main.body.highlight.photo_element_land');
-			}
-			else
-			{
-				$xtpl->parse('main.body.highlight.photo_element_port');
-			}
-			
 			$xtpl->parse('main.body.highlight');
 		}
 		

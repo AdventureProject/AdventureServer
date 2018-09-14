@@ -40,8 +40,8 @@ class HeatmapController extends BaseController
 		{
 			if( $this->enforceAuth() )
 			{
-				// This is a dirty dirty hack!! We need an actual way to post to this controller
 				$this->regenerateGeoJson();
+				header("location: /" . $this->urlStub());
 				exit();
 			}
 		}
@@ -51,6 +51,11 @@ class HeatmapController extends BaseController
 			$this->addJsFile( 'https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js', $xtpl );
 			$this->addCssFile( '/css/heatmap.css', $xtpl );
 
+			if($this->isAuthenticated())
+			{
+				$this->addNavAction( 'regenerate', 'refresh', 'Regenerate', '?action=regenerate', $xtpl );
+			}
+			
 			$xtpl->assign_file('BODY_FILE', 'templates/heatmap.html');
 			$xtpl->parse('main.body');
 		}
@@ -122,8 +127,9 @@ class HeatmapController extends BaseController
         $dbPdo = null;
 
 		$geoJsonStr = json_encode($geojson, JSON_NUMERIC_CHECK);
-
-		var_dump( file_put_contents('data/photos_geojson.json', $geoJsonStr) );
+		$result = file_put_contents('data/photos_geojson.json', $geoJsonStr);
+		
+		//var_dump( $result );
 
 		//header('Content-type: application/json');
 		//echo $geoJsonStr;

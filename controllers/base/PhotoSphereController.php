@@ -46,7 +46,8 @@ class PhotoSphereController extends BaseController
 	
 	public function getRichImage()
 	{
-		return $this->basePath . '/' . $this->currentPhoto['file_id'] . '/preview.jpg';
+		$b2BasePath = $GLOBALS['b2BasePath']['360photos'];
+		return $b2BasePath . '/' . $this->currentPhoto['file_id'] . '/preview.jpg';
 	}
 	
 	public function getSeoKeywords()

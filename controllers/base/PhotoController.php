@@ -2,10 +2,12 @@
 
 require_once('utils/KeysUtil.php');
 require_once('utils/BaseController.php');
+require_once('utils/maps.php');
 
 class PhotoController extends BaseController
 {
 	private $googleMapsApiKey;
+	private $googleMapsApiSecret;
 	private $currentPhoto = null;
 	private $albumId = null;
 	private $albumData = null;
@@ -19,6 +21,7 @@ class PhotoController extends BaseController
 		$keys = getKeys();
 
 		$this->googleMapsApiKey = $keys->google_maps_api->key;
+		$this->googleMapsApiSecret = $keys->google_maps_api->secret;
 	}
 
 	public function urlStub()
@@ -199,8 +202,6 @@ class PhotoController extends BaseController
 
 			$photoFlickr = getPhoto( $photoId, true, 1024, 1024 );
 
-			//$this->currentPhoto = $photoFlickr;
-
 			$locationParts = explode( ',', $photoFlickr->location );
 
 			$this->addSeoLocation( $locationParts[0], $locationParts[1], $xtpl );
@@ -294,6 +295,22 @@ class PhotoController extends BaseController
 				$xtpl->assign( 'PHOTO_DESCRIPTION', $photoFlickr->description );
 				$xtpl->parse( 'main.body.description' );
 			}
+			
+			// Show what albums this photo is a part of
+			$albums = $db->album_photos('photos_id = ?', $photoId);
+			if( $albums )
+			{
+				foreach( $albums as $albumInfo )
+				{
+					$album = $db->albums[ $albumInfo['albums_id'] ];
+					if( $album )
+					{
+						$xtpl->assign( 'ALBUM_ID', $album['id'] );
+						$xtpl->assign( 'ALBUM_TITLE', $album['title'] );
+						$xtpl->parse( 'main.body.album' );
+					}
+				}
+			}
 
 			$xtpl->assign( 'FLICKR_IMG', $photoFlickr->image );
 
@@ -346,7 +363,7 @@ class PhotoController extends BaseController
 	{
 		if( $this->enforceAuth() )
 		{
-			if( count( $request->args ) == 1 && is_numeric( $request->args[0] ) )
+			if( count( $request->args ) >= 1 && is_numeric( $request->args[0] ) )
 			{
 				$photoId = $request->args[0];
 
@@ -385,7 +402,7 @@ class PhotoController extends BaseController
 							addBlurMeta( $photoId );
 						}
 
-						header( "Location:/photo/$photoId" );
+						header("Location: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
 					}
 					else
 					{
@@ -413,12 +430,16 @@ class PhotoController extends BaseController
 
 	private function getZoomedOutMapUrl( $location )
 	{
-		return "http://maps.googleapis.com/maps/api/staticmap?center=$location&zoom=6&scale=1&size=700x400&maptype=terrain&key=$this->googleMapsApiKey&format=png&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%%7Clabel:%7C$location";
+		$url = "/maps/api/staticmap?center=$location&zoom=6&scale=1&size=700x400&maptype=terrain&key=$this->googleMapsApiKey&format=png&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%%7Clabel:%7C$location";
+			
+		return buildAndSignMapUrl( $url, $this->googleMapsApiSecret );
 	}
 
 	private function getZoomedInMapUrl( $location )
 	{
-		return "http://maps.googleapis.com/maps/api/staticmap?center=$location&zoom=15&scale=1&size=800x800&maptype=terrain&key=$this->googleMapsApiKey&format=png&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:%7C$location";
+		$url = "/maps/api/staticmap?center=$location&zoom=15&scale=1&size=800x800&maptype=terrain&key=$this->googleMapsApiKey&format=png&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:%7C$location";
+		
+		return buildAndSignMapUrl( $url, $this->googleMapsApiSecret );
 	}
 
 	private function refreshInfoFromFlickr( $id )

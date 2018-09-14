@@ -1,0 +1,81 @@
+<div style="background: white; display: block; width: 400px; height: 400px;">
+	<canvas id="monthChart" width="400" height="400"></canvas>
+</div>
+
+<div style="background: white; display: block; width: 1024px; height: 800px;">
+	<canvas id="hourXmonthChart" width="1024" height="800"></canvas>
+</div>
+
+<script>
+	var colors = poolColors(256);
+	
+	//////////////////////////////////////////////
+	// Month
+	//////////////////////////////////////////////
+	var monthChartCtx = $("#monthChart");
+    
+	var monthChart = new Chart(monthChartCtx, {
+		type: 'bar',
+		data: {
+			labels: ["January",
+				 "Febuary",
+				 "March",
+				 "April",
+				 "June",
+				 "July",
+				 "August",
+				 "September",
+				 "October",
+				 "November",
+				 "December"],
+			datasets: [{
+				label: '# of Photos',
+				data: [{MONTH_VALUES}],
+				backgroundColor: colors,
+				borderColor: colors,
+				borderWidth: 1
+			}]
+		}
+	});
+	
+	//////////////////////////////////////////////
+	// Hour by Month
+	//////////////////////////////////////////////
+
+	var hourXmonthChartCtx = $("#hourXmonthChart");
+    
+	var hourXmonthChart = new Chart(hourXmonthChartCtx, {
+		type: 'bubble',
+		data: {
+		datasets: [{
+				label: 'Photos by hour and month',
+				data: [{HOUR_MONTH_VALUES}],
+				backgroundColor: colors
+			}]
+		},
+		options: {
+			scales: {
+				yAxes: [{
+					ticks: {
+						beginAtZero:true
+					}
+				}]
+			}
+		}
+	});
+	
+	function poolColors(a) {
+        var pool = [];
+        for(i=0;i<a;i++){
+            pool.push(dynamicColors());
+        }
+        return pool;
+    }
+
+    function dynamicColors() {
+        var r = Math.floor(Math.random() * 255);
+        var g = Math.floor(Math.random() * 255);
+        var b = Math.floor(Math.random() * 255);
+        return "rgba(" + r + "," + g + "," + b + ", 0.5)";
+    }
+</script>

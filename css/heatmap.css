@@ -1,7 +1,26 @@
-body { margin:0; padding:0; width:100%; height: 100% }
-#body { margin:0; padding:0; width:100%; height: 100% }
+/* #body { margin:0; padding:0; width:100%; height: 100% } */
 #body_container { margin:0; padding:0; width:100%; height: 100% }
-#map { position:absolute; top:0; bottom:0; margin:0; width:100%; height: calc(100vh - 65px); }
+#map { position:absolute; top:0; bottom:0; margin:0; width:100%; height: calc(100vh - 64px); }
+
+body {
+	padding-top: 64px;
+	padding-bottom: 0;
+	padding-left: 0;
+	padding-right: 0;
+	
+	margin:0;
+	width:100%;
+	height: 100%
+}
+
+@media screen and (max-width: 1024px) {
+	body {
+		padding-top: 56px;
+	}
+	
+	#map { height: calc(100vh - 56px); }
+}
+
 
 .adventure.mdl-layout .mdl-layout__content {
 	padding-top: 0px;

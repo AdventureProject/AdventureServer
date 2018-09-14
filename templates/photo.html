@@ -134,6 +134,10 @@
                                 <br /><br />
                                 <span class="description">{PHOTO_DESCRIPTION}</span>
                                 <!-- END: description -->
+								<!-- BEGIN: album -->
+								<br /><br />
+								<em>Album:</em> <a href="/album/{ALBUM_ID}">{ALBUM_TITLE}</a>
+								<!-- END: album -->
 							</span>
 						</div>
 					</div>
@@ -202,7 +206,7 @@
                         <b>Flickr ID:</b> {FLICKR_ID}<br />
                         <b>Location:</b> {PHOTO_LOCATION}<br />
                         <br />
-                        <form action="/photo/{PHOTO_ID}" method="post">
+                        <form method="post">
                             <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="is_wallpaper">
                                 <input type="checkbox" id="is_wallpaper" name="is_wallpaper" class="mdl-switch__input" {IS_WALLPAPER} />
                                 <span class="mdl-switch__label">Is Wallpaper</span>
