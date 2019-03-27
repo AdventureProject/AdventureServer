@@ -42,6 +42,7 @@ class LogController extends BaseController
 
 		$xtpl->assign_file( 'BODY_FILE', 'templates/log.html' );
 
+		$xtpl->assign( 'BLOG_DATE', $blogPost['date_created'] );
 		$xtpl->assign( 'BLOG_TITLE', $blogPost['title'] );
 		$xtpl->assign( 'BLOG_CONTENT', $bodyText );
 
