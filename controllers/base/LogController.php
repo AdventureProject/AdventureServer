@@ -2,6 +2,7 @@
 
 require_once('utils/BaseController.php');
 require_once('libs/Parsedown.php');
+require_once('utils/b2_util.php');
 
 class LogController extends BaseController
 {
@@ -28,15 +29,24 @@ class LogController extends BaseController
     public function getBody( $request, $todaysPhoto, $xtpl )
     {
 		//$this->addCssFile( '/css/about.css', $xtpl );
-		
+
+        $db = getDb();
+        $blogPost = $db->blogs[1];
+
 		$parsedown = new Parsedown();
-		
-		
-		$markdownText = "**test** this _shit_\n# Header";
+
+		$markdownText = $blogPost['content'];
 		$bodyText = $parsedown->text( $markdownText );
+
+		$coverPhotoId = $blogPost['cover_photo_id'];
 		
 		$xtpl->assign_file('BODY_FILE', 'templates/log.html');
-		$xtpl->assign('MARK_DOWN', $bodyText);
+
+        $xtpl->assign('BLOG_TITLE', $blogPost['title']);
+		$xtpl->assign('BLOG_CONTENT', $bodyText);
+
+        $xtpl->assign('PHOTO_THUMBNAIL', b2GetPublicBlurUrl( $coverPhotoId ));
+
         $xtpl->parse('main.body');
     }
 }
