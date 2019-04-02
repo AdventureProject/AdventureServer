@@ -1,0 +1,8 @@
+.cd-timeline {
+    background: none;
+}
+
+.cd-timeline__date {
+    color: #000000;
+    text-shadow: 1px 1px #a5a5a5;
+}
