@@ -12,6 +12,7 @@ $GLOBALS['b2BasePath'] = array();
 $GLOBALS['b2BasePath']['base'] = "https://data.wethinkadventure.rocks/file/adventure/data/";
 $GLOBALS['b2BasePath']['photos'] = $GLOBALS['b2BasePath']['base'] . 'photos';
 $GLOBALS['b2BasePath']['360photos'] = $GLOBALS['b2BasePath']['base'] . '360photos';
+$GLOBALS['b2BasePath']['timeline'] = $GLOBALS['b2BasePath']['base'] . 'timeline';
 
 $GLOBALS['b2InternalPath']['photos'] = 'data/photos';
 $GLOBALS['b2InternalPath']['360photos'] = 'data/360photos';
@@ -26,6 +27,11 @@ function getB2Client()
 {
 	$keys = getKeys();
 	return new B2Service($keys->b2->account_id, $keys->b2->application_id);
+}
+
+function b2GetPublicTimelinePhoto( $file )
+{
+	return $GLOBALS['b2BasePath']['timeline'] . '/' . $file;
 }
 
 function b2GetPublicPhotoOriginalUrl( $id )

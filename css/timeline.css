@@ -3,6 +3,20 @@
 }
 
 .cd-timeline__date {
-    color: #000000;
-    text-shadow: 1px 1px #a5a5a5;
+    color: #ffffff;
+    text-shadow: 2px 2px #323232;
+}
+
+.cd-timeline__block__photo {
+    max-height: 300px;
+}
+
+.entry-image-container-full {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.entry-image-container-gallery {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
 }

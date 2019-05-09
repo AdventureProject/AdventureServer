@@ -1,6 +1,7 @@
 <?php
 
 require_once('utils/BaseController.php');
+require_once('utils/b2_util.php');
 
 class TimeLineController extends BaseController
 {
@@ -33,35 +34,34 @@ class TimeLineController extends BaseController
 
 		$xtpl->assign_file( 'BODY_FILE', 'templates/timeline.html' );
 
-		$timelineData = array(
-			array(
-				"date" => "1"
-			),
-			array(
-				"date" => 2
-			),
-			array(
-				"date" => 2
-			),
-			array(
-				"date" => 2
-			),
-			array(
-				"date" => 2
-			),
-			array(
-				"date" => 2
-			),
-			array(
-				"date" => 2
-			),
-			array(
-				"date" => 2
-			)
-		);
+		$jsonData = file_get_contents('timeline.json');
+		$data = json_decode($jsonData);
 
-		foreach( $timelineData as $entry )
+		foreach( $data->timeline as $entry )
 		{
+			echo 'print line<br />';
+			$date = date( 'j M', $entry->date );
+			$xtpl->assign( 'ENTRY_DATE', $date );
+			$xtpl->assign( 'ENTRY_TITLE', $entry->title );
+			$xtpl->assign( 'ENTRY_DESCRIPTION', $entry->description );
+
+			$numPhotos = count($entry->photos);
+			if($numPhotos == 1)
+			{
+				$xtpl->parse( 'main.body.timeline_entry.photo_container_full' );
+			}
+			else
+			{
+				$xtpl->parse( 'main.body.timeline_entry.photo_container_gallery' );
+			}
+
+			foreach($entry->photos as $photo)
+			{
+				$photoUrl = b2GetPublicTimelinePhoto($photo);
+				$xtpl->assign( 'ENTRY_PHOTO', $photoUrl );
+				$xtpl->parse( 'main.body.timeline_entry.photo' );
+			}
+
 			$xtpl->parse( 'main.body.timeline_entry' );
 		}
 
