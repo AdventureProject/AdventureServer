@@ -1,5 +1,6 @@
 {
     "require": {
-        "kamilZ/b2backblaze": "0.1.*"
+        "kamilZ/b2backblaze": "0.1.*",
+        "cebe/markdown": "*"
     }
 }
