@@ -6,9 +6,13 @@ require_once('utils/b2_util.php');
 
 class LogController extends BaseController
 {
+	private $parser;
+
 	public function __construct( $config )
 	{
 		parent::__construct( false, $config );
+
+		$this->parser = new \cebe\markdown\MarkdownExtra();
 	}
 
 	public function urlStub()
@@ -33,10 +37,8 @@ class LogController extends BaseController
 		$db = getDb();
 		$blogPost = $db->blogs[1];
 
-		$parsedown = new Parsedown();
-
 		$markdownText = $blogPost['content'];
-		$bodyText = $parsedown->text( $markdownText );
+		$bodyText = $bodyText = $this->parser->parse($markdownText);
 
 		$coverPhotoId = $blogPost['cover_photo_id'];
 
