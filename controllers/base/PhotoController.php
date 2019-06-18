@@ -206,6 +206,12 @@ class PhotoController extends BaseController
 
 			$this->addSeoLocation( $locationParts[0], $locationParts[1], $xtpl );
 
+			/*
+			$tz = get_nearest_timezone($locationParts[0], $locationParts[1], "us");
+			//date_default_timezone_set($tz);
+			date_default_timezone_set("UTC");
+			*/
+
 			if( $this->albumData != null )
 			{
 				$dateTaken = $photoData['date_taken'];

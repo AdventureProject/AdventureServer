@@ -3,6 +3,7 @@
 require_once('utils/KeysUtil.php');
 require_once('utils/BaseController.php');
 require_once('utils/b2_util.php');
+require_once('utils/DateUtils.php');
 
 class AlbumController extends BaseController
 {
@@ -114,58 +115,100 @@ class AlbumController extends BaseController
 			$xtpl->assign('ALBUM_DATE', $albumDate );
 			$xtpl->assign('ALBUM_PIC_URL', $coverPhoto->image );
 
-			$albumPhotoResults = $db->photos()->select('photos.id, photos.title, photos.date_taken, photos.orientation')->where('album_photos:albums_id', $albumId)->order('date_taken ASC');
+			$albumPhotoResults = $db->photos()->select('photos.id, photos.title, photos.date_taken, photos.orientation, photos.location')->where('album_photos:albums_id', $albumId)->order('date_taken ASC');
 
 			$xtpl->assign('ALBUM_NUM_PHOTOS', $albumPhotoResults->count());
-			$xtpl->parse('main.body.album_header');
-			
-			$currentDayOfYear = null;
-			$currentHourOfDay = null;
+			//$xtpl->parse('main.body.item_header');
+
+
+			$data = array();
+
+			$annotationResults = $db->album_annotations()->select("*")->where('albums_id', $albumId)->order('time ASC');
+			while( $annotation = $annotationResults->fetch() )
+			{
+				$item = new AlbumData();
+				$item->type = "annotation";
+				$item->dateTime = $annotation['time'];
+				$item->data = $annotation;
+
+				$data[] = $item;
+			}
+
 			while( $photo = $albumPhotoResults->fetch() )
 			{
-			    if( $timeLineMode > 0 )
-			    {
-                    $newDayOfYear = date("z", strtotime($photo['date_taken']));
+				$item = new AlbumData();
+				$item->type = "photo";
+				$item->dateTime = $photo['date_taken'];
+				$item->data = $photo;
 
-                    if ($currentDayOfYear != $newDayOfYear)
-                    {
-                        $currentDayOfYear = $newDayOfYear;
+				$data[] = $item;
+			}
 
-                        $dayStr = date("l, F j", strtotime($photo['date_taken']));
-                        $xtpl->assign('ALBUM_DAY_SEPARATOR', $dayStr);
-                        $xtpl->parse('main.body.photo.day_separator');
-                    }
+			usort($data, "cmp");
 
-                    if( $timeLineMode > 1 )
-                    {
-                        $newHourOfDay = date("H", strtotime($photo['date_taken']));
-
-                        if( $currentHourOfDay != $newHourOfDay )
-                        {
-                            $currentHourOfDay = $newHourOfDay;
-
-                            $timeStr = date("g A", strtotime($photo['date_taken']));
-                            $xtpl->assign('ALBUM_TIME_SEPARATOR', $timeStr);
-                            $xtpl->parse('main.body.photo.time_separator');
-                        }
-                    }
-                }
-
-				$xtpl->assign('PHOTO_ID', $photo['id']);
-				$xtpl->assign('PHOTO_URL', '/photo/' . $photo['id'] . '/album/' . $albumId );
-				$xtpl->assign('PHOTO_IMAGE_URL', b2GetPublicThumbnailUrl($photo['id']));
-				$xtpl->assign('PHOTO_TITLE', $photo['title']);
-
-				if( $photo['orientation'] == 'land' )
+			$currentDayOfYear = null;
+			$currentHourOfDay = null;
+			foreach( $data as $item )
+			{
+				if($item->type == "photo")
 				{
-					$xtpl->parse('main.body.photo.photo_element_land');
-				}
-				else
-				{
-					$xtpl->parse('main.body.photo.photo_element_port');
-				}
+					$photo = $item->data;
 
-				$xtpl->parse('main.body.photo');
+					/*
+					$loc = explode(',', $photo['location']);
+					$tz = get_nearest_timezone($loc[0], $loc[1], "us");
+					date_default_timezone_set($tz);
+					*/
+
+					if( $timeLineMode > 0 )
+					{
+						$newDayOfYear = date("z", strtotime($photo['date_taken']));
+
+						if ($currentDayOfYear != $newDayOfYear)
+						{
+							$currentDayOfYear = $newDayOfYear;
+
+							$dayStr = date("l, F j", strtotime($photo['date_taken']));
+							$xtpl->assign('ALBUM_DAY_SEPARATOR', $dayStr);
+							$xtpl->parse('main.body.item.day_separator');
+						}
+
+						if( $timeLineMode > 1 )
+						{
+							$newHourOfDay = date("H", strtotime($photo['date_taken']));
+
+							if( $currentHourOfDay != $newHourOfDay )
+							{
+								$currentHourOfDay = $newHourOfDay;
+
+								$timeStr = date("g A", strtotime($photo['date_taken']));
+								$xtpl->assign('ALBUM_TIME_SEPARATOR', $timeStr);
+								$xtpl->parse('main.body.item.time_separator');
+							}
+						}
+					}
+
+					$xtpl->assign('PHOTO_ID', $photo['id']);
+					$xtpl->assign('PHOTO_URL', '/photo/' . $photo['id'] . '/album/' . $albumId );
+					$xtpl->assign('PHOTO_IMAGE_URL', b2GetPublicThumbnailUrl($photo['id']));
+					$xtpl->assign('PHOTO_TITLE', $photo['title']);
+
+					if( $photo['orientation'] == 'land' )
+					{
+						$xtpl->parse('main.body.item.photo.photo_element_land');
+					}
+					else
+					{
+						$xtpl->parse('main.body.item.photo.photo_element_port');
+					}
+					$xtpl->parse('main.body.item.photo');
+				}
+				elseif($item->type == "annotation")
+				{
+					$xtpl->assign('ANNOTATION_TEXT', $item->data['text']);
+					$xtpl->parse('main.body.item.annotation');
+				}
+				$xtpl->parse('main.body.item');
 			}
 		}
 		
@@ -188,6 +231,28 @@ class AlbumController extends BaseController
 			return "";
 		}
 	}
+}
+
+function cmp($a, $b)
+{
+	return compareByTimeStamp($a->dateTime, $b->dateTime);
+}
+
+function compareByTimeStamp($time1, $time2)
+{
+	if (strtotime($time1) < strtotime($time2))
+		return -1;
+	else if (strtotime($time1) > strtotime($time2))
+		return 1;
+	else
+		return 0;
+}
+
+class AlbumData
+{
+	var $type;
+	var $dateTime;
+	var $data;
 }
 
 ?>
