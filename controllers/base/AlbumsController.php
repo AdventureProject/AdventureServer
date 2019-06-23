@@ -30,7 +30,9 @@ class AlbumsController extends BaseController
 	{
 		$this->addCssFile( '/css/albums.css', $xtpl );
 		$this->addCssFile( '/css/zoom.css', $xtpl );
-		
+
+		$this->addLazyLoadLibrary( $xtpl );
+
 		$xtpl->assign_file('BODY_FILE', 'templates/albums.html');
 		
 		$db = getDb();

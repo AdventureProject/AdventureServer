@@ -3,7 +3,6 @@
 require_once('utils/KeysUtil.php');
 require_once('utils/BaseController.php');
 require_once('utils/b2_util.php');
-require_once('utils/DateUtils.php');
 
 class AlbumController extends BaseController
 {
@@ -76,6 +75,8 @@ class AlbumController extends BaseController
 		$this->addCssFile( '/css/album.css', $xtpl );
 		$this->addCssFile( '/css/album_container.css', $xtpl );
 		$this->addCssFile( '/css/zoom.css', $xtpl );
+
+		$this->addLazyLoadLibrary( $xtpl );
 		
 		$xtpl->assign_file('BODY_FILE', 'templates/album.html');
 
@@ -110,16 +111,15 @@ class AlbumController extends BaseController
 
 			$xtpl->assign('ALBUM_TITLE', $album['title']);
 			$xtpl->assign('ALBUM_DESCRIPTION', $album['description']);
-			
-			$albumDate = date("F j, Y", strtotime( $album['date'] ));
+
+			$albumDate = $this->formatDateForDisplayWithTimeZone($album['date'], new DateTimeZone("PST"), "F j, Y");
+
 			$xtpl->assign('ALBUM_DATE', $albumDate );
 			$xtpl->assign('ALBUM_PIC_URL', $coverPhoto->image );
 
 			$albumPhotoResults = $db->photos()->select('photos.id, photos.title, photos.date_taken, photos.orientation, photos.location')->where('album_photos:albums_id', $albumId)->order('date_taken ASC');
 
 			$xtpl->assign('ALBUM_NUM_PHOTOS', $albumPhotoResults->count());
-			//$xtpl->parse('main.body.item_header');
-
 
 			$data = array();
 
@@ -154,12 +154,6 @@ class AlbumController extends BaseController
 				{
 					$photo = $item->data;
 
-					/*
-					$loc = explode(',', $photo['location']);
-					$tz = get_nearest_timezone($loc[0], $loc[1], "us");
-					date_default_timezone_set($tz);
-					*/
-
 					if( $timeLineMode > 0 )
 					{
 						$newDayOfYear = date("z", strtotime($photo['date_taken']));
@@ -168,14 +162,20 @@ class AlbumController extends BaseController
 						{
 							$currentDayOfYear = $newDayOfYear;
 
-							$dayStr = date("l, F j", strtotime($photo['date_taken']));
+							$photoLoc = explode(',', $photo['location']);
+							$dayStr = $this->formatDateForDisplayWithLocation($photo['date_taken'], $photoLoc[0], $photoLoc[1], "l, F j");
+
 							$xtpl->assign('ALBUM_DAY_SEPARATOR', $dayStr);
 							$xtpl->parse('main.body.item.day_separator');
 						}
 
 						if( $timeLineMode > 1 )
 						{
-							$newHourOfDay = date("H", strtotime($photo['date_taken']));
+							$photoLoc = explode(',', $photo['location']);
+							//echo $photoLoc[0] . '   ' . $photoLoc[1] . "<br />";
+							$timeZone = get_nearest_timezone($photoLoc[0], $photoLoc[1], "US");
+
+							$newHourOfDay = $this->formatDateForDisplayWithLocation($photo['date_taken'], $photoLoc[0], $photoLoc[1], "H");
 
 							if( $currentHourOfDay != $newHourOfDay )
 							{
