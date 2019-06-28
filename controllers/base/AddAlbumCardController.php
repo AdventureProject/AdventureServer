@@ -32,7 +32,6 @@ class AddAlbumCardController extends BaseController
 
 	public function post( $request )
 	{
-		echo 'test';
 		if( !empty($request->post['album_id']) && is_numeric($request->post['album_id']) && !empty($request->post['card_content']) )
 		{
 			$db = getDb();
@@ -43,11 +42,7 @@ class AddAlbumCardController extends BaseController
 			$datetimeStr = $date . 'T' . $time . ' PST';
 			$timestamp = date('Y-m-d H:i:s', strtotime($datetimeStr));
 
-			echo $timestamp;
-
 			error_log( 'Creating album annotation ' . $request->post['album_id'] );
-
-			$db->debug = true;
 
 			$newAnnotation = array( 'albums_id' => $request->post['album_id'],
 				'text' => $request->post['card_content'],
