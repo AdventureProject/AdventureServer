@@ -1,18 +1,14 @@
 <?php
 
 require_once('utils/BaseController.php');
-require_once('libs/Parsedown.php');
 require_once('utils/b2_util.php');
+require_once('utils/MarkDown.php');
 
 class LogsController extends BaseController
 {
-	private $parser;
-
 	public function __construct( $config )
 	{
 		parent::__construct( false, $config );
-
-		$this->parser = new \cebe\markdown\MarkdownExtra();
 	}
 
 	public function urlStub()
@@ -34,15 +30,12 @@ class LogsController extends BaseController
 	{
 		$db = getDb();
 
-		//$parsedown = new Parsedown();
-
 		foreach( $db->blogs() as $entry )
 		{
 			$content = $entry['content'];
 			$contentSummary = substr( $content, 0, strpos( $content, "\n" ) );
 
-			//$bodyText = $parsedown->text( $contentSummary );
-			$bodyText = $this->parser->parse($contentSummary);
+			$bodyText = getMarkdown()->parse($contentSummary);
 
 			$coverPhotoId = $entry['cover_photo_id'];
 
