@@ -19,6 +19,21 @@
         </div>
         <div class="log-content">
             <form action="/editlog/{BLOG_ID}" method="post">
+
+                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="is_published">
+                    <input type="checkbox" id="is_published" name="is_published" class="mdl-switch__input" {IS_PUBLISHED} />
+                    <span class="mdl-switch__label">Is Published</span>
+                </label>
+                <br /><br />
+
+                <div>
+                    <span>Blog Date</span><br />
+                    <input type="date" id="blog-date" name="blog-date" value="{BLOG_DATE}" />
+                    <input type="time" id="blog-time" name="blog-time" value="{BLOG_TIME}" />
+                    PST
+                </div>
+                <br /><br />
+
                 <div class="mdl-textfield mdl-js-textfield">
                     <input class="mdl-textfield__input" type="text" id="blog_title" name="blog_title" value="{BLOG_TITLE}" />
                     <label class="mdl-textfield__label" for="blog_title">Blog Title</label>

@@ -43,10 +43,25 @@ class EditLogController extends BaseController
 			{
 				$title = $log['title'];
 				$content = $log['content'];
+				$published = $log['is_published'];
+
+				$displayDate = $log['date_display'];
+
+				$dateTime = new DateTime($displayDate);
+				$tz = new DateTimeZone("America/Los_Angeles");
+				$dateTime->setTimezone($tz);
+
+				$date = $dateTime->format('Y-m-j');
+				$time = $dateTime->format('H:i');
 
 				$xtpl->assign( 'BLOG_ID', $logId );
 				$xtpl->assign( 'BLOG_TITLE', $title );
 				$xtpl->assign( 'BLOG_CONTENT', $content );
+
+				$xtpl->assign( 'BLOG_DATE', $date );
+				$xtpl->assign( 'BLOG_TIME', $time );
+
+				$xtpl->assign( 'IS_PUBLISHED', $published == 1 ? 'checked' : '' );
 			}
 		}
 
@@ -61,11 +76,21 @@ class EditLogController extends BaseController
 
 			$blogTitle = $request->post['blog_title'];
 			$blogContent = $request->post['blog_content'];
+			$blogPublished = ($request->post['is_published'] == 'on');
+
+			$blogDate = $request->post['blog_date'];
+			$blogTime = $request->post['blog_time'];
+
+			$datetimeStr = $blogDate . 'T' . $blogTime . ' PST';
+			$timestamp = date('Y-m-d H:i:s', strtotime($datetimeStr));
 
 			$db = getDb();
 			$row = $db->blogs[ $logId ];
 			$row['title'] = $blogTitle;
 			$row['content'] = $blogContent;
+			$row['is_published'] = $blogPublished;
+			$row['date_display'] = $timestamp;
+			$row['date_updated'] = date("Y-m-d H:i:s",time());
 			$updateResult = $row->update();
 
 			if( $updateResult )

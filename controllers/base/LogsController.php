@@ -30,7 +30,7 @@ class LogsController extends BaseController
 	{
 		$db = getDb();
 
-		foreach( $db->blogs() as $entry )
+		foreach( $db->blogs()->where('is_published', 1) as $entry )
 		{
 			$content = $entry['content'];
 			$contentSummary = substr( $content, 0, strpos( $content, "\n" ) );
