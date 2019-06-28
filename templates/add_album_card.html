@@ -1,0 +1,49 @@
+<div class="mdl-grid center-items">
+
+    <div class="mdl-card navigation-card mdl-cell mdl-cell--4-col mdl-cell--4-col-phone">
+        <div class="mdl-card__title">
+            <h4 class="mdl-card__title-text">Admin</h4>
+        </div>
+        <ul class="mdl-list">
+            <li class="mdl-list__item">
+					<span class="mdl-list__item-primary-content">
+						<a href="/admin/home">Admin Home</a>
+					</span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="mdl-card admin-card mdl-cell mdl-cell--6-col">
+        <div class="mdl-card__title">
+            <h4 class="mdl-card__title-text">Add Album Card</h4>
+        </div>
+        <div class="adventure-content">
+            <form action="/addalbumcard" method="post">
+                <div class="mdl-textfield mdl-js-textfield">
+                    <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="album_id" name="album_id">
+                    <label class="mdl-textfield__label" for="album_id">Album ID</label>
+                </div>
+                <br /><br />
+
+                <div>
+                    <span>Annotation Time</span><br />
+                    <input type="date" id="annotation-date" name="annotation-date" />
+                    <input type="time" id="annotation-time" name="annotation-time" />
+                    PST
+                </div>
+                <br /><br />
+
+                <div class="mdl-textfield mdl-js-textfield">
+                    <textarea class="mdl-textfield__input" type="text" rows= "3" id="card_content" name="card_content"></textarea>
+                    <label class="mdl-textfield__label" for="card_content">Card content</label>
+                </div>
+                <br /><br />
+
+                <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored mdl-js-ripple-effect" style="float:right;" type="submit">
+                    <i class="material-icons">add</i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+</div>

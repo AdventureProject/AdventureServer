@@ -186,7 +186,7 @@ abstract class BaseController extends Controller
 
 	public function formatDateForDisplay( $inDate, $format = null )
 	{
-		return $this->formatDateForDisplayWithTimeZone( $inDate, new DateTimeZone( 'PST' ), $format );
+		return $this->formatDateForDisplayWithTimeZone( $inDate, new DateTimeZone( 'America/Los_Angeles' ), $format );
 	}
 
 	public function formatDateForDisplayWithLocation( $inDate, $latitude, $longitude, $format = null )
@@ -197,16 +197,16 @@ echo 'latitude ' . $latitude . ' longitude ' . $longitude;
 echo 'TIMEZONE '.$timeZoneName . '<br />';
 */
 		//$timeZone = get_nearest_timezone($latitude, $longitude, 'US');
-		$timeZone = new DateTimeZone("PST");
+		$timeZone = new DateTimeZone("America/Los_Angeles");
 		return $this->formatDateForDisplayWithTimeZone( $inDate, $timeZone, $format );
 	}
 
-	private $defaultDateFormat = "j M Y - H:i";
+	private $defaultDateFormat = "j M Y - H:i A";
 
 	public function formatDateForDisplayWithTimeZone( $inDate, $timeZone, $format = null )
 	{
-		$dateTime = new DateTime( $inDate, new DateTimeZone( "UTC" ) );
-		$dateTime->setTimezone( $timeZone );
+		$dateTime = new DateTime( $inDate, new DateTimeZone( "GMT" ) );
+		//$dateTime->setTimezone( $timeZone );
 
 		$fmt = null;
 		if($format != null)

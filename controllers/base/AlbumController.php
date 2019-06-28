@@ -150,43 +150,42 @@ class AlbumController extends BaseController
 			$currentHourOfDay = null;
 			foreach( $data as $item )
 			{
+				if( $timeLineMode > 0 )
+				{
+					$newDayOfYear = date("z", strtotime($item->dateTime));
+
+					if ($currentDayOfYear != $newDayOfYear)
+					{
+						$currentDayOfYear = $newDayOfYear;
+
+						$dayStr = $this->formatDateForDisplay($item->dateTime, "l, F j");
+
+						$xtpl->assign('ALBUM_DAY_SEPARATOR', $dayStr);
+						$xtpl->parse('main.body.item.day_separator');
+					}
+
+					if( $timeLineMode > 1 )
+					{
+						//$photoLoc = explode(',', $photo['location']);
+						//echo $photoLoc[0] . '   ' . $photoLoc[1] . "<br />";
+						//$timeZone = get_nearest_timezone($photoLoc[0], $photoLoc[1], "US");
+
+						$newHourOfDay = $this->formatDateForDisplay($item->dateTime, "H");
+
+						if( $currentHourOfDay != $newHourOfDay )
+						{
+							$currentHourOfDay = $newHourOfDay;
+
+							$timeStr = date("g A", strtotime($item->dateTime));
+							$xtpl->assign('ALBUM_TIME_SEPARATOR', $timeStr);
+							$xtpl->parse('main.body.item.time_separator');
+						}
+					}
+				}
+
 				if($item->type == "photo")
 				{
 					$photo = $item->data;
-
-					if( $timeLineMode > 0 )
-					{
-						$newDayOfYear = date("z", strtotime($photo['date_taken']));
-
-						if ($currentDayOfYear != $newDayOfYear)
-						{
-							$currentDayOfYear = $newDayOfYear;
-
-							$photoLoc = explode(',', $photo['location']);
-							$dayStr = $this->formatDateForDisplayWithLocation($photo['date_taken'], $photoLoc[0], $photoLoc[1], "l, F j");
-
-							$xtpl->assign('ALBUM_DAY_SEPARATOR', $dayStr);
-							$xtpl->parse('main.body.item.day_separator');
-						}
-
-						if( $timeLineMode > 1 )
-						{
-							$photoLoc = explode(',', $photo['location']);
-							//echo $photoLoc[0] . '   ' . $photoLoc[1] . "<br />";
-							$timeZone = get_nearest_timezone($photoLoc[0], $photoLoc[1], "US");
-
-							$newHourOfDay = $this->formatDateForDisplayWithLocation($photo['date_taken'], $photoLoc[0], $photoLoc[1], "H");
-
-							if( $currentHourOfDay != $newHourOfDay )
-							{
-								$currentHourOfDay = $newHourOfDay;
-
-								$timeStr = date("g A", strtotime($photo['date_taken']));
-								$xtpl->assign('ALBUM_TIME_SEPARATOR', $timeStr);
-								$xtpl->parse('main.body.item.time_separator');
-							}
-						}
-					}
 
 					$xtpl->assign('PHOTO_ID', $photo['id']);
 					$xtpl->assign('PHOTO_URL', '/photo/' . $photo['id'] . '/album/' . $albumId );
