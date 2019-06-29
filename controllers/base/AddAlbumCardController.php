@@ -29,7 +29,7 @@ class AddAlbumCardController extends BaseController
 		$xtpl->parse( 'main.body' );
 
 		/*
-		 * Hack for modifying all
+		 * Hack for modifying all album annotation times
 		 *
 		$db = getDb();
 		$db->debug = true;

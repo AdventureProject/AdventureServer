@@ -26,6 +26,11 @@ class LogsController extends BaseController
 		return 'Adventure.Rocks - Logs';
 	}
 
+	public function getRichDescription()
+	{
+		return 'Dispatches from our adventures';
+	}
+
 	public function getBody( $request, $todaysPhoto, $xtpl )
 	{
 		$db = getDb();
