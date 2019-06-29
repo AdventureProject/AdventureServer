@@ -44,7 +44,15 @@ class EditLogController extends BaseController
 				$title = $log['title'];
 				$content = $log['content'];
 				$published = $log['is_published'];
-
+				$heroPhotoId = $log['hero_photo_id'];
+				if($heroPhotoId)
+				{
+					$heroPhotoUrl = b2GetPublicThumbnailUrl($heroPhotoId);
+				}
+				else
+				{
+					$heroPhotoUrl = "";
+				}
 				$displayDate = $log['date_display'];
 
 				$dateTime = new DateTime($displayDate);
@@ -57,7 +65,8 @@ class EditLogController extends BaseController
 				$xtpl->assign( 'BLOG_ID', $logId );
 				$xtpl->assign( 'BLOG_TITLE', $title );
 				$xtpl->assign( 'BLOG_CONTENT', $content );
-
+				$xtpl->assign( 'BLOG_HERO_PHOTO_ID', $heroPhotoId );
+				$xtpl->assign( 'HERO_PHOTO_URL', $heroPhotoUrl );
 				$xtpl->assign( 'BLOG_DATE', $date );
 				$xtpl->assign( 'BLOG_TIME', $time );
 
@@ -78,6 +87,8 @@ class EditLogController extends BaseController
 			$blogContent = $request->post['blog_content'];
 			$blogPublished = ($request->post['is_published'] == 'on');
 
+			$heroPhotoId = $request->post['blog_hero_photo_id'];
+
 			$blogDate = $request->post['blog_date'];
 			$blogTime = $request->post['blog_time'];
 
@@ -89,6 +100,7 @@ class EditLogController extends BaseController
 			$row['title'] = $blogTitle;
 			$row['content'] = $blogContent;
 			$row['is_published'] = $blogPublished;
+			$row['hero_photo_id'] = $heroPhotoId;
 			$row['date_display'] = $timestamp;
 			$row['date_updated'] = date("Y-m-d H:i:s",time());
 			$updateResult = $row->update();

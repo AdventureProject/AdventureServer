@@ -37,7 +37,8 @@ class LogsController extends BaseController
 
 			$bodyText = getMarkdown()->parse($contentSummary);
 
-			$coverPhotoId = $entry['cover_photo_id'];
+			$heroPhotoId = $entry['hero_photo_id'];
+			$photo = getPhoto( $heroPhotoId, true, 1024, 1024 );
 
 			$xtpl->assign_file( 'BODY_FILE', 'templates/logs.html' );
 
@@ -45,8 +46,7 @@ class LogsController extends BaseController
 			$xtpl->assign( 'BLOG_DATE', $entry['date_created'] );
 			$xtpl->assign( 'BLOG_TITLE', $entry['title'] );
 			$xtpl->assign( 'BLOG_CONTENT', $bodyText );
-
-			$xtpl->assign( 'PHOTO_THUMBNAIL', b2GetPublicBlurUrl( $coverPhotoId ) );
+			$xtpl->assign( 'BLOG_HERO_PHOTO_URL', $photo->image );
 			$xtpl->parse( 'main.body.log_entry' );
 		}
 

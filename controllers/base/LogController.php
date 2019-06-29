@@ -28,13 +28,14 @@ class LogController extends BaseController
 
 	public function getBody( $request, $todaysPhoto, $xtpl )
 	{
-		//$this->addCssFile( '/css/about.css', $xtpl );
-
 		$db = getDb();
 		$blogPost = $db->blogs[1];
 
 		$markdownText = $blogPost['content'];
 		$bodyText = $bodyText = getMarkdown()->parse($markdownText);
+
+		$heroPhotoId = $blogPost['hero_photo_id'];
+		$photo = getPhoto( $heroPhotoId, true, 1024, 1024 );
 
 		$coverPhotoId = $blogPost['cover_photo_id'];
 
@@ -42,6 +43,7 @@ class LogController extends BaseController
 
 		$xtpl->assign( 'BLOG_DATE', $blogPost['date_created'] );
 		$xtpl->assign( 'BLOG_TITLE', $blogPost['title'] );
+		$xtpl->assign( 'BLOG_HERO_PHOTO_URL', $photo->image );
 		$xtpl->assign( 'BLOG_CONTENT', $bodyText );
 
 		$xtpl->assign( 'PHOTO_THUMBNAIL', b2GetPublicBlurUrl( $coverPhotoId ) );
