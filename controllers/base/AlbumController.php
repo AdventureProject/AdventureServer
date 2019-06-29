@@ -117,7 +117,7 @@ class AlbumController extends BaseController
 			$xtpl->assign('ALBUM_DATE', $albumDate );
 			$xtpl->assign('ALBUM_PIC_URL', $coverPhoto->image );
 
-			$albumPhotoResults = $db->photos()->select('photos.id, photos.title, photos.date_taken, photos.orientation, photos.location')->where('album_photos:albums_id', $albumId)->order('date_taken ASC');
+			$albumPhotoResults = $db->photos()->select('photos.id, photos.title, photos.description, photos.date_taken, photos.orientation, photos.location')->where('album_photos:albums_id', $albumId)->order('date_taken ASC');
 
 			$xtpl->assign('ALBUM_NUM_PHOTOS', $albumPhotoResults->count());
 
@@ -187,10 +187,19 @@ class AlbumController extends BaseController
 				{
 					$photo = $item->data;
 
+					$photoDateStr = $this->formatDateForDisplay($photo['date_taken']);
+
 					$xtpl->assign('PHOTO_ID', $photo['id']);
+					$xtpl->assign('PHOTO_DATE', $photoDateStr);
 					$xtpl->assign('PHOTO_URL', '/photo/' . $photo['id'] . '/album/' . $albumId );
 					$xtpl->assign('PHOTO_IMAGE_URL', b2GetPublicThumbnailUrl($photo['id']));
 					$xtpl->assign('PHOTO_TITLE', $photo['title']);
+
+					if(!empty($photo['description']))
+					{
+						$xtpl->assign('PHOTO_DESCRIPTION', $photo['description']);
+						$xtpl->parse('main.body.item.photo.photo_description');
+					}
 
 					if( $photo['orientation'] == 'land' )
 					{

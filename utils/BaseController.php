@@ -201,7 +201,7 @@ echo 'TIMEZONE '.$timeZoneName . '<br />';
 		return $this->formatDateForDisplayWithTimeZone( $inDate, $timeZone, $format );
 	}
 
-	private $defaultDateFormat = "j M Y - H:i A";
+	private $defaultDateFormat = "j M Y - H:i";
 
 	public function formatDateForDisplayWithTimeZone( $inDate, $timeZone, $format = null )
 	{
