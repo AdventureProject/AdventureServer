@@ -6,3 +6,6 @@ Disallow: /libs/
 Disallow: /templates/
 Disallow: /external/
 Disallow: /data/
+Disallow: /external/
+Disallow: /js/
+Disallow: /css/

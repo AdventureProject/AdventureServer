@@ -4,13 +4,20 @@ require_once('utils/b2_util.php');
 
 class AdventureMarkdown extends \cebe\markdown\MarkdownExtra
 {
+	private $db;
+
+	public function __construct()
+	{
+		$this->db = getDb();
+	}
+
 	/**
-	 * @marker ~~
+	 * @marker {{
 	 */
 	protected function parsePhoto( $markdown )
 	{
-		// check whether the marker really represents a photo (i.e. there is a closing ~~)
-		if( preg_match( '/^~~(.+?)~~/', $markdown, $matches ) )
+		// check whether the marker really represents a photo (i.e. there is a closing {{)
+		if( preg_match( '/^{{(.+?){{/', $markdown, $matches ) )
 		{
 			return [
 				// return the parsed tag as an element of the abstract syntax tree and call `parseInline()` to allow
@@ -20,17 +27,37 @@ class AdventureMarkdown extends \cebe\markdown\MarkdownExtra
 				strlen( $matches[0] )
 			];
 		}
-		// in case we did not find a closing ~~ we just return the marker and skip 2 characters
-		return [ [ 'text', '~~' ], 2 ];
+		// in case we did not find a closing {{ we just return the marker and skip 2 characters
+		return [ [ 'text', '{{' ], 2 ];
 	}
 
 	// rendering is the same as for block elements, we turn the abstract syntax array into a string.
 	protected function renderPhoto( $element )
 	{
-		$photoId = $this->renderAbsy( $element[1] );
-		$url = b2GetPublicThumbnailUrl( $photoId );
+		$photoInfo = $this->renderAbsy( $element[1] );
 
-		return '<a href="/photo/' . $photoId . '"><img src="' . $url . '" /></a>';
+		if( strpos( $photoInfo, ',' ) !== false )
+		{
+			$parts = explode( ',', $photoInfo );
+			$photoId = trim($parts[0]);
+			$albumId = trim($parts[1]);
+
+			$url = b2GetPublicThumbnailUrl( $photoId );
+			$photo = $this->db->photos[$photoId];
+			$title = $photo['title'];
+
+			return '<a href="/photo/' . $photoId . '/album/' . $albumId . '"><img alt="'.$title.'" title="'.$title.'" src="' . $url . '" /></a>';
+		}
+		else
+		{
+			$photoId = trim($photoInfo);
+
+			$url = b2GetPublicThumbnailUrl( $photoId );
+			$photo = $this->db->photos[$photoId];
+			$title = $photo['title'];
+
+			return '<a href="/photo/' . $photoId . '"><img alt="'.$title.'" title="'.$title.'" src="' . $url . '" /></a>';
+		}
 	}
 }
 

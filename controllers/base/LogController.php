@@ -72,17 +72,14 @@ class LogController extends BaseController
 
 		$markdownText = $this->blogPost['content'];
 		$bodyText = getMarkdown()->parse($markdownText);
-
-		$coverPhotoId = $this->blogPost['cover_photo_id'];
+		$postDate = $this->formatDateForDisplay($this->blogPost['date_created']);
 
 		$xtpl->assign_file( 'BODY_FILE', 'templates/log.html' );
 
-		$xtpl->assign( 'BLOG_DATE', $this->blogPost['date_created'] );
+		$xtpl->assign( 'BLOG_DATE', $postDate );
 		$xtpl->assign( 'BLOG_TITLE', $this->blogPost['title'] );
 		$xtpl->assign( 'BLOG_HERO_PHOTO_URL', $this->heroPhoto->image );
 		$xtpl->assign( 'BLOG_CONTENT', $bodyText );
-
-		$xtpl->assign( 'PHOTO_THUMBNAIL', b2GetPublicBlurUrl( $coverPhotoId ) );
 
 		$xtpl->parse( 'main.body' );
 	}
