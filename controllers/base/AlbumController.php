@@ -152,7 +152,7 @@ class AlbumController extends BaseController
 			{
 				if( $timeLineMode > 0 )
 				{
-					$newDayOfYear = date("z", strtotime($item->dateTime));
+					$newDayOfYear = $this->formatDateForDisplay($item->dateTime, "z");
 
 					if ($currentDayOfYear != $newDayOfYear)
 					{
@@ -176,7 +176,7 @@ class AlbumController extends BaseController
 						{
 							$currentHourOfDay = $newHourOfDay;
 
-							$timeStr = date("g A", strtotime($item->dateTime));
+							$timeStr = $this->formatDateForDisplay($item->dateTime, "g A");
 							$xtpl->assign('ALBUM_TIME_SEPARATOR', $timeStr);
 							$xtpl->parse('main.body.item.time_separator');
 						}
@@ -214,6 +214,18 @@ class AlbumController extends BaseController
 				elseif($item->type == "annotation")
 				{
 					$xtpl->assign('ANNOTATION_TEXT', $item->data['text']);
+
+					/*
+					 * For debugging annotation date/times
+					 *
+					$utc = new DateTimeZone("UTC");
+					$pst = new DateTimeZone("America/Los_Angeles");
+					$dateTime = new DateTime( $item->data['time'], $utc );
+					$dateTime->setTimezone($pst);
+					$cardDate = $dateTime->format('Y-m-d H:i:s');
+					$xtpl->assign('ANNOTATION_DATE', $cardDate);
+					*/
+
 					$xtpl->parse('main.body.item.annotation');
 				}
 				$xtpl->parse('main.body.item');

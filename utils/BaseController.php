@@ -206,7 +206,7 @@ echo 'TIMEZONE '.$timeZoneName . '<br />';
 	public function formatDateForDisplayWithTimeZone( $inDate, $timeZone, $format = null )
 	{
 		$dateTime = new DateTime( $inDate, new DateTimeZone( "GMT" ) );
-		//$dateTime->setTimezone( $timeZone );
+		$dateTime->setTimezone( $timeZone );
 
 		$fmt = null;
 		if($format != null)

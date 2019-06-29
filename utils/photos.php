@@ -375,12 +375,18 @@ function updatePhotoInfoFromFlickr( $id, $flickrId, $db )
 	$location = $responseInfo['photo']['location']['latitude'] . ',' . $responseInfo['photo']['location']['longitude'];
 	$dateTaken = $responseInfo['photo']['dates']['taken'];
 
+	$utc = new DateTimeZone("UTC");
+	$pst = new DateTimeZone("America/Los_Angeles");
+	$dateTime = new DateTime( $dateTaken, $pst );
+	$dateTime->setTimezone($utc);
+	$photoDate = $dateTime->format('Y-m-d H:i:s');
+
 	$rowUpdate = array(
 		'title' => $title,
 		'description' => $description,
 		'imagetype' => $imageType,
 		'location' => $location,
-		'date_taken' => $dateTaken,
+		'date_taken' => $photoDate,
 		'date_updated' => new NotORM_Literal( "NOW()" )
 	);
 

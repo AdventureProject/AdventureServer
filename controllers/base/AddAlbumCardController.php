@@ -26,8 +26,23 @@ class AddAlbumCardController extends BaseController
 	public function getBody( $request, $todaysPhoto, $xtpl )
 	{
 		$xtpl->assign_file( 'BODY_FILE', 'templates/add_album_card.html' );
-		//$this->addJsFile( '/js/add_photo.js', $xtpl );
 		$xtpl->parse( 'main.body' );
+
+		/*
+		 * Hack for modifying all
+		 *
+		$db = getDb();
+		$db->debug = true;
+
+		foreach( $db->album_annotations() as $item )
+		{
+			//$adjustedTime = date('Y-m-d H:i:s', strtotime($item["time"]) - 60 * 60 * 8);
+			$adjustedTime = date('Y-m-d H:i:s', strtotime($item["time"]) + 60 * 60 * 5);
+			//echo strtotime($item["time"]) . ' - ' . $adjustedTime . '<br />';
+			$item["time"] = $adjustedTime;
+			$item->update();
+		}
+		*/
 	}
 
 	public function post( $request )
@@ -39,6 +54,7 @@ class AddAlbumCardController extends BaseController
 			$date = $request->post['annotation-date'];
 			$time = $request->post['annotation-time'];
 
+			date_default_timezone_set('UTC');
 			$datetimeStr = $date . 'T' . $time . ' PST';
 			$timestamp = date('Y-m-d H:i:s', strtotime($datetimeStr));
 
