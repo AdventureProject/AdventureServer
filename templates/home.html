@@ -17,7 +17,7 @@
 				<!-- END: highlight -->
 			</div>
 		</div>
-		
+
 		<div id="action-container" class="mdl-grid center-items">
 			
 			<div id="about-card" class="item-card-square mdl-card mdl-shadow--2dp">
@@ -76,6 +76,31 @@
 			  </div>
 			</div>
 		</div>
+
+        <!-- BEGIN: logs -->
+        <div class="mdl-grid albums-container">
+            <div class="album_major_separator">
+                <h1>Recent Blog Posts</h1>
+                <br /><hr />
+            </div>
+            <!-- BEGIN: log_entry -->
+            <div class="album-card-image mdl-card mdl-shadow--2dp zooming" style="background: url('{BLOG_HERO_PHOTO_URL}') center / cover;">
+                <div class="mdl-card__title mdl-card--expand mdl-js-ripple-effect"></div>
+                <div class="mdl-card__actions">
+                    <span class="album-card-image__title">{BLOG_TITLE}</span>
+                </div>
+                <a href="/log/{ENTRY_ID}" class="card_media_link"></a>
+            </div>
+            <!-- END: log_entry -->
+            <div class="album-card-image album-card-image-view-more mdl-card mdl-shadow--2dp zooming">
+                <div class="mdl-card__title mdl-card--expand mdl-js-ripple-effect"></div>
+                <div class="mdl-card__actions">
+                    <span class="album-card-image__title">View More Posts...</span>
+                </div>
+                <a href="/logs" class="card_media_link"></a>
+            </div>
+        </div>
+        <!-- END: logs -->
 		
 		<div class="mdl-grid albums-container">
 			<div class="album_major_separator">

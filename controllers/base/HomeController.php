@@ -56,7 +56,29 @@ class HomeController extends BaseController
 			
 			$xtpl->parse('main.body.highlight');
 		}
-		
+
+		$latestBlogs = $db->blogs()->where('is_published', 1)->order('date_display DESC')->limit(3);
+		if(count($latestBlogs) > 0)
+		{
+			while( $blog = $latestBlogs->fetch() )
+			{
+				$contentSummary = substr( $blog['content'], 0, strpos( $blog['content'], "\n" ) );
+
+				$bodyText = getMarkdown()->parse( $contentSummary );
+
+				$heroPhotoId = $blog['hero_photo_id'];
+				$photo = getPhoto( $heroPhotoId, true, 1024, 1024 );
+
+				$xtpl->assign( 'ENTRY_ID', $blog['id'] );
+				$xtpl->assign( 'BLOG_DATE', $blog['date_created'] );
+				$xtpl->assign( 'BLOG_TITLE', $blog['title'] );
+				$xtpl->assign( 'BLOG_CONTENT', $bodyText );
+				$xtpl->assign( 'BLOG_HERO_PHOTO_URL', $photo->image );
+				$xtpl->parse( 'main.body.logs.log_entry' );
+			}
+			$xtpl->parse( 'main.body.logs' );
+		}
+
 		$results = $db->albums()->order('date DESC')->limit(7);
 		while( $album = $results->fetch() )
 		{
