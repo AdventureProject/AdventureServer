@@ -102,11 +102,10 @@
 
 .album_minor_separator {
     flex: 1 0 100%;
-    display: inline-block;
+    box-sizing: border-box;
     width: 100%;
 
     padding-left: 8px;
-    padding-right: 8px;
 
     color: white;
 }
