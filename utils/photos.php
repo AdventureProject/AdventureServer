@@ -972,6 +972,13 @@ function pstToUtc( $inDate )
 	return $dateTime->format('Y-m-d H:i:s');
 }
 
+function utcToPst( $inDate )
+{
+	$dateTime = new DateTime($inDate, new DateTimeZone("UTC"));
+	$dateTime->setTimezone(new DateTimeZone( 'America/Los_Angeles' ));
+	return $dateTime->format('Y-m-d H:i:s');
+}
+
 class Photo
 {
 	public $title = "";

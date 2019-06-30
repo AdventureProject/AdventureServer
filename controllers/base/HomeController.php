@@ -69,8 +69,11 @@ class HomeController extends BaseController
 				$heroPhotoId = $blog['hero_photo_id'];
 				$photo = getPhoto( $heroPhotoId, true, 1024, 1024 );
 
+				$blogDate = new DateTime( utcToPst($blog['date_display']) );
+				$blogDateStr = $blogDate->format('M d');
+
 				$xtpl->assign( 'ENTRY_ID', $blog['id'] );
-				$xtpl->assign( 'BLOG_DATE', $blog['date_created'] );
+				$xtpl->assign( 'BLOG_DATE', $blogDateStr );
 				$xtpl->assign( 'BLOG_TITLE', $blog['title'] );
 				$xtpl->assign( 'BLOG_CONTENT', $bodyText );
 				$xtpl->assign( 'BLOG_HERO_PHOTO_URL', $photo->image );

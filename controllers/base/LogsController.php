@@ -42,13 +42,16 @@ class LogsController extends BaseController
 
 			$bodyText = getMarkdown()->parse($contentSummary);
 
+			$blogDate = new DateTime( utcToPst($entry['date_display']) );
+			$blogDateStr = $blogDate->format('M d');
+
 			$heroPhotoId = $entry['hero_photo_id'];
 			$photo = getPhoto( $heroPhotoId, true, 1024, 1024 );
 
 			$xtpl->assign_file( 'BODY_FILE', 'templates/logs.html' );
 
 			$xtpl->assign( 'ENTRY_ID', $entry['id'] );
-			$xtpl->assign( 'BLOG_DATE', $entry['date_created'] );
+			$xtpl->assign( 'BLOG_DATE', $blogDateStr );
 			$xtpl->assign( 'BLOG_TITLE', $entry['title'] );
 			$xtpl->assign( 'BLOG_CONTENT', $bodyText );
 			$xtpl->assign( 'BLOG_HERO_PHOTO_URL', $photo->image );

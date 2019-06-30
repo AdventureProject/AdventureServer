@@ -13,6 +13,7 @@
 .adventure .blog-image {
     object-fit: scale-down;
     max-width: 100%;
+    margin: 16px 8px 8px;
 }
 
 @media screen and (max-width: 640px) {
@@ -51,5 +52,10 @@
 }
 
 .blog-content {
+    width: 100%;
     overflow: auto;
+}
+
+.blog-content p {
+    font-size: large;
 }

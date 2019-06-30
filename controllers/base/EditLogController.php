@@ -53,14 +53,11 @@ class EditLogController extends BaseController
 				{
 					$heroPhotoUrl = "";
 				}
-				$displayDate = $log['date_display'];
 
-				$dateTime = new DateTime($displayDate);
-				$tz = new DateTimeZone("America/Los_Angeles");
-				$dateTime->setTimezone($tz);
+				$displayDate = new DateTime(utcToPst($log['date_display']));
 
-				$date = $dateTime->format('Y-m-j');
-				$time = $dateTime->format('H:i');
+				$date = $displayDate->format('Y-m-d');
+				$time = $displayDate->format('H:i');
 
 				$xtpl->assign( 'BLOG_ID', $logId );
 				$xtpl->assign( 'BLOG_TITLE', $title );
@@ -92,8 +89,8 @@ class EditLogController extends BaseController
 			$blogDate = $request->post['blog_date'];
 			$blogTime = $request->post['blog_time'];
 
-			$datetimeStr = $blogDate . 'T' . $blogTime . ' PST';
-			$timestamp = date('Y-m-d H:i:s', strtotime($datetimeStr));
+			$datetimeStr = $blogDate . 'T' . $blogTime;
+			$timestamp = pstToUtc($datetimeStr);
 
 			$db = getDb();
 			$row = $db->blogs[ $logId ];

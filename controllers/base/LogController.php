@@ -21,7 +21,7 @@ class LogController extends BaseController
 
 	public function getTitle()
 	{
-		return 'Log';
+		return 'Log - ' . $this->blogPost['title'];
 	}
 
 	public function getRichTitle()
@@ -79,8 +79,9 @@ class LogController extends BaseController
 		$this->addCssFile('/css/log.css', $xtpl);
 
 		$markdownText = $this->blogPost['content'];
+
 		$bodyText = getMarkdown()->parse($markdownText);
-		$postDate = $this->formatDateForDisplay($this->blogPost['date_created']);
+		$postDate = $this->formatDateForDisplay($this->blogPost['date_display'], 'M d');
 
 		$xtpl->assign_file( 'BODY_FILE', 'templates/log.html' );
 
