@@ -745,18 +745,23 @@ function createPhotoData( $flickrId, $targetAlbumId, $isWallpaper, $isHighlight,
 		{
 			$photoRow = $db->photos( 'flickr_id', $flickrId )->fetch();
 
-			$item = array( 'albums_id' => $targetAlbumId,
-				'photos_id' => $photoRow['id'] );
-
-			$db->album_photos()->insert( $item );
-
-			// By default we want the album date to be the date that the earliest photo in that album was taken,
-			// so if this photo is older than the current album date, update the album date
-			$album = $db->albums[ $targetAlbumId ];
-			if( strtotime( $photoRow['date_taken'] ) < strtotime( $album['date'] ) )
+			// Only insert if we don't already have one
+			$albumPhotoRow = $db->album_photos()->where('photos_id, albums_id', $photoRow['id'], $targetAlbumId );
+			if(count($albumPhotoRow) == 0)
 			{
-				$album['date'] = $photoRow['date_taken'];
-				$album->update();
+				$item = array( 'albums_id' => $targetAlbumId,
+					'photos_id' => $photoRow['id'] );
+
+				$db->album_photos()->insert( $item );
+
+				// By default we want the album date to be the date that the earliest photo in that album was taken,
+				// so if this photo is older than the current album date, update the album date
+				$album = $db->albums[ $targetAlbumId ];
+				if( strtotime( $photoRow['date_taken'] ) < strtotime( $album['date'] ) )
+				{
+					$album['date'] = $photoRow['date_taken'];
+					$album->update();
+				}
 			}
 		}
 	}
@@ -960,15 +965,10 @@ function autorotateImage( Imagick $image )
 	return $image;
 }
 
-$tzLosAngeles = new DateTimeZone( 'America/Los_Angeles' );
-$tzUtc = new DateTimeZone("UTC");
-function pstToUtc( $inDate)
+function pstToUtc( $inDate )
 {
-	global $tzLosAngeles;
-	global $tzUtc;
-
-	$dateTime = new DateTime( $inDate, $tzLosAngeles );
-	$dateTime->setTimezone($tzUtc);
+	$dateTime = new DateTime($inDate, new DateTimeZone( 'America/Los_Angeles' ));
+	$dateTime->setTimezone(new DateTimeZone("UTC"));
 	return $dateTime->format('Y-m-d H:i:s');
 }
 
