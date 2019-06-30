@@ -48,9 +48,17 @@ span.photo_count {
 }
 
 .adventure .album-annotation {
+    margin: 16px;
     background: rgba(200, 200, 200, 0.5);
 }
 
 .adventure .album-container .description {
     max-width: 968px;
+}
+
+@media only screen and (max-width: 650px) {
+    .adventure .album-annotation {
+        margin: 0 auto;
+        background: rgba(200, 200, 200, 0.5);
+    }
 }
