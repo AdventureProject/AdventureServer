@@ -46,3 +46,11 @@ span.photo_count {
 	height: 50vh;
 	max-height: 760px;
 }
+
+.adventure .album-annotation {
+    background: rgba(200, 200, 200, 0.5);
+}
+
+.adventure .album-container .description {
+    max-width: 968px;
+}

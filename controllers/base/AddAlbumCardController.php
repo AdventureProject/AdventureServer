@@ -54,9 +54,8 @@ class AddAlbumCardController extends BaseController
 			$date = $request->post['annotation-date'];
 			$time = $request->post['annotation-time'];
 
-			date_default_timezone_set('UTC');
-			$datetimeStr = $date . 'T' . $time . ' PST';
-			$timestamp = date('Y-m-d H:i:s', strtotime($datetimeStr));
+			$datetimeStr = $date . 'T' . $time;
+			$timestamp = pstToUtc($datetimeStr);
 
 			error_log( 'Creating album annotation ' . $request->post['album_id'] );
 
