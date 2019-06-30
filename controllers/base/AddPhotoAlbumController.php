@@ -89,7 +89,7 @@ class AddPhotoAlbumController extends BaseController
 									'user_id' => $keys->flickr_api->user_id,
 								 	'media' => 'photos',
 									'perpage' => 500,
-									'page' => 2);
+									'page' => 1);
 					$responseAlbumPhotos = $flickr->call_method($method, $args);
 					
 					if( $flickr->ok( $responseAlbumPhotos ) )

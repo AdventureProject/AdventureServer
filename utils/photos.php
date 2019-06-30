@@ -375,11 +375,7 @@ function updatePhotoInfoFromFlickr( $id, $flickrId, $db )
 	$location = $responseInfo['photo']['location']['latitude'] . ',' . $responseInfo['photo']['location']['longitude'];
 	$dateTaken = $responseInfo['photo']['dates']['taken'];
 
-	$utc = new DateTimeZone("UTC");
-	$pst = new DateTimeZone("America/Los_Angeles");
-	$dateTime = new DateTime( $dateTaken, $pst );
-	$dateTime->setTimezone($utc);
-	$photoDate = $dateTime->format('Y-m-d H:i:s');
+	$photoDate = pstToUtc($dateTaken);
 
 	$rowUpdate = array(
 		'title' => $title,
@@ -692,7 +688,8 @@ function createPhotoData( $flickrId, $targetAlbumId, $isWallpaper, $isHighlight,
 			$hadRotation = false;
 		}
 
-		$item['date_taken'] = $responseInfo['photo']['dates']['taken'];
+		$flickrDate = $responseInfo['photo']['dates']['taken'];
+		$item['date_taken'] = pstToUtc($flickrDate);
 
 		////////////////////////////////////////////////////////
 		// Flickr Sizes
@@ -961,6 +958,18 @@ function autorotateImage( Imagick $image )
 	}
 	$image->setImageOrientation( Imagick::ORIENTATION_TOPLEFT );
 	return $image;
+}
+
+$tzLosAngeles = new DateTimeZone( 'America/Los_Angeles' );
+$tzUtc = new DateTimeZone("UTC");
+function pstToUtc( $inDate)
+{
+	global $tzLosAngeles;
+	global $tzUtc;
+
+	$dateTime = new DateTime( $inDate, $tzLosAngeles );
+	$dateTime->setTimezone($tzUtc);
+	return $dateTime->format('Y-m-d H:i:s');
 }
 
 class Photo
