@@ -46,7 +46,7 @@ class AdventureMarkdown extends \cebe\markdown\MarkdownExtra
 			$photo = $this->db->photos[$photoId];
 			$title = $photo['title'];
 
-			return '<a href="/photo/' . $photoId . '/album/' . $albumId . '"><img alt="'.$title.'" title="'.$title.'" src="' . $url . '" /></a>';
+			return '<a href="/photo/' . $photoId . '/album/' . $albumId . '"><img alt="'.$title.'" title="'.$title.'" src="' . $url . '" class="blog-image" /></a>';
 		}
 		else
 		{
@@ -56,7 +56,7 @@ class AdventureMarkdown extends \cebe\markdown\MarkdownExtra
 			$photo = $this->db->photos[$photoId];
 			$title = $photo['title'];
 
-			return '<a href="/photo/' . $photoId . '"><img alt="'.$title.'" title="'.$title.'" src="' . $url . '" /></a>';
+			return '<a href="/photo/' . $photoId . '"><img alt="'.$title.'" title="'.$title.'" src="' . $url . '" class="blog-image" /></a>';
 		}
 	}
 }

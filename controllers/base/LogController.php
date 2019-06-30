@@ -56,11 +56,19 @@ class LogController extends BaseController
 			$db = getDb();
 
 			$blogId = $request->args[0];
+			$tempBlog = $db->blogs[ $blogId ];
 
-			$this->blogPost = $db->blogs[$blogId];
-			$heroPhotoId = $this->blogPost['hero_photo_id'];
+			if( $this->isAuthenticated() || $tempBlog['is_published'] == 1 )
+			{
+				$this->blogPost = $tempBlog;
+				$heroPhotoId = $this->blogPost['hero_photo_id'];
 
-			$this->heroPhoto = getPhoto( $heroPhotoId, true, 1024, 1024 );
+				$this->heroPhoto = getPhoto( $heroPhotoId, true, 1024, 1024 );
+			}
+			else
+			{
+				exit();
+			}
 		}
 
 		parent::get( $request );

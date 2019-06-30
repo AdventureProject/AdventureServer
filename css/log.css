@@ -1,8 +1,55 @@
 .log-header {
     width: 100%;
     height: 60vh;
+
+    overflow: auto;
 }
 
-h2.title {
-    text-align: center;
+.adventure .blog-date {
+    float: outside;
+    text-align: right;
+}
+
+.adventure .blog-image {
+    object-fit: scale-down;
+    max-width: 100%;
+}
+
+@media screen and (max-width: 640px) {
+    .log-header {
+        width: 100%;
+        height: auto;
+
+        overflow: auto;
+    }
+
+    .adventure .blog-date {
+        font-size: large;
+        float: right;
+    }
+
+    .adventure .mdl-card__title h1.title {
+        text-align: center;
+        font-size: xx-large;
+    }
+
+    .adventure .blog-content h1 {
+        font-size: xx-large;
+    }
+
+    .adventure .blog-content h2 {
+        font-size: x-large;
+    }
+
+    .adventure .blog-content h3 {
+        font-size: large;
+    }
+
+    .adventure .blog-content h4 {
+        font-size: medium;
+    }
+}
+
+.blog-content {
+    overflow: auto;
 }
