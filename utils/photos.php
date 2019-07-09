@@ -244,7 +244,7 @@ function getPhoto( $photoId, $findSmallest = false, $minWidth = -1, $minHeight =
 		}
 		else
 		{
-			$selectedSize = b2GetPublicPhotoOriginalUrl( $photoId );
+			$selectedSize = b2GetPublicPhotoOriginalUrl( $photoId, $photoRow['imagetype'] );
 		}
 		$todaysPhoto->image = $selectedSize;
 	}
@@ -302,7 +302,7 @@ function findSmallest( $sizes, $minWidth, $minHeight, $imageType, $photoId )
 		{
 			error_log( 'Resized file does NOT exist!' );
 
-			$originalSizeUrl = b2GetPublicPhotoOriginalUrl( $photoId );
+			$originalSizeUrl = b2GetPublicPhotoOriginalUrl( $photoId, $imageType );
 			error_log( 'source ' . $originalSizeUrl );
 			$localPath = 'data/resize';
 			$fileName = "resize_" . $photoId . '_' . $smallestSize['width'] . '_' . $smallestSize['height'] . '.' . $imageType;
@@ -339,7 +339,7 @@ function findSmallest( $sizes, $minWidth, $minHeight, $imageType, $photoId )
 	}
 	else
 	{
-		$resizedUrl = b2GetPublicPhotoOriginalUrl( $photoId );
+		$resizedUrl = b2GetPublicPhotoOriginalUrl( $photoId, $imageType );
 	}
 
 	return $resizedUrl;
@@ -806,7 +806,12 @@ function transferPhotoFromFlickrToB2( $id, $flickrId, $flickr, $force = false )
 {
 	$success = false;
 
-	$sourceUrl = b2GetPublicPhotoOriginalUrl( $id );
+	$db = getDb();
+	$photo = $db->photos[$id];
+	$db->close();
+	$db = null;
+
+	$sourceUrl = b2GetPublicPhotoOriginalUrl( $id, $photo['imagetype'] );
 
 	if( !remoteFileExists( $sourceUrl ) || $force )
 	{
@@ -926,6 +931,45 @@ function transferThumbnailFromFlickrToB2( $photoId, $force = false )
 	}
 
 	return $success;
+}
+
+function createReimportTask( $photoId )
+{
+	$importTaskId = null;
+
+	$db = getDb();
+
+	$photo = $db->photos[$photoId];
+
+	error_log( 'Creating reimport task for ' . $photoId );
+
+	$newImportTask = array( 'flickr_id' => $photo['flickr_id'],
+		'flickr_album_id' => null,
+		'target_album_id' => null,
+		'is_wallpaper' => $photo['is_wallpaper'] ? 1 : 0,
+		'is_photoframe' => $photo['is_photoframe'] ? 1 : 0,
+		'is_highlight' => $photo['is_highlight'] ? 1 : 0,
+		'is_photowall' => $photo['is_photowall'] ? 1 : 0,
+		'is_album_cover' => $photo['is_album_cover'] ? 1 : 0,
+		'import_state' => 'photo_data_imported');
+
+	$db->debug = true;
+	$insertResult = $db->photo_import()->insert( $newImportTask );
+	if( $insertResult )
+	{
+		$importTaskId = $insertResult['id'];
+		error_log('Import task created: ' . $importTaskId);
+	}
+	else
+	{
+		$importTaskId = false;
+		error_log('Failed to insert Import Task into DB!');
+	}
+
+	$db->close();
+	$db = null;
+
+	return $importTaskId;
 }
 
 function autorotateImage( Imagick $image )
