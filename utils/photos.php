@@ -392,6 +392,32 @@ function updatePhotoInfoFromFlickr( $id, $flickrId, $db )
 	error_log( 'updating photo info: ' . $id . ' flickr: ' . $flickrId );
 }
 
+function deleteResized( $photoId )
+{
+	$b2Files = listMetaFilesInternal( $photoId );
+
+	if( $b2Files )
+	{
+		foreach( $b2Files as $file )
+		{
+			echo $file . '<br />';
+			if (strpos($file, $GLOBALS['b2InternalPath']['photo']['resized_base']) !== false)
+			{
+				$deleteResult = deleteB2File( $file );
+				echo 'Delete file ' . $file . ' Success: ' . $deleteResult . '<br />';
+			}
+		}
+	}
+
+	$db = getDb();
+	$sizesResults = $db->photo_sizes( 'photo_id = ?', $photoId );
+	foreach( $sizesResults as $row )
+	{
+		$deleteResult = $row->delete();
+		echo 'Photo Size deleted: ' . ($deleteResult == true) . '<br />';
+	}
+}
+
 function deletePhoto( $photoId )
 {
 	$b2Files = listAllFilesInternal( $photoId );

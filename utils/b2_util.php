@@ -198,12 +198,9 @@ function listAllFilesInternal( $photoId )
 	{
 		$apiURL = $authResponse->get('apiUrl');
 		$token = $authResponse->get('authorizationToken');
-		$downloadURL = $authResponse->get('downloadUrl');
-		$minimumPartSize = $authResponse->get('minimumPartSize');
-		
+
 		$fileNames = array();
 		
-		//public function b2ListFileNames($URL, $token, $bucketId, $startFileName = null, $maxFileCount = 100, $prefix = null, $delimiter = null)
 		$fileNamesResponse = $client->b2ListFileNames( $apiURL, $token, $targetBucketId, $startFileName = null, $maxFileCount = 100, $prefix = getB2PhotoPath( $photoId ) );
 		if( $fileNamesResponse->isOK() )
 		{
@@ -215,6 +212,40 @@ function listAllFilesInternal( $photoId )
 			}
 		}
 		
+		return $fileNames;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+function listMetaFilesInternal( $photoId )
+{
+	$keys = getKeys();
+	$client = new B2API($keys->b2->account_id, $keys->b2->application_id, 2000);
+
+	$targetBucketId = getKeys()->b2->bucket_id;
+
+	$authResponse = $client->b2AuthorizeAccount();
+	if ($authResponse->isOk())
+	{
+		$apiURL = $authResponse->get('apiUrl');
+		$token = $authResponse->get('authorizationToken');
+
+		$fileNames = array();
+
+		$fileNamesResponse = $client->b2ListFileNames( $apiURL, $token, $targetBucketId, $startFileName = null, $maxFileCount = 100, $prefix = getB2PhotoMetaPath( $photoId ) );
+		if( $fileNamesResponse->isOK() )
+		{
+			$data = $fileNamesResponse->getData();
+
+			foreach( $data['files'] as $file )
+			{
+				$fileNames[] = $file['fileName'];
+			}
+		}
+
 		return $fileNames;
 	}
 	else

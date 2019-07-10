@@ -109,8 +109,16 @@ class PhotoController extends BaseController
 				}
 				else if( $request->params['regenerate'] == 'all' )
 				{
+					deleteResized( $photoId );
+
 					$importTaskId = createReimportTask( $photoId );
 					processImportTask( $importTaskId );
+
+					transferThumbnailFromFlickrToB2( $photoId, true );
+				}
+				else if( $request->params['regenerate'] == 'resized' )
+				{
+					deleteResized( $photoId );
 				}
 
 				header( 'Location: /photo/' . $request->args[0] );
