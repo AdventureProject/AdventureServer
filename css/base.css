@@ -446,6 +446,9 @@ main.adventure.mdl-layout__content,
 	display: flex !important;
 }
 
+.adventure footer.mdl-mini-footer {
+    padding: 0 16px;
+}
 
 div.adventure-content {
     padding: 10px;
