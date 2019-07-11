@@ -69,9 +69,13 @@ class EditLogController extends BaseController
 
 				$xtpl->assign( 'IS_PUBLISHED', $published == 1 ? 'checked' : '' );
 			}
-		}
 
-		$xtpl->parse( 'main.body' );
+			$xtpl->parse( 'main.body' );
+		}
+		else
+		{
+			echo 'no log ID';
+		}
 	}
 
 	public function post( $request )

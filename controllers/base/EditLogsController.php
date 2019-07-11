@@ -25,24 +25,29 @@ class EditLogsController extends BaseController
 
 	public function getBody( $request, $todaysPhoto, $xtpl )
 	{
+		$db = getDb();
 		if($request->params['create'] == true)
 		{
-			$db = getDb();
-
 			$db->debug = true;
 
-			$newBlog = array('title' => '', 'content' => '');
+			$newBlog = array('title' => '', 'content' => '', 'hero_photo_id' => 1);
 			$row = $db->blogs()->insert($newBlog);
 
 			$newId = $row['id'];
 
-			header( 'Location: /editlog/' . $newId );
+			if( $newId )
+			{
+				header( 'Location: /editlog/' . $newId );
+			}
+			else
+			{
+				echo('Failed to create log');
+			}
 		}
 		else
 		{
 			$xtpl->assign_file( 'BODY_FILE', 'templates/edit_logs.html' );
 
-			$db = getDb();
 			foreach( $db->blogs() as $blog )
 			{
 				$xtpl->assign( 'BLOG_ID', $blog['id'] );
@@ -52,6 +57,9 @@ class EditLogsController extends BaseController
 
 			$xtpl->parse( 'main.body' );
 		}
+
+		$db->close();
+		$db = null;
 	}
 }
 
