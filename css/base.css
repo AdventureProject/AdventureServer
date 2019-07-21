@@ -447,7 +447,12 @@ main.adventure.mdl-layout__content,
 }
 
 .adventure footer.mdl-mini-footer {
+    margin-top: 64px;
     padding: 0 16px;
+}
+
+.adventure footer.mdl-mini-footer h3 {
+    margin: 8px;
 }
 
 div.adventure-content {
