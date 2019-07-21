@@ -34,7 +34,25 @@ class AdventureMarkdown extends \cebe\markdown\MarkdownExtra
 	// rendering is the same as for block elements, we turn the abstract syntax array into a string.
 	protected function renderPhoto( $element )
 	{
-		$photoInfo = $this->renderAbsy( $element[1] );
+		$data = $this->renderAbsy( $element[1] );
+
+		$parts = explode('|', $data);
+		$size = trim($parts[0]);
+		$photoInfo = trim($parts[1]);
+
+		$size = strtoupper($size);
+		if($size == "S")
+		{
+			$imageStyle = 'blog-image-small';
+		}
+		elseif($size == "M")
+		{
+			$imageStyle = 'blog-image-medium';
+		}
+		else
+		{
+			$imageStyle = 'blog-image-large';
+		}
 
 		if( strpos( $photoInfo, ',' ) !== false )
 		{
@@ -46,7 +64,7 @@ class AdventureMarkdown extends \cebe\markdown\MarkdownExtra
 			$photo = $this->db->photos[$photoId];
 			$title = $photo['title'];
 
-			return '<a href="/photo/' . $photoId . '/album/' . $albumId . '"><img alt="'.$title.'" title="'.$title.'" src="' . $url . '" class="blog-image" /></a>';
+			return '<a href="/photo/' . $photoId . '/album/' . $albumId . '" class="blog-image-link"><img alt="'.$title.'" title="'.$title.'" src="' . $url . '" class="'.$imageStyle.'" /></a>';
 		}
 		else
 		{
@@ -56,7 +74,7 @@ class AdventureMarkdown extends \cebe\markdown\MarkdownExtra
 			$photo = $this->db->photos[$photoId];
 			$title = $photo['title'];
 
-			return '<a href="/photo/' . $photoId . '"><img alt="'.$title.'" title="'.$title.'" src="' . $url . '" class="blog-image" /></a>';
+			return '<a href="/photo/' . $photoId . '" class="blog-image-link"><img alt="'.$title.'" title="'.$title.'" src="' . $url . '" class="'.$imageStyle.'" /></a>';
 		}
 	}
 }

@@ -12,10 +12,36 @@
     width: 100%;
 }
 
-.adventure .blog-image {
+.adventure .blog-content {
+    display: inline-block;
+}
+
+.adventure .blog-content p {
+    min-width: 150px;
+}
+
+.adventure .blog-image-link {
+    display: inline-block;
+}
+
+.adventure .blog-image-small {
     display: block;
     object-fit: scale-down;
-    max-width: 95%;
+    max-width: 128px;
+    margin: 8px 4px 4px;
+}
+
+.adventure .blog-image-medium {
+    display: block;
+    object-fit: scale-down;
+    max-width: 256px;
+    margin: 16px 8px 8px;
+}
+
+.adventure .blog-image-large {
+    display: block;
+    object-fit: scale-down;
+    max-width: 512px;
     margin: 16px 8px 8px;
 }
 
