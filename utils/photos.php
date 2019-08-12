@@ -854,6 +854,8 @@ function transferPhotoFromFlickrToB2( $id, $flickrId, $flickr, $force = false )
 	$db->close();
 	$db = null;
 
+	error_log( 'Getting source photo ' . $id . ' of FlickrId: ' . $flickrId );
+
 	$sourceUrl = b2GetPublicPhotoOriginalUrl( $id, $photo['imagetype'] );
 
 	if( !remoteFileExists( $sourceUrl ) || $force )
