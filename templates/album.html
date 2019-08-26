@@ -61,3 +61,40 @@
             <!-- END: photo -->
         <!-- END: item -->
     </div>
+
+		<!-- BEGIN: admin_links -->
+		<div class="mdl-card navigation-card mdl-cell mdl-cell--2-col mdl-cell--4-col-phone">
+			<div class="mdl-card__title">
+				<h4 class="mdl-card__title-text">Admin</h4>
+			</div>
+			<ul class="mdl-list">
+				<li class="mdl-list__item">
+						<span class="mdl-list__item-primary-content">
+							<a href="/admin/home">Admin Home</a>
+						</span>
+				</li>
+				<li class="mdl-list__item">
+						<span class="mdl-list__item-primary-content">
+							<a href="/addphoto">Add Photo</a>
+						</span>
+				</li>
+			</ul>
+		</div>
+
+		<div class="mdl-card admin-card mdl-cell mdl-cell--4-col mdl-cell--4-col-phone">
+			<div class="mdl-card__title">
+				<h4 class="mdl-card__title-text">Edit Album</h4>
+			</div>
+			<div style="padding: 15px;">
+				<br />
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" onclick="location.href='/album/{ALBUM_ID}?regenerate=info';">
+					Re-fetch info from Flickr
+				</button>
+				<br /><br />
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" onclick="location.href='/album/{ALBUM_ID}?regenerate=photoinfo';">
+					Re-fetch all photo info from Flickr
+				</button>
+				<br /><br />
+			</div>
+		</div>
+		<!-- END: admin_links -->

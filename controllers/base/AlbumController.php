@@ -83,7 +83,23 @@ class AlbumController extends BaseController
 		$albumId = $this->getAlbumId( $request );
 		if( $albumId != null )
         {
+			$xtpl->assign('ALBUM_ID', $albumId);
+
 			$db = getDb();
+
+			if( $this->isAuthenticated() && array_key_exists( 'regenerate', $request->params ) )
+			{
+				if( $request->params['regenerate'] == 'info' )
+				{
+					error_log( 'regenerate albumInfo ' . $albumId );
+
+					updateAlbumInfo( $albumId );
+				}
+				elseif( $request->params['regenerate'] == 'photoinfo' )
+				{
+					updateAlbumPhotos( $albumId );
+				}
+			}
 
 			$album = $db->albums[$albumId];
 			$coverPhoto = getPhotoById( $album['cover_photo_id'], true, 1024, 768 );
@@ -120,6 +136,11 @@ class AlbumController extends BaseController
 			$albumPhotoResults = $db->photos()->select('photos.id, photos.title, photos.description, photos.date_taken, photos.orientation, photos.location')->where('album_photos:albums_id', $albumId)->order('date_taken ASC');
 
 			$xtpl->assign('ALBUM_NUM_PHOTOS', $albumPhotoResults->count());
+
+			if( $this->isAuthenticated() )
+			{
+				$xtpl->parse('main.body.admin_links');
+			}
 
 			$data = array();
 
@@ -230,6 +251,8 @@ class AlbumController extends BaseController
 				}
 				$xtpl->parse('main.body.item');
 			}
+
+			$db->close();
 		}
 		
 		$xtpl->parse('main.body');

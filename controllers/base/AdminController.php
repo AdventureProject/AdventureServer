@@ -45,7 +45,8 @@ class AdminController extends BaseController
 
 			error_log( 'Updating album: ' . $albumId );
 
-			$this->updateAlbum( $albumId );
+			updateAlbumInfo( $albumId );
+			updateAlbumPhotos( $albumId );
 
 			header("Location:/admin/home?browse=album?album_id=$albumId");
 		}
@@ -114,20 +115,6 @@ class AdminController extends BaseController
         }
     }
 	
-	private function updateAlbum( $albumId )
-	{
-		$db = getDb();
-
-		$albumPhotoResults = $db->photos()->select('photos.id, photos.flickr_id')->where('album_photos:albums_id', $albumId)->order('date_taken ASC');
-		foreach( $albumPhotoResults as $photo )
-		{
-			$flickrId = $photo['flickr_id'];
-			$id = $photo['id'];
-			
-			updatePhotoInfoFromFlickr( $id, $flickrId, $db );
-		}
-	}
-    
     private function renderHome( $xtpl, $request )
     {
 		$this->addCssFile( '/css/admin_home.css', $xtpl );

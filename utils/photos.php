@@ -357,6 +357,66 @@ function getHttpResponseCode( $theURL )
 	return substr( $headers[0], 9, 3 );
 }
 
+function updateAlbumInfo( $albumId )
+{
+	$db = getDb();
+	$keys = getKeys();
+
+	$key = $keys->flickr_api->key;
+	$secret = $keys->flickr_api->secret;
+	$flickr = new Flickr($key, $secret);
+
+	$album = $db->albums[$albumId];
+	$flickrAlbumId = $album['flickr_album_id'];
+
+	////////////////////////////////////////////////////////
+	// Flickr Album Info
+
+	$method = 'flickr.photosets.getInfo';
+	$args = array(	'photoset_id' => $flickrAlbumId,
+		'user_id' => $keys->flickr_api->user_id );
+
+	$responseAlbumInfo = $flickr->call_method($method, $args);
+
+	if( $flickr->ok( $responseAlbumInfo ) )
+	{
+		error_log( 'got album info' );
+		$photoSetInfo = $responseAlbumInfo['photoset'];
+		$albumTitle = $photoSetInfo['title']['_content'];
+		$albumDescription = $photoSetInfo['description']['_content'];
+
+		//$albumCoverFlickrId = $photoSetInfo['primary'];
+
+		$rowUpdate = array(
+			'title' => $albumTitle,
+			'description' => $albumDescription
+		);
+
+		$albumRow = $db->albums[ $albumId ];
+		$result = $albumRow->update( $rowUpdate );
+
+		error_log("Album info updated! " . $albumId );
+	}
+
+	$db->close();
+}
+
+function updateAlbumPhotos( $albumId )
+{
+	$db = getDb();
+
+	$albumPhotoResults = $db->photos()->select('photos.id, photos.flickr_id')->where('album_photos:albums_id', $albumId)->order('date_taken ASC');
+	foreach( $albumPhotoResults as $photo )
+	{
+		$flickrId = $photo['flickr_id'];
+		$id = $photo['id'];
+
+		updatePhotoInfoFromFlickr( $id, $flickrId, $db );
+	}
+
+	$db->close();
+}
+
 function updatePhotoInfoFromFlickr( $id, $flickrId, $db )
 {
 	$keys = getKeys();
