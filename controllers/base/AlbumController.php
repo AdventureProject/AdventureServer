@@ -287,25 +287,40 @@ class AlbumController extends BaseController
 			{
 				$albumId = $request->args[0];
 
-				$db = getDb();
-				$albumRow = $db->albums[ $albumId ];
-				if( $albumRow )
-				{
-					$albumRow['is_published'] = isset( $request->post['is_published'] ) ? 1 : 0;
-					$success = $albumRow->update();
+				$action = $request->post['action'];
 
-					if($success)
+				if($action == 'update')
+				{
+					$db = getDb();
+					$albumRow = $db->albums[ $albumId ];
+					if( $albumRow )
 					{
-						header( "Location: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]" );
+						$albumRow['is_published'] = isset( $request->post['is_published'] ) ? 1 : 0;
+						$success = $albumRow->update();
+
+						if($success)
+						{
+							header( "Location: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]" );
+						}
+						else
+						{
+							echo 'Failed to update album';
+						}
 					}
 					else
 					{
-						echo 'Failed to update album';
+						echo 'No album found for id';
 					}
 				}
-				else
+				elseif($action == 'addcard')
 				{
-					echo 'No album found for id';
+					$date = $request->post['annotation-date'];
+					$time = $request->post['annotation-time'];
+					$content = $request->post['card_content'];
+
+					$this->addCard($albumId, $date, $time, $content);
+
+					header( "Location: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]" );
 				}
 			}
 			else
@@ -313,6 +328,24 @@ class AlbumController extends BaseController
 				echo 'No album id provided';
 			}
 		}
+	}
+
+	private function addCard( $albumId, $date, $time, $content )
+	{
+		$db = getDb();
+
+		$datetimeStr = $date . 'T' . $time;
+		$timestamp = pstToUtc($datetimeStr);
+
+		error_log( 'Creating album annotation ' . $albumId );
+
+		$newAnnotation = array( 'albums_id' => $albumId,
+			'text' => $content,
+			'time' => $timestamp );
+
+		$insertResult = $db->album_annotations()->insert( $newAnnotation );
+
+		return ($insertResult != null);
 	}
 
 	public function getBlurredBackgroundPhotoUrl( $todaysPhoto )
