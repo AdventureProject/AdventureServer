@@ -100,6 +100,13 @@ class AlbumController extends BaseController
 				{
 					updateAlbumPhotos( $albumId );
 				}
+				elseif( $request->params['regenerate'] == 'timelinemode' )
+				{
+					$this->updateTimelineMode( $albumId );
+				}
+
+				$stub = $this->urlStub();
+				header("Location: /$stub/$albumId");
 			}
 			// If not authenticated, and album is not published, render 404
 			elseif( !$this->isAuthenticated() && $album['is_published'] == 0 )
@@ -124,12 +131,15 @@ class AlbumController extends BaseController
 				{
 					case 0:
 						$this->addNavAction( 'timelinemode', 'av_timer', 'Timeline Mode Light', '?timeline=1', $xtpl );
+						$xtpl->assign('TIMELINE_MODE', 'None');
 						break;
 					case 1:
 						$this->addNavAction( 'timelinemode', 'av_timer', 'Timeline Mode Full', '?timeline=2', $xtpl );
+						$xtpl->assign('TIMELINE_MODE', 'Day');
 						break;
 					case 2:
 						$this->addNavAction( 'timelinemode', 'av_timer', 'No Timeline Mode', '?timeline=0', $xtpl );
+						$xtpl->assign('TIMELINE_MODE', 'Hour');
 						break;
 				}
 
@@ -320,6 +330,32 @@ class AlbumController extends BaseController
 		{
 			return "";
 		}
+	}
+
+	private function updateTimelineMode( $albumId )
+	{
+		$db = getDb();
+
+		$album = $db->albums[$albumId];
+		$currentMode = $album['timeline_mode'];
+
+		switch($currentMode)
+		{
+			case 0:
+				$album['timeline_mode'] = 1;
+				break;
+			case 1:
+				$album['timeline_mode'] = 2;
+				break;
+			case 2:
+			default:
+			$album['timeline_mode'] = 0;
+				break;
+		}
+
+		$album->update();
+
+		$db->close();
 	}
 }
 

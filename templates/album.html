@@ -101,7 +101,6 @@
 					</form>
 
 					<hr />
-
 				</div>
 				<br /><br />
 				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" onclick="location.href='/album/{ALBUM_ID}?regenerate=info';">
@@ -110,6 +109,11 @@
 				<br /><br />
 				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" onclick="location.href='/album/{ALBUM_ID}?regenerate=photoinfo';">
 					Re-fetch all photo info from Flickr
+				</button>
+				<br /><br />
+				<strong>Timeline Mode:</strong> {TIMELINE_MODE}<br />
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" onclick="location.href='/album/{ALBUM_ID}?regenerate=timelinemode';">
+					Cycle Timeline Mode
 				</button>
 				<br /><br />
 			</div>
