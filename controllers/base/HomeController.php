@@ -82,7 +82,7 @@ class HomeController extends BaseController
 			$xtpl->parse( 'main.body.logs' );
 		}
 
-		$results = $db->albums()->order('date DESC')->limit(7);
+		$results = $db->albums()->where('is_published', 1)->order('date DESC')->limit(7);
 		while( $album = $results->fetch() )
 		{
 			$xtpl->assign('ALBUM_ID', $album['id']);

@@ -86,7 +86,24 @@
 				<h4 class="mdl-card__title-text">Edit Album</h4>
 			</div>
 			<div style="padding: 15px;">
-				<br />
+				<div style="padding: 15px;">
+					<br />
+					<form method="post">
+						<label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="is_published">
+							<input type="checkbox" id="is_published" name="is_published" class="mdl-switch__input" {IS_PUBLISHED} />
+							<span class="mdl-switch__label">Is Published</span>
+						</label>
+						<br /><br />
+						<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit">
+							Update
+						</button><br />
+						<br />
+					</form>
+
+					<hr />
+
+				</div>
+				<br /><br />
 				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" onclick="location.href='/album/{ALBUM_ID}?regenerate=info';">
 					Re-fetch info from Flickr
 				</button>

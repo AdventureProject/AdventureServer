@@ -36,7 +36,7 @@ class AlbumsController extends BaseController
 		$xtpl->assign_file('BODY_FILE', 'templates/albums.html');
 		
 		$db = getDb();
-		$results = $db->albums()->order('date DESC');
+		$results = $db->albums()->where('is_published', 1)->order('date DESC');
 		while( $album = $results->fetch() )
 		{
 			$xtpl->assign('ALBUM_ID', $album['id']);
