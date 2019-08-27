@@ -768,7 +768,7 @@ function createPhotoData( $flickrId, $targetAlbumId, $isWallpaper, $isHighlight,
 	$hadRotation = null;
 	$rotation = $responseInfo['photo']['rotation'];
 
-	if( $rotation == 90 || $rotation == 180 || $rotation == 270 )
+	if( $rotation == 90 || $rotation == 270 )
 	{
 		$hadRotation = true;
 	}
