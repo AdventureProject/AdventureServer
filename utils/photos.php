@@ -1114,18 +1114,18 @@ function autorotateImage( Imagick $image )
 	return $image;
 }
 
-function pstToUtc( $inDate )
+function pstToUtc( $inDate, $format='Y-m-d H:i:s' )
 {
 	$dateTime = new DateTime( $inDate, new DateTimeZone( 'America/Los_Angeles' ) );
 	$dateTime->setTimezone( new DateTimeZone( "UTC" ) );
-	return $dateTime->format( 'Y-m-d H:i:s' );
+	return $dateTime->format( $format );
 }
 
-function utcToPst( $inDate )
+function utcToPst( $inDate, $format='Y-m-d H:i:s' )
 {
 	$dateTime = new DateTime( $inDate, new DateTimeZone( "UTC" ) );
 	$dateTime->setTimezone( new DateTimeZone( 'America/Los_Angeles' ) );
-	return $dateTime->format( 'Y-m-d H:i:s' );
+	return $dateTime->format( $format );
 }
 
 class Photo

@@ -117,6 +117,11 @@ class AlbumController extends BaseController
 			// Normal album render
 			else
 			{
+				$pstDate = utcToPst( $album['date'], 'Y-m-d' );
+				$pstTime = utcToPst( $album['date'], 'H:i:s' );
+				$xtpl->assign( 'ANNOTATION_DATE', $pstDate );
+				$xtpl->assign( 'ANNOTATION_TIME', $pstTime );
+
 				$coverPhoto = getPhotoById( $album['cover_photo_id'], true, 1024, 768 );
 
 				$timeLineMode = $album['timeline_mode'];
@@ -266,6 +271,13 @@ class AlbumController extends BaseController
 						$cardDate = $dateTime->format('Y-m-d H:i:s');
 						$xtpl->assign('ANNOTATION_DATE', $cardDate);
 						*/
+
+						if($this->isAuthenticated())
+						{
+							$xtpl->assign( 'ANNOTATION_ID', $item->data['id'] );
+							$xtpl->assign( 'ANNOTATION_DATE', utcToPst( $item->data['time'] ) );
+							$xtpl->parse( 'main.body.item.annotation.admin' );
+						}
 
 						$xtpl->parse( 'main.body.item.annotation' );
 					}

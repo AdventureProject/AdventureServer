@@ -1,0 +1,44 @@
+<script>
+	function confirmDelete()
+	{
+        if( confirm('Delete this annotation?') )
+		{
+            location.href='/editalbumcard/{ANNOTATION_ID}?delete=1';
+		}
+	}
+</script>
+
+<a href="/album/{ALBUM_ID}">Back to Album</a><br /><br />
+
+<div class="mdl-grid center-items">
+
+    <div class="mdl-card admin-card mdl-cell mdl-cell--6-col">
+        <div class="mdl-card__title">
+            <h4 class="mdl-card__title-text">Edit Album Card</h4>
+        </div>
+        <div class="adventure-content">
+            <form method="post">
+                <div>
+                    <span>Annotation Time</span><br />
+                    <input type="date" id="annotation-date" name="annotation-date" value="{ANNOTATION_DATE}" />
+                    <input type="time" id="annotation-time" name="annotation-time" value="{ANNOTATION_TIME}" />
+                    PST
+                </div>
+                <br /><br />
+
+                <div class="mdl-textfield mdl-js-textfield">
+                    <textarea class="mdl-textfield__input" type="text" rows= "3" id="card_content" name="card_content">{ANNOTATION_CONTENT}</textarea>
+                    <label class="mdl-textfield__label" for="card_content">Card content</label>
+                </div>
+                <br /><br />
+
+                <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored mdl-js-ripple-effect" style="float:right;" type="submit">
+                    <i class="material-icons">edit</i>
+                </button>
+            </form>
+			<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" onclick="confirmDelete();">
+				Delete
+			</button>
+        </div>
+    </div>
+</div>

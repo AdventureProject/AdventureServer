@@ -65,8 +65,8 @@
 				<input type="hidden" name="action" value="addcard" />
 				<div>
 					<span>Annotation Time</span><br />
-					<input type="date" id="annotation-date" name="annotation-date" />
-					<input type="time" id="annotation-time" name="annotation-time" />
+					<input type="date" id="annotation-date" name="annotation-date" value="{ANNOTATION_DATE}" />
+					<input type="time" id="annotation-time" name="annotation-time" value="{ANNOTATION_TIME}" />
 					PST
 				</div>
 				<br /><br />
@@ -120,7 +120,12 @@
                 <div class="mdl-card__title mdl-color-text--white">
                     <h4 style="color: #0b0b0b; margin: 0 auto; text-align: center;">{ANNOTATION_TEXT}</h4>
                 </div>
-                {ANNOTATION_DATE}
+				<!-- BEGIN: admin -->
+				{ANNOTATION_DATE}<br />
+				<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" onclick="location.href='/editalbumcard/{ANNOTATION_ID}';">
+					Edit
+				</button>
+				<!-- END: admin -->
             </div>
             <!-- END: annotation -->
 
