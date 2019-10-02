@@ -313,24 +313,33 @@ function findSmallest( $sizes, $minWidth, $minHeight, $imageType, $photoId )
 
 			error_log( 'local: ' . $localFile );
 			error_log( 'downloaded original' );
-			$image = new Imagick( $localFile );
-			if( $image )
+			try
 			{
-				$image->resizeImage( $smallestSize['width'], $smallestSize['height'], Imagick::FILTER_LANCZOS, 1 );
-				error_log( 'resized!' );
-				$image->writeImage( $localFile );
+				$image = new Imagick( $localFile );
+				if( $image )
+				{
+					$image->resizeImage( $smallestSize['width'], $smallestSize['height'], Imagick::FILTER_LANCZOS, 1 );
+					error_log( 'resized!' );
+					$image->writeImage( $localFile );
 
-				error_log( 'Proccessed image' );
+					error_log( 'Proccessed image' );
 
-				$targetPath = getB2PhotoMetaResizedPath( $photoId, $smallestSize['width'], $smallestSize['height'], $imageType );
-				// Upload resized image to B2
-				uploadB2File( $localFile, $targetPath );
+					$targetPath = getB2PhotoMetaResizedPath( $photoId, $smallestSize['width'], $smallestSize['height'], $imageType );
+					// Upload resized image to B2
+					uploadB2File( $localFile, $targetPath );
 
-				$db->photo_sizes()->insert( $rowValues );
+					$db->photo_sizes()->insert( $rowValues );
 
-				error_log( 'uploaded' );
+					error_log( 'uploaded' );
+				}
 			}
+			catch(ImagickException $e)
+			{
+				error_log( "Failed to resize image: $photoId" );
 
+				// Fallback to original size URL
+				$resizedUrl = b2GetPublicPhotoOriginalUrl( $photoId, $imageType );
+			}
 			unlink( $localFile );
 		}
 
