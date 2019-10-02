@@ -4,6 +4,12 @@ require_once('utils/KeysUtil.php');
 require_once('utils/BaseController.php');
 require_once('utils/b2_util.php');
 
+use phpGPX\phpGPX;
+use phpGPX\Models\Metadata;
+use phpGPX\Models\Point;
+use phpGPX\Models\Segment;
+use phpGPX\Models\Track;
+
 class AlbumController extends BaseController
 {
 	private $currentAlbumId = null;
@@ -85,6 +91,22 @@ class AlbumController extends BaseController
 		{
 			$db = getDb();
 			$album = $db->albums[ $albumId ];
+
+			$geoDataRow = $db->album_tracks->select('*')->where('album_id', $albumId)->fetch();
+			if($geoDataRow)
+			{
+				$rawGpx = $geoDataRow['gpx'];
+				$rawGpx = trim($rawGpx);
+
+				if(!empty($rawGpx))
+				{
+					$gpxParser = new phpGPX();
+					$gpx = $gpxParser->parse( $rawGpx );
+
+					//echo $gpx->metadata->time->format('Y-m-d H:i:s') . '<br />';
+					//echo 'Description: '.$gpx->metadata->description . '<br />';
+				}
+			}
 
 			$xtpl->assign( 'ALBUM_ID', $albumId );
 
