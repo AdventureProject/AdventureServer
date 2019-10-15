@@ -4,6 +4,7 @@
         "kriswallsmith/buzz": "0.15",
         "cebe/markdown": "*",
         "opencoconut/coconut": "2.*",
-        "sibyx/phpgpx": "1.0-RC5"
+        "sibyx/phpgpx": "1.0-RC5",
+        "emcconville/google-map-polyline-encoding-tool" : ">=1.2.1"
     }
 }

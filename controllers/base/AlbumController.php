@@ -3,6 +3,9 @@
 require_once('utils/KeysUtil.php');
 require_once('utils/BaseController.php');
 require_once('utils/b2_util.php');
+require_once('utils/maps.php');
+
+use Polyline;
 
 use phpGPX\phpGPX;
 use phpGPX\Models\Metadata;
@@ -12,12 +15,20 @@ use phpGPX\Models\Track;
 
 class AlbumController extends BaseController
 {
+	private $googleMapsApiKey;
+	private $googleMapsApiSecret;
+
 	private $currentAlbumId = null;
 	private $currentAlbumData = null;
 
 	public function __construct( $config )
 	{
 		parent::__construct( false, $config );
+
+		$keys = getKeys();
+
+		$this->googleMapsApiKey = $keys->google_maps_api->key;
+		$this->googleMapsApiSecret = $keys->google_maps_api->secret;
 	}
 
 	public function urlStub()
@@ -92,17 +103,40 @@ class AlbumController extends BaseController
 			$db = getDb();
 			$album = $db->albums[ $albumId ];
 
-			$geoDataRow = $db->album_tracks->select('*')->where('album_id', $albumId)->fetch();
-			if($geoDataRow)
+			$geoDataRow = $db->album_tracks->select( '*' )->where( 'album_id', $albumId )->fetch();
+			if( $geoDataRow )
 			{
 				$rawGpx = $geoDataRow['gpx'];
-				$rawGpx = trim($rawGpx);
+				$rawGpx = trim( $rawGpx );
 
-				if(!empty($rawGpx))
+				if( !empty( $rawGpx ) )
 				{
 					$gpxParser = new phpGPX();
 					$gpx = $gpxParser->parse( $rawGpx );
+					$points = array();
 
+					foreach( $gpx->tracks as $track )
+					{
+						// Statistics for whole track
+						$stats = $track->stats->toArray();
+
+						foreach ($track->segments as $segment)
+						{
+							// Statistics for segment of track
+							#$segment->stats->toArray();
+							foreach ($segment->points as $point)
+							{
+								$points[] = array($point->latitude, $point->longitude);
+							}
+						}
+					}
+
+					$points = $this->downSample($points, 5000);
+
+					$overviewMapUrl = $this->getMapUrl($points, 640, 400);
+
+					$xtpl->assign('ALBUM_MAP_OVERVIEW', $overviewMapUrl);
+					$xtpl->parse('main.body.map');
 					//echo $gpx->metadata->time->format('Y-m-d H:i:s') . '<br />';
 					//echo 'Description: '.$gpx->metadata->description . '<br />';
 				}
@@ -128,7 +162,7 @@ class AlbumController extends BaseController
 				}
 
 				$stub = $this->urlStub();
-				header("Location: /$stub/$albumId");
+				header( "Location: /$stub/$albumId" );
 			}
 			// If not authenticated, and album is not published, render 404
 			elseif( !$this->isAuthenticated() && $album['is_published'] == 0 )
@@ -158,15 +192,15 @@ class AlbumController extends BaseController
 				{
 					case 0:
 						$this->addNavAction( 'timelinemode', 'av_timer', 'Timeline Mode Light', '?timeline=1', $xtpl );
-						$xtpl->assign('TIMELINE_MODE', 'None');
+						$xtpl->assign( 'TIMELINE_MODE', 'None' );
 						break;
 					case 1:
 						$this->addNavAction( 'timelinemode', 'av_timer', 'Timeline Mode Full', '?timeline=2', $xtpl );
-						$xtpl->assign('TIMELINE_MODE', 'Day');
+						$xtpl->assign( 'TIMELINE_MODE', 'Day' );
 						break;
 					case 2:
 						$this->addNavAction( 'timelinemode', 'av_timer', 'No Timeline Mode', '?timeline=0', $xtpl );
-						$xtpl->assign('TIMELINE_MODE', 'Hour');
+						$xtpl->assign( 'TIMELINE_MODE', 'Hour' );
 						break;
 				}
 
@@ -294,7 +328,7 @@ class AlbumController extends BaseController
 						$xtpl->assign('ANNOTATION_DATE', $cardDate);
 						*/
 
-						if($this->isAuthenticated())
+						if( $this->isAuthenticated() )
 						{
 							$xtpl->assign( 'ANNOTATION_ID', $item->data['id'] );
 							$xtpl->assign( 'ANNOTATION_DATE', utcToPst( $item->data['time'] ) );
@@ -323,7 +357,7 @@ class AlbumController extends BaseController
 
 				$action = $request->post['action'];
 
-				if($action == 'update')
+				if( $action == 'update' )
 				{
 					$db = getDb();
 					$albumRow = $db->albums[ $albumId ];
@@ -332,7 +366,7 @@ class AlbumController extends BaseController
 						$albumRow['is_published'] = isset( $request->post['is_published'] ) ? 1 : 0;
 						$success = $albumRow->update();
 
-						if($success)
+						if( $success )
 						{
 							header( "Location: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]" );
 						}
@@ -346,13 +380,13 @@ class AlbumController extends BaseController
 						echo 'No album found for id';
 					}
 				}
-				elseif($action == 'addcard')
+				elseif( $action == 'addcard' )
 				{
 					$date = $request->post['annotation-date'];
 					$time = $request->post['annotation-time'];
 					$content = $request->post['card_content'];
 
-					$this->addCard($albumId, $date, $time, $content);
+					$this->addCard( $albumId, $date, $time, $content );
 
 					header( "Location: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]" );
 				}
@@ -369,7 +403,7 @@ class AlbumController extends BaseController
 		$db = getDb();
 
 		$datetimeStr = $date . 'T' . $time;
-		$timestamp = pstToUtc($datetimeStr);
+		$timestamp = pstToUtc( $datetimeStr );
 
 		error_log( 'Creating album annotation ' . $albumId );
 
@@ -403,10 +437,10 @@ class AlbumController extends BaseController
 	{
 		$db = getDb();
 
-		$album = $db->albums[$albumId];
+		$album = $db->albums[ $albumId ];
 		$currentMode = $album['timeline_mode'];
 
-		switch($currentMode)
+		switch( $currentMode )
 		{
 			case 0:
 				$album['timeline_mode'] = 1;
@@ -416,13 +450,44 @@ class AlbumController extends BaseController
 				break;
 			case 2:
 			default:
-			$album['timeline_mode'] = 0;
+				$album['timeline_mode'] = 0;
 				break;
 		}
 
 		$album->update();
 
 		$db->close();
+	}
+
+	private function getMapUrl( $pathPoints, $width, $height )
+	{
+		$encoded = Polyline::encode($pathPoints);
+
+		$url = "/maps/api/staticmap?size=${width}x${height}&maptype=terrain&key=$this->googleMapsApiKey&format=png&path=color:0x0000ff|weight:5|enc:$encoded";
+
+		return buildAndSignMapUrl( $url, $this->googleMapsApiSecret );
+	}
+
+	private function downSample($array, $max)
+	{
+		$totalPoints = sizeof( $array );
+		$result = array();
+		if( $totalPoints > $max )
+		{
+			$stride = ceil( $totalPoints / $max );
+
+			//array_pad($result, ($totalPoints/$stride), null);
+			for( $ii = 0; $ii < $totalPoints; $ii += $stride )
+			{
+				$result[] = $array[ $ii ];
+			}
+		}
+		else
+		{
+			$result = $array;
+		}
+
+		return $result;
 	}
 }
 
