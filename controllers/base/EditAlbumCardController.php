@@ -54,6 +54,27 @@ class EditAlbumCardController extends BaseController
 				$xtpl->assign( 'ANNOTATION_TIME', $pstTime );
 				$xtpl->assign( 'ANNOTATION_CONTENT', $annotation['text'] );
 
+				if($annotation['type'] == 'text')
+				{
+					$xtpl->assign( 'ANNOTATION_TYPE_TEXT_CHECKED', 'checked' );
+					$xtpl->assign( 'ANNOTATION_TYPE_PATH_CHECKED', '' );
+				}
+				else if($annotation['type'] == 'path')
+				{
+					$xtpl->assign( 'ANNOTATION_TYPE_TEXT_CHECKED', '' );
+					$xtpl->assign( 'ANNOTATION_TYPE_PATH_CHECKED', 'checked' );
+
+					$pstPathStartDate = utcToPst( $annotation['path_start'], 'Y-m-d' );
+					$pstPathStartTime = utcToPst( $annotation['path_start'], 'H:i:s' );
+					$xtpl->assign( 'ANNOTATION_PATH_START_DATE', $pstPathStartDate );
+					$xtpl->assign( 'ANNOTATION_PATH_START_TIME', $pstPathStartTime );
+
+					$pstPathEndDate = utcToPst( $annotation['path_end'], 'Y-m-d' );
+					$pstPathEndTime = utcToPst( $annotation['path_end'], 'H:i:s' );
+					$xtpl->assign( 'ANNOTATION_PATH_END_DATE', $pstPathEndDate );
+					$xtpl->assign( 'ANNOTATION_PATH_END_TIME', $pstPathEndTime );
+				}
+
 				$xtpl->parse( 'main.body' );
 			}
 			$db->close();
@@ -72,17 +93,38 @@ class EditAlbumCardController extends BaseController
 
 			$date = $request->post['annotation-date'];
 			$time = $request->post['annotation-time'];
-
 			$datetimeStr = $date . 'T' . $time;
 			$timestamp = pstToUtc( $datetimeStr );
+
+			$type = $request->post['type'];
+
+			$pathStartTimestamp = null;
+			$pathEndTimestamp = null;
+			if($type == 'path')
+			{
+				$pathStartDate = $request->post['annotation-path-start-date'];
+				$pathStartTime = $request->post['annotation-path-start-time'];
+				$pathStartStr = $pathStartDate . 'T' . $pathStartTime;
+				$pathStartTimestamp = pstToUtc( $pathStartStr );
+
+				$pathEndDate = $request->post['annotation-path-end-date'];
+				$pathEndTime = $request->post['annotation-path-end-time'];
+				$pathEndStr = $pathEndDate . 'T' . $pathEndTime;
+				$pathEndTimestamp = pstToUtc( $pathEndStr );
+			}
 
 			error_log( 'Updating album annotation ' . $annotationId );
 
 			$annotation = $db->album_annotations[ $annotationId ];
 			if( $annotation )
 			{
+
+				$annotation['type'] = $type;
+				$annotation['time'] = $timestamp;
 				$annotation['text'] = $request->post['card_content'];
 				$annotation['time'] = $timestamp;
+				$annotation['path_start'] = $pathStartTimestamp;
+				$annotation['path_end'] = $pathEndTimestamp;
 				$annotation->update();
 
 				$albumId = $annotation['albums_id'];

@@ -1137,6 +1137,12 @@ function utcToPst( $inDate, $format='Y-m-d H:i:s' )
 	return $dateTime->format( $format );
 }
 
+function utcTimestamp( $inDate )
+{
+	$dateTime = new DateTime( $inDate, new DateTimeZone( "UTC" ) );
+	return $dateTime->getTimestamp();
+}
+
 class Photo
 {
 	public $title = "";

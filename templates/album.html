@@ -63,6 +63,13 @@
 		<div class="adventure-content">
 			<form method="post">
 				<input type="hidden" name="action" value="addcard" />
+
+				<div>
+					<span>Annotation Type</span><br />
+					<input type="radio" name="annotation-type" value="text" checked />Text<br>
+					<input type="radio" name="annotation-type" value="path" />Path<br>
+				</div>
+
 				<div>
 					<span>Annotation Time</span><br />
 					<input type="date" id="annotation-date" name="annotation-date" value="{ANNOTATION_DATE}" />
@@ -74,6 +81,22 @@
 				<div class="mdl-textfield mdl-js-textfield">
 					<textarea class="mdl-textfield__input" type="text" rows= "3" id="card_content" name="card_content"></textarea>
 					<label class="mdl-textfield__label" for="card_content">Card content</label>
+				</div>
+				<br /><br />
+
+				<div>
+					<span>Path Start Time</span><br />
+					<input type="date" id="annotation-path-start-date" name="annotation-path-start-date" value="{ANNOTATION_DATE}" />
+					<input type="time" id="annotation-path-start-time" name="annotation-path-start-time" value="{ANNOTATION_TIME}" />
+					PST
+				</div>
+				<br /><br />
+
+				<div>
+					<span>Path End Time</span><br />
+					<input type="date" id="annotation-path-end-date" name="annotation-path-end-date" value="{ANNOTATION_DATE}" />
+					<input type="time" id="annotation-path-end-time" name="annotation-path-end-time" value="{ANNOTATION_TIME}" />
+					PST
 				</div>
 				<br /><br />
 
@@ -125,7 +148,7 @@
             </div>
             <!-- END: time_separator -->
 
-            <!-- BEGIN: annotation -->
+            <!-- BEGIN: annotation_text -->
             <div class="album-item mdl-card mdl-shadow--2dp album-annotation">
                 <div class="mdl-card__title mdl-color-text--white">
                     <h4 style="color: #0b0b0b; margin: 0 auto; text-align: center;">{ANNOTATION_TEXT}</h4>
@@ -137,7 +160,24 @@
 				</button>
 				<!-- END: admin -->
             </div>
-            <!-- END: annotation -->
+            <!-- END: annotation_text -->
+
+		<!-- BEGIN: annotation_path -->
+		<div class="album-item mdl-card mdl-shadow--2dp album-annotation">
+			<div class="path-map">
+				<img src="{ALBUM_PATH_MAP}" />
+			</div>
+			<div class="mdl-card__title mdl-color-text--white">
+				<h4 style="color: #0b0b0b; margin: 0 auto; text-align: center;">{ANNOTATION_TEXT}</h4>
+			</div>
+			<!-- BEGIN: admin -->
+			{ANNOTATION_DATE}<br />
+			<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" onclick="location.href='/editalbumcard/{ANNOTATION_ID}';">
+				Edit
+			</button>
+			<!-- END: admin -->
+		</div>
+		<!-- END: annotation_path -->
 
             <!-- BEGIN: photo -->
                 <!-- BEGIN: photo_element_port -->

@@ -18,6 +18,12 @@
         </div>
         <div class="adventure-content">
             <form method="post">
+				<div>
+					<span>Annotation Type</span><br />
+					<input type="radio" name="type" value="text" {ANNOTATION_TYPE_TEXT_CHECKED} />Text<br>
+					<input type="radio" name="type" value="path" {ANNOTATION_TYPE_PATH_CHECKED} />Path<br>
+				</div>
+
                 <div>
                     <span>Annotation Time</span><br />
                     <input type="date" id="annotation-date" name="annotation-date" value="{ANNOTATION_DATE}" />
@@ -31,6 +37,22 @@
                     <label class="mdl-textfield__label" for="card_content">Card content</label>
                 </div>
                 <br /><br />
+
+				<div>
+					<span>Path Start Time</span><br />
+					<input type="date" id="annotation-path-start-date" name="annotation-path-start-date" value="{ANNOTATION_PATH_START_DATE}" />
+					<input type="time" id="annotation-path-start-time" name="annotation-path-start-time" value="{ANNOTATION_PATH_START_TIME}" />
+					PST
+				</div>
+				<br /><br />
+
+				<div>
+					<span>Path End Time</span><br />
+					<input type="date" id="annotation-path-end-date" name="annotation-path-end-date" value="{ANNOTATION_PATH_END_DATE}" />
+					<input type="time" id="annotation-path-end-time" name="annotation-path-end-time" value="{ANNOTATION_PATH_END_TIME}" />
+					PST
+				</div>
+				<br /><br />
 
                 <button class="mdl-button mdl-js-button mdl-button--fab mdl-button--mini-fab mdl-button--colored mdl-js-ripple-effect" style="float:right;" type="submit">
                     <i class="material-icons">edit</i>

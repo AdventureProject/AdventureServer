@@ -103,6 +103,7 @@ class AlbumController extends BaseController
 			$db = getDb();
 			$album = $db->albums[ $albumId ];
 
+			$gpsPoints = null;
 			$geoDataRow = $db->album_tracks->select( '*' )->where( 'album_id', $albumId )->fetch();
 			if( $geoDataRow )
 			{
@@ -113,30 +114,32 @@ class AlbumController extends BaseController
 				{
 					$gpxParser = new phpGPX();
 					$gpx = $gpxParser->parse( $rawGpx );
-					$points = array();
+					$gpsPoints = array();
 
 					foreach( $gpx->tracks as $track )
 					{
 						// Statistics for whole track
 						$stats = $track->stats->toArray();
 
-						foreach ($track->segments as $segment)
+						foreach( $track->segments as $segment )
 						{
 							// Statistics for segment of track
 							#$segment->stats->toArray();
-							foreach ($segment->points as $point)
+							foreach( $segment->points as $point )
 							{
-								$points[] = array($point->latitude, $point->longitude);
+								$gpsPoints[] = array(
+									array( $point->latitude, $point->longitude ),
+									array( $point->elevation, $point->time )
+								);
 							}
 						}
 					}
 
-					$points = $this->downSample($points, 5000);
+					$overviewPoints = $this->downSample( $gpsPoints, 5000 );
+					$overviewMapUrl = $this->getMapUrl( $overviewPoints, 640, 400 );
 
-					$overviewMapUrl = $this->getMapUrl($points, 640, 400);
-
-					$xtpl->assign('ALBUM_MAP_OVERVIEW', $overviewMapUrl);
-					$xtpl->parse('main.body.map');
+					$xtpl->assign( 'ALBUM_MAP_OVERVIEW', $overviewMapUrl );
+					$xtpl->parse( 'main.body.map' );
 					//echo $gpx->metadata->time->format('Y-m-d H:i:s') . '<br />';
 					//echo 'Description: '.$gpx->metadata->description . '<br />';
 				}
@@ -328,14 +331,37 @@ class AlbumController extends BaseController
 						$xtpl->assign('ANNOTATION_DATE', $cardDate);
 						*/
 
-						if( $this->isAuthenticated() )
-						{
-							$xtpl->assign( 'ANNOTATION_ID', $item->data['id'] );
-							$xtpl->assign( 'ANNOTATION_DATE', utcToPst( $item->data['time'] ) );
-							$xtpl->parse( 'main.body.item.annotation.admin' );
-						}
+						$xtpl->assign( 'ANNOTATION_ID', $item->data['id'] );
+						$xtpl->assign( 'ANNOTATION_DATE', utcToPst( $item->data['time'] ) );
 
-						$xtpl->parse( 'main.body.item.annotation' );
+						$type = $item->data['type'];
+						if( $type == 'text' )
+						{
+							if( $this->isAuthenticated() )
+							{
+								$xtpl->parse( 'main.body.item.annotation_text.admin' );
+							}
+
+							$xtpl->parse( 'main.body.item.annotation_text' );
+						}
+						elseif( $type == 'path' )
+						{
+							$pathStartTimestamp = utcTimestamp( $item->data['path_start'] );
+							$pathEndTimestamp = utcTimestamp( $item->data['path_end'] );
+
+							$pathPoints = $this->getPathPoints( $gpsPoints, $pathStartTimestamp, $pathEndTimestamp );
+
+							$pathPoints = $this->downSample( $pathPoints, 2000 );
+							$pathMapUrl = $this->getMapUrl( $pathPoints, 480, 400 );
+							$xtpl->assign( 'ALBUM_PATH_MAP', $pathMapUrl );
+
+							if( $this->isAuthenticated() )
+							{
+								$xtpl->parse( 'main.body.item.annotation_path.admin' );
+							}
+
+							$xtpl->parse( 'main.body.item.annotation_path' );
+						}
 					}
 					$xtpl->parse( 'main.body.item' );
 				}
@@ -345,6 +371,29 @@ class AlbumController extends BaseController
 		}
 
 		$xtpl->parse( 'main.body' );
+	}
+
+	private function getPathPoints( $points, $startTime, $endTime )
+	{
+		$filtered = array();
+
+		$totalPoints = sizeof( $points );
+		for( $ii = 0; $ii < $totalPoints; $ii++ )
+		{
+			$point = $points[ $ii ];
+
+			$ptTimestamp = $point[1][1]->getTimestamp();
+			if( $ptTimestamp > $endTime )
+			{
+				break;
+			}
+			elseif( $ptTimestamp >= $startTime && $ptTimestamp < $endTime )
+			{
+				$filtered[] = $point;
+			}
+		}
+
+		return $filtered;
 	}
 
 	public function post( $request )
@@ -382,11 +431,30 @@ class AlbumController extends BaseController
 				}
 				elseif( $action == 'addcard' )
 				{
+					$type = $request->post['annotation-type'];
 					$date = $request->post['annotation-date'];
-					$time = $request->post['annotation-time'];
 					$content = $request->post['card_content'];
 
-					$this->addCard( $albumId, $date, $time, $content );
+					$time = $request->post['annotation-time'];
+					$datetimeStr = $date . 'T' . $time;
+					$timestamp = pstToUtc( $datetimeStr );
+
+					$pathStartTimestamp = null;
+					$pathEndTimestamp = null;
+					if( $type == 'path' )
+					{
+						$pathStartDate = $request->post['annotation-path-start-date'];
+						$pathStartTime = $request->post['annotation-path-start-time'];
+						$pathStartStr = $pathStartDate . 'T' . $pathStartTime;
+						$pathStartTimestamp = pstToUtc( $pathStartStr );
+
+						$pathEndDate = $request->post['annotation-path-end-date'];
+						$pathEndTime = $request->post['annotation-path-end-time'];
+						$pathEndStr = $pathEndDate . 'T' . $pathEndTime;
+						$pathEndTimestamp = pstToUtc( $pathEndStr );
+					}
+
+					$this->addCard( $albumId, $type, $timestamp, $content, $pathStartTimestamp, $pathEndTimestamp );
 
 					header( "Location: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]" );
 				}
@@ -398,18 +466,18 @@ class AlbumController extends BaseController
 		}
 	}
 
-	private function addCard( $albumId, $date, $time, $content )
+	private function addCard( $albumId, $type, $timestamp, $content, $pathStartTimestamp, $pathEndTimestamp )
 	{
 		$db = getDb();
-
-		$datetimeStr = $date . 'T' . $time;
-		$timestamp = pstToUtc( $datetimeStr );
 
 		error_log( 'Creating album annotation ' . $albumId );
 
 		$newAnnotation = array( 'albums_id' => $albumId,
+			'type' => $type,
 			'text' => $content,
-			'time' => $timestamp );
+			'time' => $timestamp,
+			'path_start' => $pathStartTimestamp,
+			'path_end' => $pathEndTimestamp );
 
 		$insertResult = $db->album_annotations()->insert( $newAnnotation );
 
@@ -461,30 +529,30 @@ class AlbumController extends BaseController
 
 	private function getMapUrl( $pathPoints, $width, $height )
 	{
-		$encoded = Polyline::encode($pathPoints);
+		$encoded = Polyline::encode( $pathPoints );
 
 		$url = "/maps/api/staticmap?size=${width}x${height}&maptype=terrain&key=$this->googleMapsApiKey&format=png&path=color:0x0000ff|weight:5|enc:$encoded";
 
 		return buildAndSignMapUrl( $url, $this->googleMapsApiSecret );
 	}
 
-	private function downSample($array, $max)
+	private function downSample( $array, $max )
 	{
 		$totalPoints = sizeof( $array );
 		$result = array();
 		if( $totalPoints > $max )
 		{
 			$stride = ceil( $totalPoints / $max );
-
-			//array_pad($result, ($totalPoints/$stride), null);
-			for( $ii = 0; $ii < $totalPoints; $ii += $stride )
-			{
-				$result[] = $array[ $ii ];
-			}
 		}
 		else
 		{
-			$result = $array;
+			$stride = 1;
+		}
+
+		//array_pad($result, ($totalPoints/$stride), null);
+		for( $ii = 0; $ii < $totalPoints; $ii += $stride )
+		{
+			$result[] = $array[ $ii ][0];
 		}
 
 		return $result;
