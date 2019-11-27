@@ -85,8 +85,8 @@ class PhotoSphereController extends BaseController
 				$this->currentPhoto = $photoData;
 				$locationParts = explode( ',', $photoData['location'] );
 				$this->addSeoLocation( $locationParts[0], $locationParts[1], $xtpl );
-				
-				$this->addNavAction( 'download_button', 'file_download', 'Download this photo', "$basePath/{$photoData['file_id']}/{$photoData['file_id']}.jpg", $xtpl, 'download' );
+
+				$this->addNavAction( 'download_button', 'file_download', 'Download this photo', b2GetPublic360Photo($photoData['file_id']), $xtpl, 'download' );
 				
 				$xtpl->assign('FILE_ID', $photoData['file_id'] );
 				$xtpl->assign('PHOTO_TITLE', $photoData['title'] );

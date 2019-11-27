@@ -29,6 +29,11 @@ function getB2Client()
 	return new B2Service($keys->b2->account_id, $keys->b2->application_id);
 }
 
+function b2GetPublic360Photo( $fileId )
+{
+	return $GLOBALS['b2BasePath']['360photos'] . '/' . $fileId . '/' . $fileId . '.jpg';
+}
+
 function b2GetPublicTimelinePhoto( $file )
 {
 	return $GLOBALS['b2BasePath']['timeline'] . '/' . $file;
