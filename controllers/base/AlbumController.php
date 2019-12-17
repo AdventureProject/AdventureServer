@@ -365,6 +365,10 @@ class AlbumController extends BaseController
 
 							$pathPoints = $this->getPathPoints( $gpsPoints, $pathStartTimestamp, $pathEndTimestamp );
 
+							$urlPathPoints = $this->downSample( $pathPoints, 2000 );
+							$pathMapUrl = $this->getMapUrl( $urlPathPoints, 450, 400 );
+							$xtpl->assign( 'ALBUM_PATH_MAP', $pathMapUrl );
+
 							$track = new Track();
 							$segment = new Segment();
 							foreach( $pathPoints as $pathPoint )
@@ -380,10 +384,6 @@ class AlbumController extends BaseController
 							$track->segments[] = $segment;
 							$track->recalculateStats();
 							$pathStats = $track->stats->toArray();
-
-							$pathPoints = $this->downSample( $pathPoints, 2000 );
-							$pathMapUrl = $this->getMapUrl( $pathPoints, 450, 400 );
-							$xtpl->assign( 'ALBUM_PATH_MAP', $pathMapUrl );
 
 							$pathStartTimestamp = strtotime($pathStats['startedAt']);
 							$pathFinishTimestamp = strtotime($pathStats['finishedAt']);
@@ -577,7 +577,8 @@ class AlbumController extends BaseController
 
 	private function getMapUrl( $pathPoints, $width, $height )
 	{
-		$encoded = Polyline::encode( $pathPoints );
+		$polyline = Polyline::encode( $pathPoints );
+		$encoded = urlencode($polyline);
 
 		$url = "/maps/api/staticmap?size=${width}x${height}&maptype=terrain&key=$this->googleMapsApiKey&format=png&path=color:0x0000ff|weight:5|enc:$encoded";
 
