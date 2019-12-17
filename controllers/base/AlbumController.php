@@ -116,10 +116,21 @@ class AlbumController extends BaseController
 					$gpx = $gpxParser->parse( $rawGpx );
 					$gpsPoints = array();
 
+					$distanceMiles = 0;
+					$elevationFeet = 0;
 					foreach( $gpx->tracks as $track )
 					{
 						// Statistics for whole track
 						$stats = $track->stats->toArray();
+						//print_r($stats);
+
+						// Convert meters to feet
+						$elevationMeters = $stats['cumulativeElevationGain'];
+						$elevationFeet += round( $elevationMeters * 3.28084 );
+
+						// Convert meters to miles
+						$distanceMeters = $stats['distance'];
+						$distanceMiles += round( $distanceMeters * 0.000621371 );
 
 						foreach( $track->segments as $segment )
 						{
@@ -139,6 +150,9 @@ class AlbumController extends BaseController
 					$overviewMapUrl = $this->getMapUrl( $overviewPoints, 640, 400 );
 
 					$xtpl->assign( 'ALBUM_MAP_OVERVIEW', $overviewMapUrl );
+					$xtpl->assign( 'ALBUM_MAP_DISTANCE', "$distanceMiles miles" );
+					$xtpl->assign( 'ALBUM_MAP_ELEVATION_GAIN', "$elevationFeet feet" );
+
 					$xtpl->parse( 'main.body.map' );
 					//echo $gpx->metadata->time->format('Y-m-d H:i:s') . '<br />';
 					//echo 'Description: '.$gpx->metadata->description . '<br />';
@@ -354,6 +368,7 @@ class AlbumController extends BaseController
 							$pathPoints = $this->downSample( $pathPoints, 2000 );
 							$pathMapUrl = $this->getMapUrl( $pathPoints, 480, 400 );
 							$xtpl->assign( 'ALBUM_PATH_MAP', $pathMapUrl );
+							$xtpl->assign( 'ALBUM_MAP_DISTANCE', '12 miles' );
 
 							if( $this->isAuthenticated() )
 							{
