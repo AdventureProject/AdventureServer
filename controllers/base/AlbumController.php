@@ -365,10 +365,43 @@ class AlbumController extends BaseController
 
 							$pathPoints = $this->getPathPoints( $gpsPoints, $pathStartTimestamp, $pathEndTimestamp );
 
+							$track = new Track();
+							$segment = new Segment();
+							foreach( $pathPoints as $pathPoint )
+							{
+								$point = new Point( Point::TRACKPOINT );
+								$point->latitude = $pathPoint[0][0];
+								$point->longitude = $pathPoint[0][1];
+								$point->elevation = $pathPoint[1][0];
+								$point->time = $pathPoint[1][1];
+
+								$segment->points[] = $point;
+							}
+							$track->segments[] = $segment;
+							$track->recalculateStats();
+							$pathStats = $track->stats->toArray();
+
 							$pathPoints = $this->downSample( $pathPoints, 2000 );
-							$pathMapUrl = $this->getMapUrl( $pathPoints, 480, 400 );
+							$pathMapUrl = $this->getMapUrl( $pathPoints, 400, 400 );
 							$xtpl->assign( 'ALBUM_PATH_MAP', $pathMapUrl );
-							$xtpl->assign( 'ALBUM_MAP_DISTANCE', '12 miles' );
+
+							$pathStartTimestamp = strtotime($pathStats['startedAt']);
+							$pathFinishTimestamp = strtotime($pathStats['finishedAt']);
+							$pathDurationHours = ($pathFinishTimestamp - $pathStartTimestamp) / 60 / 60;
+							$pathDurationHours = round($pathDurationHours, 1);
+
+							$xtpl->assign( 'ALBUM_PATH_DURATION', "$pathDurationHours hours" );
+
+							// Convert meters to feet
+							$pathElevationMeters = $pathStats['cumulativeElevationGain'];
+							$pathElevationFeet = round( $pathElevationMeters * 3.28084 );
+
+							// Convert meters to miles
+							$pathDistanceMeters = $pathStats['distance'];
+							$pathDistanceMiles = round( $pathDistanceMeters * 0.000621371 );
+
+							$xtpl->assign( 'ALBUM_PATH_DISTANCE', "$pathDistanceMiles miles" );
+							$xtpl->assign( 'ALBUM_PATH_ELEVATION', "$pathElevationFeet feet" );
 
 							if( $this->isAuthenticated() )
 							{

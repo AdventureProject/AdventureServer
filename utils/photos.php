@@ -307,7 +307,8 @@ function findSmallest( $sizes, $minWidth, $minHeight, $imageType, $photoId )
 			$localPath = 'data/resize';
 			$fileName = "resize_" . $photoId . '_' . $smallestSize['width'] . '_' . $smallestSize['height'] . '.' . $imageType;
 			$localFile = $localPath . '/' . $fileName;
-
+			error_log('CurDir: ' . getcwd());
+			error_log('Resize file: '.$localFile);
 			// Download the original image
 			file_put_contents( $localFile, file_get_contents( $originalSizeUrl ) );
 
@@ -340,7 +341,8 @@ function findSmallest( $sizes, $minWidth, $minHeight, $imageType, $photoId )
 				// Fallback to original size URL
 				$resizedUrl = b2GetPublicPhotoOriginalUrl( $photoId, $imageType );
 			}
-			unlink( $localFile );
+			if (file_exists($localFile))
+				unlink($localFile);
 		}
 
 		$db->close();

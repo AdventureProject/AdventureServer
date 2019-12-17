@@ -178,13 +178,18 @@
 	<!-- END: annotation_text -->
 
 	<!-- BEGIN: annotation_path -->
-	<div class="album-item mdl-card mdl-shadow--2dp album-annotation">
+	<div class="album-item path-map-container mdl-card mdl-shadow--2dp album-annotation">
 		<div class="path-map">
 			<img src="{ALBUM_PATH_MAP}"/>
 		</div>
 		<div class="mdl-card__title mdl-color-text--white">
-			<h4 style="color: #0b0b0b; margin: 0 auto; text-align: center;">{ANNOTATION_TEXT}</h4>
+			<h4 style="color: #0b0b0b; margin: 0 auto; text-align: center;">{ANNOTATION_TEXT}</h4><br />
 		</div>
+		<span>
+			<strong>Duration:</strong> {ALBUM_PATH_DURATION}<br />
+			<strong>Distance:</strong> {ALBUM_PATH_DISTANCE}<br />
+			<strong>Elevation Gain:</strong> {ALBUM_PATH_ELEVATION}<br />
+		</span>
 		<!-- BEGIN: admin -->
 		{ANNOTATION_DATE}<br/>
 		<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit"
