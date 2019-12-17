@@ -231,6 +231,8 @@ class AlbumController extends BaseController
 
 				$xtpl->assign( 'IS_PUBLISHED', $album['is_published'] == 1 ? 'checked' : '' );
 
+				$xtpl->assign( 'ALBUM_GPX', $rawGpx );
+
 				$albumPhotoResults = $db->photos()->select( 'photos.id, photos.title, photos.description, photos.date_taken, photos.orientation, photos.location' )->where( 'album_photos:albums_id', $albumId )->order( 'date_taken ASC' );
 
 				$xtpl->assign( 'ALBUM_NUM_PHOTOS', $albumPhotoResults->count() );
@@ -385,10 +387,10 @@ class AlbumController extends BaseController
 							$track->recalculateStats();
 							$pathStats = $track->stats->toArray();
 
-							$pathStartTimestamp = strtotime($pathStats['startedAt']);
-							$pathFinishTimestamp = strtotime($pathStats['finishedAt']);
+							$pathStartTimestamp = strtotime( $pathStats['startedAt'] );
+							$pathFinishTimestamp = strtotime( $pathStats['finishedAt'] );
 							$pathDurationHours = ($pathFinishTimestamp - $pathStartTimestamp) / 60 / 60;
-							$pathDurationHours = round($pathDurationHours, 1);
+							$pathDurationHours = round( $pathDurationHours, 1 );
 
 							$xtpl->assign( 'ALBUM_PATH_DURATION', "$pathDurationHours hours" );
 
@@ -460,17 +462,39 @@ class AlbumController extends BaseController
 					$albumRow = $db->albums[ $albumId ];
 					if( $albumRow )
 					{
-						$albumRow['is_published'] = isset( $request->post['is_published'] ) ? 1 : 0;
-						$success = $albumRow->update();
+						if( isset( $request->post['album_gpx'] ) && !empty( trim( $request->post['album_gpx'] ) ) )
+						{
+							error_log("Updating GPX data for AlbumId: $albumId");
+							//echo 'Updating GPX data';
+							$gpx = trim( $request->post['album_gpx'] );
+							//$gpx = preg_replace('/\s+/', '', $gpx); // For some reason, stripping white space makes the parser GPX fail
 
-						if( $success )
-						{
-							header( "Location: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]" );
+							$result = false;
+
+							$trackRow = $db->album_tracks()->select('id')->where('album_id', $albumId)->fetch();
+							if($trackRow)
+							{
+								$trackRow['gpx'] = $gpx;
+								$trackRow->update();
+								$result = true;
+							}
+							else
+							{
+								$result = $db->album_tracks()->insert(array( 'album_id' => $albumId, 'gpx' => $gpx ));
+							}
+
+							if( !$result )
+							{
+								//echo "Failed to add GPX data to Album: $albumId";
+								error_log( "Failed to add GPX data to Album: $albumId" );
+								exit();
+							}
 						}
-						else
-						{
-							echo 'Failed to update album';
-						}
+
+						$albumRow['is_published'] = isset( $request->post['is_published'] ) ? 1 : 0;
+						$albumRow->update();
+
+						header( "Location: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]" );
 					}
 					else
 					{
@@ -578,7 +602,7 @@ class AlbumController extends BaseController
 	private function getMapUrl( $pathPoints, $width, $height )
 	{
 		$polyline = Polyline::encode( $pathPoints );
-		$encoded = urlencode($polyline);
+		$encoded = urlencode( $polyline );
 
 		$url = "/maps/api/staticmap?size=${width}x${height}&maptype=terrain&key=$this->googleMapsApiKey&format=png&path=color:0x0000ff|weight:5|enc:$encoded";
 
