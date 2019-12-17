@@ -89,9 +89,13 @@ span.photo_count {
     text-shadow: 1px 1px #232323;
 }
 
+.path-map-annotation {
+    background: #00000066;
+}
+
 .path-map-container span {
-    padding-left: 16px;
-    padding-bottom: 16px;
+    padding: 16px;
+    background: #00000066;
 }
 
 @media only screen and (max-width: 650px) {
