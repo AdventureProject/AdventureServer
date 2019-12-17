@@ -382,7 +382,7 @@ class AlbumController extends BaseController
 							$pathStats = $track->stats->toArray();
 
 							$pathPoints = $this->downSample( $pathPoints, 2000 );
-							$pathMapUrl = $this->getMapUrl( $pathPoints, 400, 400 );
+							$pathMapUrl = $this->getMapUrl( $pathPoints, 450, 400 );
 							$xtpl->assign( 'ALBUM_PATH_MAP', $pathMapUrl );
 
 							$pathStartTimestamp = strtotime($pathStats['startedAt']);
