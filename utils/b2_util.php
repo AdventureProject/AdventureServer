@@ -34,6 +34,11 @@ function b2GetPublic360Photo( $fileId )
 	return $GLOBALS['b2BasePath']['360photos'] . '/' . $fileId . '/' . $fileId . '.jpg';
 }
 
+function b2GetPublic360PhotoPreview( $fileId )
+{
+	return $GLOBALS['b2BasePath']['360photos'] . '/' . $fileId . '/preview.jpg';
+}
+
 function b2GetPublicTimelinePhoto( $file )
 {
 	return $GLOBALS['b2BasePath']['timeline'] . '/' . $file;

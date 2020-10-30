@@ -17,7 +17,7 @@ $basePath = $GLOBALS['b2BasePath']['360photos'];
 
 $script = 'generate.py';
 
-chdir('./external/pannellum/tools');
+chdir('external/pannellum/tools');
 
 $preview_file = $_FILES['preview_upload']['tmp_name'];
 $previewName = $_FILES['preview_upload']['name'];
@@ -48,6 +48,7 @@ if( !empty($preview_file) && !empty($previewName) && !empty($previewExt)
 	if( $previewWidth == 800 && $previewHeight == 600 )
 	{
 		echo 'Processing image...<br />';
+		echo "python $script $target_file\n";
 		passthru( "python $script $target_file", $return_code );
 
 		if( $return_code === 0 )
@@ -111,27 +112,34 @@ if( !empty($preview_file) && !empty($previewName) && !empty($previewExt)
 				echo 'Upload complete<br />';
 
 				echo "<a href='/360photo/{$newRow["id"]}'>Go to PhotoSphere</a><br />";
+
+				error_log("PhotoSphere added!");
 			}
 			else
 			{
+				error_log("Failed to insert row");
 				echo 'Failed to insert row<br />';
 			}
 		}
 		else
 		{
+			error_log("Image conversion failed: $return_code");
 			echo 'Image conversion failed<br />';
 		}
 	}
 	else
 	{
+		error_log("Preview image MUST be 800x600");
 		echo 'Preview image MUST be 800x600<br />';
 	}
 
+	error_log("Cleaning up...");
 	echo 'Cleaning up...<br />';
 	cleanUpOutput( 'output' );
 }
 else
 {
+	error_log("Image already added!");
 	echo 'Image already added!';
 }
 
@@ -167,13 +175,20 @@ function cleanUpOutput( $dir )
 
 function delTree( $dir )
 {
-	$files = array_diff(scandir($dir), array('.','..'));
-	foreach ($files as $file)
+	if(file_exists($dir))
 	{
-		(is_dir("$dir/$file")) ? delTree("$dir/$file", true) : unlink("$dir/$file");
+		$files = array_diff( scandir( $dir ), array( '.', '..' ) );
+		foreach( $files as $file )
+		{
+			(is_dir( "$dir/$file" )) ? delTree( "$dir/$file", true ) : unlink( "$dir/$file" );
+		}
+
+		return rmdir( $dir );
 	}
-	
-	return rmdir($dir);
+	else
+	{
+		return false;
+	}
 }
 
 function uploadDirectory( $curDir, $baseUploadDir, $b2BucketId )

@@ -1145,6 +1145,16 @@ function utcTimestamp( $inDate )
 	return $dateTime->getTimestamp();
 }
 
+function getPhotoSphereMapUrl( $location, $googleMapsApiKey )
+{
+	return "http://maps.googleapis.com/maps/api/staticmap?center=$location&zoom=2&scale=1&size=96x96&maptype=terrain&key=$googleMapsApiKey&format=jpg&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:%7C$location";
+}
+
+function getPhotoSphereMapLargeUrl( $location, $googleMapsApiKey )
+{
+	return "http://maps.googleapis.com/maps/api/staticmap?center=$location&zoom=2&scale=1&size=256x96&maptype=terrain&key=$googleMapsApiKey&format=jpg&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:%7C$location";
+}
+
 class Photo
 {
 	public $title = "";
