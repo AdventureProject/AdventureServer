@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .album-container {
     width: 80vw;
 
@@ -112,4 +113,120 @@
 
 .album_minor_separator > h3 {
     margin-bottom: 0;
+=======
+.album-container {
+    width: 80vw;
+
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+
+    margin: 0 auto;
+}
+
+
+.album-item-port-card-image.mdl-card {
+    width: 300px;
+    height: 400px;
+    margin: 4px;
+
+    max-width: 350px;
+
+    flex-shrink: 1;
+    flex-grow: 1;
+}
+
+.album-item-land-card-image.mdl-card {
+    width: 500px;
+    height: 400px;
+    margin: 4px;
+
+    max-width: 550px;
+
+    flex-shrink: 1;
+    flex-grow: 2;
+}
+
+.album-item:last-child{
+    flex-grow: 0;
+}
+
+@media only screen and (max-width: 650px) {
+    .album-container {
+        width: 100%;
+
+        display: flex;
+        flex-wrap: wrap;
+        align-content: flex-start;
+
+        margin: 0 auto;
+    }
+
+    .album-item-port-card-image.mdl-card {
+        width: 400px;
+        height: 400px;
+        margin: 4px;
+
+        max-width: unset;
+    }
+
+    .album-item-land-card-image.mdl-card {
+        width: 400px;
+        height: 400px;
+        margin: 4px;
+
+        max-width: unset;
+    }
+}
+
+.album-item > .mdl-card__actions {
+    height: 52px;
+    padding: 16px;
+    background: linear-gradient(rgba(0, 0, 0, 0.0), rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.5));
+}
+
+.album-item-card-image__title {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.album_major_separator {
+    flex: 1 0 100%;
+    width: 100%;
+
+    padding-left: 8px;
+    padding-right: 8px;
+
+    box-sizing: border-box;
+
+    color: white;
+ }
+
+.album_major_separator > h1 {
+    margin-bottom: 0;
+    font-size: calc(4vh + 2vmin);
+}
+
+.album_major_separator > hr {
+    margin-top: -24px;
+
+    border: none;
+    height: 4px;
+    background-color: #FFFFFF;
+}
+
+.album_minor_separator {
+    flex: 1 0 100%;
+    box-sizing: border-box;
+    width: 100%;
+
+    padding-left: 8px;
+
+    color: white;
+}
+
+.album_minor_separator > h3 {
+    margin-bottom: 0;
+>>>>>>> 0bc6615a0373328a595c25b5a586a0a01329692a
 }

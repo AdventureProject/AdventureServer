@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 			<style>
 				.adventure .photo_title .mdl-card__media {
 					padding-top: 150px;
@@ -284,4 +285,292 @@
 			<a id="info_button" href="#info_card" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored info_fab"><i class="material-icons">arrow_downward</i></a>
 			<div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--top" for="info_button">
 				More Info about this Photo
+=======
+			<style>
+				.adventure .photo_title .mdl-card__media {
+					padding-top: 150px;
+					background-image: url({MAP_ZOOMED_OUT});
+				}
+
+				.adventure .map .mdl-card__media {
+				background-image: url({MAP_ZOOMED_IN});
+					height: 80%;
+					width: 100%;
+				}
+			</style>
+
+            <!-- BEGIN: photo_nav_js_controls -->
+			<script>
+				function leftArrowPressed()
+				{
+					if( {HAS_PREV_PHOTO} )
+					{
+						window.location.href = '{PREV_PHOTO_URL}';
+					}
+				}
+
+				function rightArrowPressed()
+				{
+					if( {HAS_NEXT_PHOTO} )
+					{
+						window.location.href = '{NEXT_PHOTO_URL}';
+					}
+				}
+
+				document.onkeydown = function(evt)
+				{
+					evt = evt || window.event;
+					switch (evt.keyCode)
+					{
+						case 37:
+							leftArrowPressed();
+							break;
+						case 39:
+							rightArrowPressed();
+							break;
+					}
+				};
+			</script>
+            <!-- END: photo_nav_js_controls -->
+            <script>
+                $(document).ready(function() {
+                    $('#primary_image').magnificPopup({
+                        type: 'image',
+                        items: {
+                            src: '{FLICKR_IMG}',
+                            image: {
+                                verticalFit: true
+                            }
+                        },
+						callbacks: {
+							open: function() {
+								var viewport_meta = document.getElementById('viewport-meta');
+								viewport_meta.setAttribute( 'content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=1' );
+							},
+							close: function() {
+								var viewport_meta = document.getElementById('viewport-meta');
+								viewport_meta.setAttribute( 'content', 'width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=0' );
+							}
+						},
+                        fixedContentPos: true,
+                        closeOnContentClick: true,
+                        closeBtnInside: false,
+                        mainClass: 'mfp-no-margins mfp-with-zoom', // class to remove default margin from left and right side
+                        zoom: {
+                            enabled: true,
+                            duration: 300, // don't forget to change the duration also in CSS
+                            opener: function(openerElement) {
+                                return $('#primary_image');
+                            }
+                        }
+                    });
+
+                    var LIGHTBOX = '/lightbox';
+                    $('#primary_image').on('mfpOpen', function(e) {
+                        if( !window.location.href.endsWith(LIGHTBOX) )
+                        {
+                            history.replaceState(null, null, window.location.href + LIGHTBOX);
+                        }
+                    });
+
+                    $('#primary_image').on('mfpClose', function(e) {
+                        if( window.location.href.endsWith(LIGHTBOX) )
+                        {
+                            var pos = window.location.href.lastIndexOf(LIGHTBOX);
+                            history.replaceState(null, null, window.location.href.substring(0, pos));
+                        }
+                    });
+                    <!-- BEGIN: start_zoomed -->
+                    $('#primary_image').magnificPopup('open');
+                    <!-- END: start_zoomed -->
+
+                    $( "#delete_button" ).click(function() {
+                        if( $( "#delete_confirm" ).val() == "DELETE" )
+                        {
+                            if(confirm('Are you sure you want to DELETE this photo and all associated data?'))
+                            {
+                                location.href='/photo/{PHOTO_ID}?delete=1';
+                            }
+                        }
+                        else
+                        {
+                            alert("Type DELETE to get started");
+                        }
+                    });
+                });
+            </script>
+
+			<div class="mdl-grid center-items">
+
+                <div class="mdl-cell mdl-cell--12-col">
+					<div id="photo_container" class="mdl-shadow--8dp">
+                    	<img id="primary_image" src="{FLICKR_IMG}" />
+					</div>
+                </div>
+				<div id="info_card" class="mdl-card photo_title title-card-wide mdl-cell mdl-cell--6-col mdl-shadow--2dp">
+                    <div class="mdl-card__media">
+                        <div class="mdl-card__title mdl-color-text--grey-50">
+                            <h3 class="title">{PHOTO_TITLE}</h3>
+                        </div>
+                    </div>
+                    <div class="mdl-card__supporting-text meta">
+					    <img src="/images/photo_info_icon.png" class="comment__avatar">
+						<div>
+							<span>
+                                <span class="mdl-color-text--grey-600 date">{PHOTO_DATE}</span>
+                                <!-- BEGIN: description -->
+                                <br /><br />
+                                <span class="description">{PHOTO_DESCRIPTION}</span>
+                                <!-- END: description -->
+								<!-- BEGIN: album -->
+								<br /><br />
+								<em>Album:</em> <a href="/album/{ALBUM_ID}">{ALBUM_TITLE}</a>
+								<!-- END: album -->
+							</span>
+						</div>
+					</div>
+					<div class="mdl-card__actions mdl-card--border">
+						<a target="_blank" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" href="https://www.flickr.com/photos/adamwbrown/{FLICKR_ID}/">
+							View on Flickr
+						</a>
+					</div>
+				</div>
+
+				<div id="location_card" class="mdl-card map title-card-wide mdl-cell mdl-cell--6-col mdl-shadow--2dp">
+					<div class="mdl-card__media">
+						<div class="mdl-card__title mdl-color-text--grey-50">
+							<div class="mdl-card__title mdl-color-text--grey-50">
+								<h3 class="title">Location</h3>
+							</div>
+						</div>
+					</div>
+					<div class="mdl-card__supporting-text meta mdl-color-text--grey-600">
+						<img src="/images/map_location_icon.png" class="comment__avatar">
+						<div>
+							<span class="location">
+								<b>Coordinates:</b>
+                                <br />
+                                {PHOTO_LOCATION}
+							</span>
+						</div>
+					</div>
+				</div>
+
+                <!-- BEGIN: admin_links -->
+                <div class="mdl-card navigation-card mdl-cell mdl-cell--2-col mdl-cell--4-col-phone">
+                    <div class="mdl-card__title">
+                        <h4 class="mdl-card__title-text">Admin</h4>
+                    </div>
+                    <ul class="mdl-list">
+                        <li class="mdl-list__item">
+						<span class="mdl-list__item-primary-content">
+							<a href="/admin/home">Admin Home</a>
+						</span>
+                        </li>
+                        <li class="mdl-list__item">
+						<span class="mdl-list__item-primary-content">
+							<a href="/addphoto">Add Photo</a>
+						</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="mdl-card admin-card mdl-cell mdl-cell--4-col mdl-cell--4-col-phone">
+                    <div class="mdl-card__title">
+                        <h4 class="mdl-card__title-text">Edit Photo</h4>
+                    </div>
+                    <div style="padding: 15px;">
+                        <!-- BEGIN: photo_actions -->
+                        <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" onclick="location.href='{PREV_PHOTO_URL}';">
+                            <i class="material-icons">arrow_back</i>
+                        </button>
+
+                        <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored" onclick="location.href='{NEXT_PHOTO_URL}';" style="float:right;">
+                            <i class="material-icons">arrow_forward</i>
+                        </button>
+                        <br /><br />
+                        <b>Photo ID:</b> {PHOTO_ID}<br />
+                        <b>PhotoWall ID:</b> {PHOTOWALL_ID}<br />
+                        <b>Flickr ID:</b> {FLICKR_ID}<br />
+                        <b>Location:</b> {PHOTO_LOCATION}<br />
+                        <br />
+                        <form method="post">
+                            <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="is_wallpaper">
+                                <input type="checkbox" id="is_wallpaper" name="is_wallpaper" class="mdl-switch__input" {IS_WALLPAPER} />
+                                <span class="mdl-switch__label">Is Wallpaper</span>
+                            </label>
+                            <br /><br />
+                            <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="is_highlight">
+                                <input type="checkbox" id="is_highlight" name="is_highlight" class="mdl-switch__input" {IS_HIGHLIGHT} />
+                                <span class="mdl-switch__label">Is Highlight</span>
+                            </label>
+                            <br /><br />
+                            <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="is_photoframe">
+                                <input type="checkbox" id="is_photoframe" name="is_photoframe" class="mdl-switch__input" {IS_PHOTOFRAME} />
+                                <span class="mdl-switch__label">Is Photoframe</span>
+                            </label>
+                            <br /><br />
+                            <br />
+                            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit">
+                                Update
+                            </button><br />
+                            <br />
+                        </form>
+
+                        <hr />
+
+						<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" onclick="location.href='/photo/{PHOTO_ID}?regenerate=info';">
+                            Re-fetch info from Flickr
+                        </button>
+						<br /><br />
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" onclick="location.href='/photo/{PHOTO_ID}?regenerate=thumbnail';">
+                            Regenerate Thumbnail
+                        </button>
+                        <img src="{THUMBNAIL_URL}" style="height:64px; width:auto;">
+                        <br /><br />
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" onclick="location.href='/photo/{PHOTO_ID}?regenerate=all';">
+                            Reimport from Flickr
+                        </button>
+                        <br /><br />
+						<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" onclick="location.href='/photo/{PHOTO_ID}?regenerate=resized';">
+							Delete resized
+						</button>
+						<br /><br />
+                        Type: DELETE to enable button
+                        <input type="text" id="delete_confirm" />
+                        <button id="delete_button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit">
+                            DELETE
+                        </button>
+                        <br /><br />
+
+						<!-- END: photo_actions -->
+						<h3>
+							Meta Files
+						</h3>
+						
+						<!-- BEGIN: meta_file -->
+						<img src="{META_FILE_URL}" style="height:64px; width:auto;">
+						<a href="{META_FILE_URL}">{META_FILE_NAME}</a>
+						<br />
+						<!-- END: meta_file -->
+
+                        <!-- BEGIN: add_photowall -->
+                        <hr />
+                        <br />
+                        <form action="/photo/{PHOTO_ID}" method="post" onsubmit="return confirmPhotoWall(this);">
+                            <button name="add_to_photowall" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored confirm_photo_wall" type="submit">
+                                Add to Wall [{NEXT_PHOTOWALL_ID}]
+                            </button>
+                        </form>
+                        <!-- END: add_photowall -->
+                    </div>
+                </div>
+                <!-- END: admin_links -->
+
+			</div>
+
+			<a id="info_button" href="#info_card" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored info_fab"><i class="material-icons">arrow_downward</i></a>
+			<div class="mdl-tooltip mdl-tooltip--large mdl-tooltip--top" for="info_button">
+				More Info about this Photo
+>>>>>>> 0bc6615a0373328a595c25b5a586a0a01329692a
 			</div>

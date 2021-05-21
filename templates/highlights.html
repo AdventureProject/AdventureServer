@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 			<div class="mdl-grid mdl-grid--no-spacing center-items">
 	
 				<div class="mdl-card highlights-pic highlights-title-card mdl-cell mdl-cell--8-col mdl-cell--4-col-phone mdl-shadow--2dp">
@@ -33,4 +34,41 @@
 				</div>
 
 				<!-- END: highlight -->
+=======
+			<div class="mdl-grid mdl-grid--no-spacing center-items">
+	
+				<div class="mdl-card highlights-pic highlights-title-card mdl-cell mdl-cell--8-col mdl-cell--4-col-phone mdl-shadow--2dp">
+					<div class="mdl-card__media">
+						<div class="mdl-card__title mdl-color-text--grey-50">
+							<h3 class="title">Highlights</h3>
+						</div>
+					</div>
+					<div class="mdl-card__supporting-text meta mdl-color-text--grey-600">
+						<img src="/images/highlights_icon.png" class="comment__avatar">
+                        <div>
+                            <span>Checkout some of our best photos.</span>
+                            <span>You can click any of them to see more about when and where they were taken.</span>
+                        </div>
+                    </div>
+                </div>
+			</div>
+
+			<div class="album-container">
+				 <!-- BEGIN: highlight -->
+				
+				<!-- BEGIN: photo_element_port -->
+				<div class="lazy album-item album-item-port-card-image album-item-card-image-{PHOTO_ID} mdl-card mdl-shadow--2dp zooming" data-src="{PHOTO_THUMBNAIL}" style="background: center / cover;">
+				<!-- END: photo_element_port -->
+				<!-- BEGIN: photo_element_land -->
+				<div class="lazy album-item album-item-land-card-image album-item-card-image-{PHOTO_ID} mdl-card mdl-shadow--2dp zooming" data-src="{PHOTO_THUMBNAIL}" style="background: center / cover;">
+				<!-- END: photo_element_land -->
+					<div class="mdl-card__title mdl-card--expand mdl-js-ripple-effect"></div>
+					<a id="photo_{PHOTO_ID}" href="{PHOTO_URL}" class="card_media_link"></a>
+				</div>
+				<div class="mdl-tooltip mdl-tooltip--large" for="photo_{PHOTO_ID}">
+					{PHOTO_TITLE}
+				</div>
+
+				<!-- END: highlight -->
+>>>>>>> 0bc6615a0373328a595c25b5a586a0a01329692a
 			</div>

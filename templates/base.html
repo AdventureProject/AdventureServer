@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!-- BEGIN: main -->
 <!DOCTYPE html>
 <html lang="en-us">
@@ -188,4 +189,196 @@
 	</body>
 
 </html>
+=======
+<!-- BEGIN: main -->
+<!DOCTYPE html>
+<html lang="en-us">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta id="viewport-meta" name="viewport"
+			  content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=0">
+
+		<meta name="theme-color" content="#29388e">
+
+		<title>{TITLE} - We Think Adventure.Rocks</title>
+
+		<!-- Rich preview -->
+		<meta property="og:title" content="{RICH_PREVIEW_TITLE}"/>
+		<meta property="og:description" content="{RICH_PREVIEW_DESCRIPTION}"/>
+		<meta property="og:image" content="{RICH_PREVIEW_IMAGE}"/>
+		<meta property="og:url" content="{RICH_URL}"/>
+		<meta property="og:type" content="website"/>
+
+		<!-- SEO -->
+		<meta name="description" content="{RICH_PREVIEW_DESCRIPTION}"/>
+		<meta name="keywords" content="{SEO_KEYWORDS}"/>
+		<meta name="robots" content="{SEO_ROBOTS}"/>
+		<meta name="revisit-after" content="1 month"/>
+		<!-- BEGIN: seo_location -->
+		<meta name="geo.position" content="{SEO_LATITUDE}; {SEO_LONGITUDE}"><!-- END: seo_location -->
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+		<!-- MDL -->
+		<link rel="stylesheet"
+			  href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en"/>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
+		<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-red.min.css"/>
+		<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+
+		<script src="https://kit.fontawesome.com/81f4e660ff.js"></script>
+
+		<link rel="stylesheet" href="/css/base.css">
+
+		<link rel="icon" type="image/png" href="/icon.png"/>
+
+		<!-- Add to homescreen for Chrome on Android -->
+		<meta name="mobile-web-app-capable" content="yes">
+		<link rel="icon" sizes="192x192" href="images/android-desktop.png">
+
+		<!-- Add to homescreen for Safari on iOS -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="#29388e">
+		<meta name="apple-mobile-web-app-title" content="WeThinkAdventure.Rocks">
+		<link rel="apple-touch-icon-precomposed" href="images/ios-desktop.png">
+
+		<!-- Tile icon for Win8 (144x144 + tile color) -->
+		<meta name="msapplication-TileImage" content="images/ms-touch-icon-144x144-precomposed.png">
+		<meta name="msapplication-TileColor" content="#29388e">
+
+		<!-- Google Analytics -->
+		<script>
+            (function (i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r;
+                i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+                a = s.createElement(o),
+                    m = s.getElementsByTagName(o)[0];
+                a.async = 1;
+                a.src = g;
+                m.parentNode.insertBefore(a, m)
+            })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+            ga('create', 'UA-87333451-2', 'auto');
+            ga('send', 'pageview');
+		</script>
+
+		<style>
+
+			body:before {
+			<!-- BEGIN: normal_background --> background: url({IMAGE}) no-repeat center center fixed;
+			<!-- END: normal_background --> <!-- BEGIN: blur_background --> background: linear-gradient( rgba(150, 150, 150, 0.0), rgba(150, 150, 150, 0.50) ) no-repeat center center fixed,
+			url({BLURRED_BACKGROUND}) no-repeat center center fixed;
+			<!-- END: blur_background --> -webkit-background-size: cover;
+				-moz-background-size: cover;
+				-o-background-size: cover;
+				background-size: cover;
+
+				content: "";
+				display: block;
+				position: fixed;
+				left: 0;
+				top: 0;
+				width: 100%;
+				height: 100vh;
+				z-index: -10;
+			}
+
+		</style>
+
+		<!-- Page Specific Files -->
+		<!-- BEGIN: css_file -->
+		<link type="text/css" rel="stylesheet" href="{CSS_FILE}"/>
+		<!-- END: css_file -->
+		<!-- BEGIN: js_file -->
+		<script type="text/javascript" src="{JS_FILE}"></script>
+		<!-- END: js_file -->
+	</head>
+
+	<body>
+		<!-- Always shows a header, even in smaller screens. -->
+		<div class="adventure mdl-layout mdl-js-layout mdl-layout--fixed-header has-drawer is-upgraded">
+			<header class="mdl-layout__header">
+				<!-- BEGIN: nav_back -->
+				<div class="mdl-layout__drawer-button mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"
+					 onclick="location.href='{BACK_URL}'">
+					<i class="material-icons">arrow_back</i>
+				</div>
+				<!-- END: nav_back -->
+				<div class="mdl-layout__header-row">
+					<!-- Title -->
+					<span class="mdl-layout-title">Adventure.Rocks</span>
+					<!-- Add spacer, to align navigation to the right -->
+					<div class="mdl-layout-spacer"></div>
+					<!-- Navigation. We hide it in small screens. -->
+					<nav class="mdl-navigation">
+						<!-- BEGIN: nav_action -->
+						<a id="action_{ACTION_ID}"
+						   class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"
+						   href="{ACTION_URL}" {ACTION_RAW}><i class="material-icons">{ACTION_ICON}</i></a>
+						<div class="mdl-tooltip mdl-tooltip--large" for="action_{ACTION_ID}">
+							{ACTION_TOOLTIP}
+						</div>
+						<!-- END: nav_action -->
+						<!-- BEGIN: authenticated -->
+						<a id="action_signout" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon"
+						   href="/admin/signout"><i class="material-icons">lock_open</i></a>
+						<div class="mdl-tooltip mdl-tooltip--large" for="action_signout">
+							Sign Out
+						</div>
+						<!-- END: authenticated -->
+					</nav>
+				</div>
+			</header>
+			<!-- BEGIN: nav_drawer -->
+			<div class="mdl-layout__drawer">
+				<nav class="mdl-navigation">
+					<a class="mdl-navigation__link" href="/"><i class="material-icons">home</i> Home</a>
+					<a class="mdl-navigation__link" href="/about"><i class="material-icons">info_outline</i> About</a>
+					<a class="mdl-navigation__link" href="/apps"><i class="material-icons">smartphone</i> Apps</a>
+					<a class="mdl-navigation__link" href="https://www.paypal.com/pools/c/8iLK55zPzx" target="_blank"><i
+							class="material-icons">local_drink</i> Buy us Beer!</a>
+					<hr/>
+					<a class="mdl-navigation__link" href="/highlights"><i class="material-icons">grade</i>
+						Highlights</a>
+					<a class="mdl-navigation__link" href="/logs"><i class="material-icons">description</i> Blog</a>
+					<a class="mdl-navigation__link" href="/albums"><i class="material-icons">photo_library</i>
+						Albums</a>
+					<a class="mdl-navigation__link" href="/heatmap"><i class="material-icons">map</i> Heatmap</a>
+					<a class="mdl-navigation__link" href="/360photos"><i class="material-icons">camera</i> 360
+						Photos</a>
+					<a class="mdl-navigation__link" href="/videos"><i class="material-icons">local_movies</i> Videos</a>
+					<a class="mdl-navigation__link" href="/todaysphoto"><i class="material-icons">camera_alt</i> Today's
+						Photo</a>
+				</nav>
+			</div>
+			<!-- END: nav_drawer -->
+			<!-- BEGIN: body -->
+			<main class="adventure mdl-layout__content" id="body_container">
+				<div class="page-content" id="body">
+					{FILE {BODY_FILE}}
+				</div>
+			</main>
+			<!-- END: body -->
+
+			<footer class="mdl-mini-footer">
+				<div class="mdl-mini-footer__left-section">
+					<!-- <a href="http://adamwbrown.me">adamwbrown.me</a> -->
+				</div>
+				<div class="mdl-mini-footer__right-section">
+					<h3>
+						<a href="https://www.facebook.com/wethinkadventurerocks"><i class="fab fa-facebook"></i></a>
+						&nbsp;
+						<a href="https://www.instagram.com/wethinkadventurerocks/"><i class="fab fa-instagram"></i></a>
+					</h3>
+				</div>
+			</footer>
+		</div>
+	</body>
+
+</html>
+>>>>>>> 0bc6615a0373328a595c25b5a586a0a01329692a
 <!-- END: main -->

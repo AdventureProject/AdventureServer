@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @media (max-width: 512px)	and (-webkit-min-device-pixel-ratio: 1.5),
 	(max-width: 512px)	and (min-resolution: 1.5dppx),
 	(max-width: 1024px) and (-webkit-max-device-pixel-ratio: 1.5),
@@ -520,3 +521,527 @@ body .adventure {
     margin-top: 16px;
     margin-bottom: 16px;
 }
+=======
+@media (max-width: 512px)	and (-webkit-min-device-pixel-ratio: 1.5),
+	(max-width: 512px)	and (min-resolution: 1.5dppx),
+	(max-width: 1024px) and (-webkit-max-device-pixel-ratio: 1.5),
+	(max-width: 1024px) and (max-resolution: 1.5dppx);
+
+@media (min-width: 513px)	and (max-width: 1024px) and (-webkit-min-device-pixel-ratio: 1.5),
+	(min-width: 513px)	and (max-width: 1024px) and (min-resolution: 1.5dppx),
+	(min-width: 1025px) and (max-width: 2048px) and (-webkit-max-device-pixel-ratio: 1.5),
+	(min-width: 1025px) and (max-width: 2048px) and (max-resolution: 1.5dppx);
+
+@media (min-width: 1025px) and (-webkit-min-device-pixel-ratio: 1.5),
+	(min-width: 1025px) and (min-resolution: 1.5dppx),
+	(min-width: 2049px) and (-webkit-max-device-pixel-ratio: 1.5),
+	(min-width: 2049px) and (max-resolution: 1.5dppx);
+
+@media screen and (max-width: 640px) {
+	.hide { display: none !important; }
+}
+
+body {
+	padding-top: 64px;
+}
+
+@media screen and (max-width: 1024px) {
+	body {
+		padding-top: 56px;
+	}
+}
+
+.adventure .mdl-layout__header {
+	position: fixed;
+	top: 0;
+}
+
+main.adventure.mdl-layout__content,
+.mdl-layout {
+	overflow: visible;
+}
+
+.adventure .adventure__location_details {
+	max-width: 900px;
+	padding: 0;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	width: 100%;
+	margin: 0 auto;
+	-webkit-flex-shrink: 0;
+			-ms-flex-negative: 0;
+				flex-shrink: 0;
+}
+
+.adventure.mdl-layout .mdl-layout__content {
+	padding-top: 100px;
+	position: relative;
+	-webkit-overflow-scrolling: touch;
+}
+.adventure .mdl-card {
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-flex-direction: column;
+			-ms-flex-direction: column;
+				flex-direction: column;
+	-webkit-align-items: stretch;
+			-ms-flex-align: stretch;
+				align-items: stretch;
+	min-height: 256px;
+}
+.adventure .mdl-card__title {
+	padding: 16px;
+	-webkit-flex-grow: 1;
+			-ms-flex-positive: 1;
+				flex-grow: 1;
+}
+.adventure .mdl-card__media {
+	min-height: 256px;
+	box-sizing: border-box;
+	background-size: cover;
+	padding: 24px;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-flex-grow: 1;
+			-ms-flex-positive: 1;
+				flex-grow: 1;
+	-webkit-flex-direction: row;
+			-ms-flex-direction: row;
+				flex-direction: row;
+	-webkit-align-items: flex-end;
+			-ms-flex-align: end;
+				align-items: flex-end;
+}
+.adventure .mdl-card__media a,
+.adventure .mdl-card__title a {
+	color: inherit;
+}
+.adventure .mdl-card__supporting-text {
+	width: 100%;
+	padding: 16px;
+	min-height: 64px;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-align-items: center;
+			-ms-flex-align: center;
+				align-items: center;
+}
+.adventure .mdl-card__supporting-text strong {
+	font-weight: 400;
+}
+.adventure .mdl-card__media ~ .mdl-card__supporting-text {
+	min-height: 64px;
+}
+.adventure .mdl-card__supporting-text:not(:last-child) {
+	box-sizing: border-box;
+	min-height: 76px;
+}
+.adventure:not(.adventure--blogpost) .mdl-card__supporting-text ~ .mdl-card__supporting-text {
+	border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+.adventure .mdl-card__actions:first-child {
+	margin-left: 0;
+}
+.adventure .meta {
+	box-sizing: border-box;
+	padding: 16px;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-flex-direction: row;
+			-ms-flex-direction: row;
+				flex-direction: row;
+	-webkit-align-items: center;
+			-ms-flex-align: center;
+				align-items: center;
+	-webkit-justify-content: flex-start;
+			-ms-flex-pack: start;
+				justify-content: flex-start;
+	height: auto;
+}
+.adventure .meta > .meta__favorites{
+	-webkit-flex-direction: row;
+			-ms-flex-direction: row;
+				flex-direction: row;
+	margin: 0 8px;
+	font-size: 13px;
+	font-weight: 500;
+}
+.adventure .meta > .meta__favorites .material-icons {
+	font-size: 2em;
+	cursor: pointer;
+	margin-left: 12px;
+}
+.adventure .mdl-card .meta.meta--fill {
+	-webkit-justify-content: space-between;
+			-ms-flex-pack: justify;
+				justify-content: space-between;
+}
+.adventure .meta > *:first-child {
+	margin-right: 16px;
+}
+.adventure .meta > * {
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-flex-direction: column;
+			-ms-flex-direction: column;
+				flex-direction: column;
+}
+.adventure.is-small-screen .adventure__location_details > .mdl-card.intro-pic {
+	-webkit-order: 0;
+			-ms-flex-order: 0;
+				order: 0;
+}
+.adventure.is-small-screen .adventure__location_details > .mdl-card.something-else {
+	-webkit-order: -1;
+			-ms-flex-order: -1;
+				order: -1;
+}
+.adventure .intro-pic .mdl-card__media {
+	background-image: url('images/intro.jpg');
+}
+.adventure .something-else .mdl-card__media {
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-flex-direction: column;
+			-ms-flex-direction: column;
+				flex-direction: column;
+	-webkit-justify-content: center;
+			-ms-flex-pack: center;
+				justify-content: center;
+	-webkit-align-items: center;
+			-ms-flex-align: center;
+				align-items: center;
+}
+.adventure .something-else > button {
+	position: absolute;
+	top: 0;
+	right: 28px;
+	-webkit-transform: translate(0px, -28px);
+				transform: translate(0px, -28px);
+}
+.adventure .something-else .mdl-card__media {
+	font-size: 13px;
+	font-weight: 500;
+	border-top-left-radius: 2px;
+	border-top-right-radius: 2px;
+}
+.adventure .something-else .mdl-card__media img {
+	width: 64px;
+	height: 64px;
+	margin-bottom: 10px;
+}
+.adventure .something-else .mdl-card__supporting-text {
+	background-color: #F5F5F5;
+	border-bottom-left-radius: 2px;
+	border-bottom-right-radius: 2px;
+}
+
+.adventure .adventure__location_details > .demo-nav {
+	margin: 12px 15px;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-flex-direction: row;
+			-ms-flex-direction: row;
+				flex-direction: row;
+	-webkit-justify-content: space-between;
+			-ms-flex-pack: justify;
+				justify-content: space-between;
+	-webkit-align-items: center;
+			-ms-flex-align: center;
+				align-items: center;
+	color: white;
+	font-weight: 500;
+}
+.adventure .mdl-card > a {
+	color: inherit;
+	text-decoration: none;
+	font-weight: inherit;
+}
+.adventure .mdl-card h3 {
+	margin: 0;
+}
+.adventure .mdl-card h3 a {
+	text-decoration: none;
+}
+.adventure .mdl-card h3.quote:before, .adventure .mdl-card h3.quote:after {
+	display: block;
+	font-size: 3em;
+	margin-top: 0.5em;
+}
+.adventure .mdl-card h3.quote:before {
+	content: '“';
+}
+.adventure .mdl-card h3.quote:after {
+	content: '”';
+}
+.adventure--blogpost .custom-header {
+	background-color: transparent;
+}
+
+.adventure--blogpost .comments {
+	background-color: #EEE;
+}
+.adventure--blogpost .meta > * {
+	-webkit-align-items: center;
+			-ms-flex-align: center;
+								-ms-grid-row-align: center;
+				align-items: center;
+}
+.adventure--blogpost .meta + .mdl-card__supporting-text {
+	border: 0;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-flex-direction: column;
+			-ms-flex-direction: column;
+				flex-direction: column;
+}
+.adventure--blogpost .meta + .mdl-card__supporting-text p {
+	max-width: 512px;
+	margin: 16px auto;
+	font-size: 16px;
+	line-height: 28px;
+}
+
+.adventure--blogpost .comments {
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-flex-direction: column;
+			-ms-flex-direction: column;
+				flex-direction: column;
+	-webkit-justify-content: flex-start;
+			-ms-flex-pack: start;
+				justify-content: flex-start;
+	-webkit-align-items: stretch;
+			-ms-flex-align: stretch;
+				align-items: stretch;
+	padding: 32px;
+	box-sizing: border-box;
+}
+.adventure--blogpost .comments > form {
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-flex-direction: row;
+			-ms-flex-direction: row;
+				flex-direction: row;
+	margin-bottom: 16px;
+}
+.adventure--blogpost .comments > form .mdl-textfield {
+	-webkit-flex-grow: 1;
+			-ms-flex-positive: 1;
+				flex-grow: 1;
+	margin-right: 16px;
+	color: rgb(97, 97, 97);
+}
+/* Workaround for Firefox.
+ * User agent stylesheet kept overwriting the font in FF only.
+ */
+.adventure--blogpost .comments > form .mdl-textfield .mdl-textfield__input {
+	font-family: 'Roboto', 'Helvetica', sans-serif;
+}
+.adventure--blogpost .comments > form .mdl-textfield input,
+.adventure--blogpost .comments > form .mdl-textfield textarea {
+	resize: none;
+}
+.adventure--blogpost .comments > form button {
+	margin-top: 20px;
+	background-color: rgba(0, 0, 0, 0.24);
+	color: white;
+}
+.adventure--blogpost .comments .comment {
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-flex-direction: column;
+			-ms-flex-direction: column;
+				flex-direction: column;
+	-webkit-align-items: stretch;
+			-ms-flex-align: stretch;
+				align-items: stretch;
+}
+.adventure--blogpost .comments .comment > .comment__header {
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-flex-direction: row;
+			-ms-flex-direction: row;
+				flex-direction: row;
+	-webkit-align-items: center;
+			-ms-flex-align: center;
+				align-items: center;
+	margin-bottom: 16px;
+}
+.adventure--blogpost .comments .comment > .comment__header > .comment__avatar {
+	width: 48px;
+	height: 48px;
+	border-radius: 24px;
+	margin-right: 16px;
+}
+.adventure--blogpost .comments .comment > .comment__header > .comment__author {
+	-webkit-flex-grow: 1;
+			-ms-flex-positive: 1;
+				flex-grow: 1;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-flex-direction: column;
+			-ms-flex-direction: column;
+				flex-direction: column;
+}
+.adventure--blogpost .comments .comment > .comment__text {
+	line-height: 1.5em;
+}
+.adventure--blogpost .comments .comment > .comment__actions {
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-flex-direction: row;
+			-ms-flex-direction: row;
+				flex-direction: row;
+	-webkit-justify-content: flex-start;
+			-ms-flex-pack: start;
+				justify-content: flex-start;
+	-webkit-align-items: center;
+			-ms-flex-align: center;
+				align-items: center;
+	font-size: 0.8em;
+	margin-top: 16px;
+}
+.adventure--blogpost .comments .comment > .comment__actions button {
+	margin-right: 16px;
+	color: rgba(0, 0, 0, 0.24);
+}
+.adventure--blogpost .comments .comment > .comment__answers {
+	padding-top: 32px;
+	padding-left: 48px;
+}
+
+.adventure--blogpost .adventure-back {
+	color: white;
+	z-index: 9999;
+}
+.adventure .section-spacer {
+	-webkit-flex-grow: 1;
+			-ms-flex-positive: 1;
+				flex-grow: 1;
+}
+.adventure .something-else {
+	overflow: visible;
+	z-index: 10;
+}
+.adventure .amazing .mdl-card__title {
+	background-color: #263238;
+}
+.adventure .minilogo {
+	width: 44px;
+	height: 44px;
+	background-image: url('images/avatar.png');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 50%;
+	border-radius: 22px;
+	background-color: #F5F5F5;
+}
+.adventure .timelogo {
+	width: 44px;
+	height: 44px;
+	background-image: url('images/clock.png');
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 50%;
+	border-radius: 22px;
+	background-color: #F5F5F5;
+}
+/* Fixes for IE 10 */
+.mdl-grid {
+	display: -webkit-flex !important;
+	display: -ms-flexbox !important;
+	display: flex !important;
+}
+
+.adventure footer.mdl-mini-footer {
+    margin-top: 64px;
+    padding: 0 16px;
+}
+
+.adventure footer.mdl-mini-footer h3 {
+    margin: 8px;
+}
+
+div.adventure-content {
+    padding: 10px;
+}
+
+.navigation-card .mdl-card__title {
+    background-color:#FFD54F;
+}
+
+.admin-card .mdl-card__title {
+    background-color:#B0BEC5;
+}
+
+a.card_media_link {
+	position: absolute;
+	display: block;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+}
+
+.adventure .mdl-card__title h3.title { 
+	background-color: rgba(33, 33, 33, 0.9);
+	color: #fff;
+	display: inline;
+	padding: 0.5rem;
+
+	-webkit-box-decoration-break: clone;
+	box-decoration-break: clone;
+}
+
+.adventure .mdl-card__title h1.title {
+    color: #fff;
+    display: inline;
+    padding: 1rem;
+    font-size: 5em;
+    text-shadow: #0b0b0b 2px 2px;
+
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+}
+
+.adventure .mdl-grid.center-items {
+	justify-content: center;
+}
+
+div.mdl-layout__drawer > nav.mdl-navigation > a.mdl-navigation__link {
+	display: inline-flex;
+	vertical-align: middle;
+}
+
+div.mdl-layout__drawer > nav.mdl-navigation > a.mdl-navigation__link i {
+	margin-right: 20px;
+}
+
+body .adventure {
+	font-family: 'Roboto', 'Helvetica', sans-serif;
+}
+
+.adventure span.date {
+    font-weight: bold;
+    font-size: 18pt;
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+>>>>>>> 0bc6615a0373328a595c25b5a586a0a01329692a
