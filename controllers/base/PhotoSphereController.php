@@ -3,6 +3,7 @@
 require_once('utils/KeysUtil.php');
 require_once('utils/BaseController.php');
 require_once('utils/b2_util.php');
+require_once('utils/photos.php');
 
 
 class PhotoSphereController extends BaseController
@@ -85,8 +86,8 @@ class PhotoSphereController extends BaseController
 				$this->currentPhoto = $photoData;
 				$locationParts = explode( ',', $photoData['location'] );
 				$this->addSeoLocation( $locationParts[0], $locationParts[1], $xtpl );
-				
-				$this->addNavAction( 'download_button', 'file_download', 'Download this photo', "$basePath/{$photoData['file_id']}/{$photoData['file_id']}.jpg", $xtpl, 'download' );
+
+				$this->addNavAction( 'download_button', 'file_download', 'Download this photo', b2GetPublic360Photo($photoData['file_id']), $xtpl, 'download' );
 				
 				$xtpl->assign('FILE_ID', $photoData['file_id'] );
 				$xtpl->assign('PHOTO_TITLE', $photoData['title'] );
@@ -94,7 +95,7 @@ class PhotoSphereController extends BaseController
 				
 				$keys = getKeys();
 				$location = str_replace( ' ', '', $photoData['location'] ); // The popup doesn't like spaces
-				$mapUrl = $this->getMapUrl( $location, $keys->google_maps_api->key );
+				$mapUrl = getPhotoSphereMapLargeUrl( $location, $keys->google_maps_api->key );
 				$xtpl->assign('PHOTO_LOCATION_URL', $mapUrl);
 				
 				$xtpl->assign('PITCH', $photoData['initial_pitch'] );
@@ -104,11 +105,6 @@ class PhotoSphereController extends BaseController
 		
 		$xtpl->parse('main.body');
     }
-	
-	private function getMapUrl( $location, $googleMapsApiKey )
-	{
-		return "http://maps.googleapis.com/maps/api/staticmap?center=$location&zoom=2&scale=1&size=256x96&maptype=terrain&key=$googleMapsApiKey&format=jpg&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:%7C$location";
-	}
 }
 
 ?>

@@ -31,7 +31,9 @@ class HighlightsController extends BaseController
 		$this->addCssFile( '/css/album_container.css', $xtpl );
 		$this->addCssFile( '/css/highlights.css', $xtpl );
 		$this->addCssFile( '/css/zoom.css', $xtpl );
-		
+
+		$this->addLazyLoadLibrary( $xtpl );
+
 		$xtpl->assign_file('BODY_FILE', 'templates/highlights.html');
 		
 		$db = getDb();

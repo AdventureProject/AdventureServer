@@ -446,6 +446,14 @@ main.adventure.mdl-layout__content,
 	display: flex !important;
 }
 
+.adventure footer.mdl-mini-footer {
+    margin-top: 64px;
+    padding: 0 16px;
+}
+
+.adventure footer.mdl-mini-footer h3 {
+    margin: 8px;
+}
 
 div.adventure-content {
     padding: 10px;
@@ -476,6 +484,17 @@ a.card_media_link {
 
 	-webkit-box-decoration-break: clone;
 	box-decoration-break: clone;
+}
+
+.adventure .mdl-card__title h1.title {
+    color: #fff;
+    display: inline;
+    padding: 1rem;
+    font-size: 5em;
+    text-shadow: #0b0b0b 2px 2px;
+
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
 }
 
 .adventure .mdl-grid.center-items {

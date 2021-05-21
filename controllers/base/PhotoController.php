@@ -97,15 +97,28 @@ class PhotoController extends BaseController
 
 				if( $request->params['regenerate'] == 'thumbnail' )
 				{
-					error_log( 'regenerate thumbnail ' . $request->args[0] );
+					error_log( 'regenerate thumbnail ' . $photoId );
 
-					transferThumbnailFromFlickrToB2( $request->args[0], true );
+					transferThumbnailFromFlickrToB2( $photoId, true );
 				}
 				else if( $request->params['regenerate'] == 'info' )
 				{
-					error_log( 'regenerate info ' . $request->args[0] );
+					error_log( 'regenerate info ' . $photoId );
 
-					$this->refreshInfoFromFlickr( $request->args[0] );
+					$this->refreshInfoFromFlickr( $photoId );
+				}
+				else if( $request->params['regenerate'] == 'all' )
+				{
+					deleteResized( $photoId );
+
+					$importTaskId = createReimportTask( $photoId );
+					processImportTask( $importTaskId );
+
+					transferThumbnailFromFlickrToB2( $photoId, true );
+				}
+				else if( $request->params['regenerate'] == 'resized' )
+				{
+					deleteResized( $photoId );
 				}
 
 				header( 'Location: /photo/' . $request->args[0] );
@@ -205,6 +218,12 @@ class PhotoController extends BaseController
 			$locationParts = explode( ',', $photoFlickr->location );
 
 			$this->addSeoLocation( $locationParts[0], $locationParts[1], $xtpl );
+
+			/*
+			$tz = get_nearest_timezone($locationParts[0], $locationParts[1], "us");
+			//date_default_timezone_set($tz);
+			date_default_timezone_set("UTC");
+			*/
 
 			if( $this->albumData != null )
 			{

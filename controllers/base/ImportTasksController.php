@@ -35,6 +35,7 @@ class ImportTasksController extends BaseController
 			while ($task = $importTasks->fetch()) {
 				$xtpl->assign('TASK_ID', $task['id']);
 				$xtpl->assign('ALBUM_ID', $task['flickr_album_id']);
+				$xtpl->assign('FLICKR_ID', $task['flickr_id']);
 				$xtpl->assign('STATUS', $task['import_state']);
 
 				$xtpl->parse('main.body.import_task');

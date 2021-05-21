@@ -46,3 +46,72 @@ span.photo_count {
 	height: 50vh;
 	max-height: 760px;
 }
+
+.adventure .album-annotation {
+    margin: 16px;
+    background: rgba(200, 200, 200, 0.5);
+}
+
+.adventure .album-container .description {
+    max-width: 968px;
+}
+
+#map-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    height: auto;
+}
+
+#map {
+    display: inline-block;
+
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+
+    background: #FFFFFF;
+}
+
+#map img {
+    max-width: 800px;
+    height: auto;
+}
+
+#map p {
+    padding: 8px;
+}
+
+.path-map {
+    background-size: cover;
+    color: #ffffff;
+    text-shadow: 1px 1px #232323;
+}
+
+.path-map-annotation {
+    background: #00000066;
+}
+
+.path-map-container span {
+    padding: 16px;
+    background: #00000066;
+}
+
+@media only screen and (max-width: 650px) {
+    .adventure .album-annotation {
+        margin: 0 auto;
+        background: rgba(200, 200, 200, 0.5);
+    }
+
+    #map {
+        width: 100%;
+        margin-left: 8px;
+        margin-right: -8px;
+    }
+
+    #map img {
+        width: 100%;
+        height: auto;
+    }
+}

@@ -1,5 +1,10 @@
 {
     "require": {
-        "kamilZ/b2backblaze": "0.1.*"
+        "kamilz/b2backblaze": "0.1.3",
+        "kriswallsmith/buzz": "0.15",
+        "cebe/markdown": "*",
+        "opencoconut/coconut": "2.*",
+        "sibyx/phpgpx": "1.0-RC5",
+        "emcconville/google-map-polyline-encoding-tool" : ">=1.2.1"
     }
 }

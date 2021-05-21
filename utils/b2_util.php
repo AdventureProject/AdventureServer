@@ -12,11 +12,12 @@ $GLOBALS['b2BasePath'] = array();
 $GLOBALS['b2BasePath']['base'] = "https://data.wethinkadventure.rocks/file/adventure/data/";
 $GLOBALS['b2BasePath']['photos'] = $GLOBALS['b2BasePath']['base'] . 'photos';
 $GLOBALS['b2BasePath']['360photos'] = $GLOBALS['b2BasePath']['base'] . '360photos';
+$GLOBALS['b2BasePath']['timeline'] = $GLOBALS['b2BasePath']['base'] . 'timeline';
 
 $GLOBALS['b2InternalPath']['photos'] = 'data/photos';
 $GLOBALS['b2InternalPath']['360photos'] = 'data/360photos';
 
-$GLOBALS['b2InternalPath']['photo']['source'] = 'source.jpg';
+$GLOBALS['b2InternalPath']['photo']['source'] = 'source';
 $GLOBALS['b2InternalPath']['photo']['meta'] = 'meta';
 $GLOBALS['b2InternalPath']['photo']['blurred_image'] = 'blurred.jpg';
 $GLOBALS['b2InternalPath']['photo']['thumbnail_image'] = 'thumbnail.jpg';
@@ -28,9 +29,24 @@ function getB2Client()
 	return new B2Service($keys->b2->account_id, $keys->b2->application_id);
 }
 
-function b2GetPublicPhotoOriginalUrl( $id )
+function b2GetPublic360Photo( $fileId )
 {
-	return $GLOBALS['b2BasePath']['photos'] . '/' . $id . '/' . $GLOBALS['b2InternalPath']['photo']['source'];
+	return $GLOBALS['b2BasePath']['360photos'] . '/' . $fileId . '/' . $fileId . '.jpg';
+}
+
+function b2GetPublic360PhotoPreview( $fileId )
+{
+	return $GLOBALS['b2BasePath']['360photos'] . '/' . $fileId . '/preview.jpg';
+}
+
+function b2GetPublicTimelinePhoto( $file )
+{
+	return $GLOBALS['b2BasePath']['timeline'] . '/' . $file;
+}
+
+function b2GetPublicPhotoOriginalUrl( $id, $imageType )
+{
+	return $GLOBALS['b2BasePath']['photos'] . '/' . $id . '/' . $GLOBALS['b2InternalPath']['photo']['source'] . '.' . $imageType;
 }
 
 function b2GetPublicThumbnailUrl( $id )
@@ -192,12 +208,9 @@ function listAllFilesInternal( $photoId )
 	{
 		$apiURL = $authResponse->get('apiUrl');
 		$token = $authResponse->get('authorizationToken');
-		$downloadURL = $authResponse->get('downloadUrl');
-		$minimumPartSize = $authResponse->get('minimumPartSize');
-		
+
 		$fileNames = array();
 		
-		//public function b2ListFileNames($URL, $token, $bucketId, $startFileName = null, $maxFileCount = 100, $prefix = null, $delimiter = null)
 		$fileNamesResponse = $client->b2ListFileNames( $apiURL, $token, $targetBucketId, $startFileName = null, $maxFileCount = 100, $prefix = getB2PhotoPath( $photoId ) );
 		if( $fileNamesResponse->isOK() )
 		{
@@ -209,6 +222,40 @@ function listAllFilesInternal( $photoId )
 			}
 		}
 		
+		return $fileNames;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+function listMetaFilesInternal( $photoId )
+{
+	$keys = getKeys();
+	$client = new B2API($keys->b2->account_id, $keys->b2->application_id, 2000);
+
+	$targetBucketId = getKeys()->b2->bucket_id;
+
+	$authResponse = $client->b2AuthorizeAccount();
+	if ($authResponse->isOk())
+	{
+		$apiURL = $authResponse->get('apiUrl');
+		$token = $authResponse->get('authorizationToken');
+
+		$fileNames = array();
+
+		$fileNamesResponse = $client->b2ListFileNames( $apiURL, $token, $targetBucketId, $startFileName = null, $maxFileCount = 100, $prefix = getB2PhotoMetaPath( $photoId ) );
+		if( $fileNamesResponse->isOK() )
+		{
+			$data = $fileNamesResponse->getData();
+
+			foreach( $data['files'] as $file )
+			{
+				$fileNames[] = $file['fileName'];
+			}
+		}
+
 		return $fileNames;
 	}
 	else

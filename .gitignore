@@ -1,2 +1,15 @@
 vendor/**
 data/**
+/.idea/AdventureServer.iml
+/.idea/dataSources/bbd39fc7-c925-422f-9c20-463f87f7da61.xml
+/.idea/deployment.xml
+/.idea/encodings.xml
+/.idea/shelf/markdown.xml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/php.xml
+/.idea/shelf/markdown/shelved.patch
+/.idea/sqldialects.xml
+/.idea/vcs.xml
+/.idea/webResources.xml
+/.idea/workspace.xml

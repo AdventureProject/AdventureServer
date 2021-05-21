@@ -65,13 +65,21 @@ class AddPhotoAlbumController extends BaseController
 				$albumItem = array( 'flickr_album_id' => $flickrAlbumId,
 									'title' => $albumTitle,
 								  	'description' => $albumDescription );
-				
-				$newAlbumRow = $db->albums()->insert( $albumItem );
-				
-                if( $newAlbumRow )
+
+				$existingAlbumResult = $db->albums('flickr_album_id', $flickrAlbumId)->fetch();
+				if($existingAlbumResult)
+				{
+					$localAlbumId = $existingAlbumResult['id'];
+				}
+				else
+				{
+					$newAlbumRow = $db->albums()->insert( $albumItem );
+					$localAlbumId = $newAlbumRow['id'];
+				}
+
+                if( $localAlbumId )
                 {
 					error_log('created album' );
-                	$localAlbumId = $newAlbumRow['id'];
 
 					////////////////////////////////////////////////////////
 					// Flickr Album Photos
@@ -79,7 +87,9 @@ class AddPhotoAlbumController extends BaseController
 					$method = 'flickr.photosets.getPhotos';
 					$args = array(	'photoset_id' => $flickrAlbumId,
 									'user_id' => $keys->flickr_api->user_id,
-								 	'media' => 'photos' );
+								 	'media' => 'photos',
+									'perpage' => 500,
+									'page' => 1);
 					$responseAlbumPhotos = $flickr->call_method($method, $args);
 					
 					if( $flickr->ok( $responseAlbumPhotos ) )

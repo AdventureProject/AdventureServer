@@ -17,7 +17,7 @@ class AddPhotoController extends BaseController
 	{
 		return 'addphoto';
 	}
-    
+
     public function getTitle()
     {
     	return 'Add Photo';

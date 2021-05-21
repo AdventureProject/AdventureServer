@@ -240,12 +240,21 @@
                         </button>
                         <img src="{THUMBNAIL_URL}" style="height:64px; width:auto;">
                         <br /><br />
+                        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" onclick="location.href='/photo/{PHOTO_ID}?regenerate=all';">
+                            Reimport from Flickr
+                        </button>
+                        <br /><br />
+						<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit" onclick="location.href='/photo/{PHOTO_ID}?regenerate=resized';">
+							Delete resized
+						</button>
+						<br /><br />
                         Type: DELETE to enable button
                         <input type="text" id="delete_confirm" />
                         <button id="delete_button" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" type="submit">
                             DELETE
                         </button>
                         <br /><br />
+
 						<!-- END: photo_actions -->
 						<h3>
 							Meta Files

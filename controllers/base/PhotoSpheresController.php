@@ -3,6 +3,7 @@
 require_once('utils/KeysUtil.php');
 require_once('utils/BaseController.php');
 require_once('utils/b2_util.php');
+require_once('utils/photos.php');
 
 
 class PhotoSpheresController extends BaseController
@@ -57,7 +58,7 @@ class PhotoSpheresController extends BaseController
 			$xtpl->assign('PHOTO_DESCRIPTION', $data['description']);
 			$xtpl->assign('PHOTO_DATE_TAKEN', $this->formatDateForDisplay( $data['date_taken'] ) );
 			
-			$mapUrl = $this->getMapUrl( $data['location'], $keys->google_maps_api->key );
+			$mapUrl = getPhotoSphereMapUrl( $data['location'], $keys->google_maps_api->key );
 			$xtpl->assign('PHOTO_LOCATION_IMG', $mapUrl);
 			
 			$xtpl->assign('PITCH', $data['initial_pitch'] );
@@ -69,11 +70,6 @@ class PhotoSpheresController extends BaseController
 		
 		$xtpl->parse('main.body');
     }
-	
-	private function getMapUrl( $location, $googleMapsApiKey )
-	{
-		return "http://maps.googleapis.com/maps/api/staticmap?center=$location&zoom=2&scale=1&size=96x96&maptype=terrain&key=$googleMapsApiKey&format=jpg&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:%7C$location";
-	}
 }
 
 ?>

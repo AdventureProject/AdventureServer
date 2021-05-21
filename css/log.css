@@ -1,0 +1,126 @@
+.adventure .log-header {
+    width: 100%;
+    height: 60vh;
+    display: block;
+    overflow: auto;
+    position: relative;
+}
+
+.adventure .blog-date {
+    text-shadow: #0b0b0b 2px 2px;
+    text-align: right;
+    width: 100%;
+}
+
+.adventure .blog-content {
+    display: inline-block;
+}
+
+.adventure .blog-content p {
+    min-width: 150px;
+}
+
+.adventure .blog-image-link {
+    display: inline-block;
+}
+
+.adventure .blog-image-small {
+    display: block;
+    object-fit: scale-down;
+    max-width: 128px;
+    margin: 8px 4px 4px;
+}
+
+.adventure .blog-image-medium {
+    display: block;
+    object-fit: scale-down;
+    max-width: 256px;
+    margin: 16px 8px 8px;
+}
+
+.adventure .blog-image-large {
+    display: block;
+    object-fit: scale-down;
+    max-width: 512px;
+    margin: 16px 8px 8px;
+}
+
+.blog-content {
+    width: 100%;
+    overflow: auto;
+    padding: 32px;
+}
+
+.blog-content p {
+    font-size: large;
+    text-indent: 40px;
+}
+
+.blog-content h3::first-letter {
+    text-transform: uppercase;
+    font-size: 1.5em;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.adventure .mdl-card__title {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: 100%;
+}
+
+.adventure .mdl-card__title h1.title {
+    width: 100%;
+}
+
+@media screen and (max-width: 640px) {
+    .adventure.mdl-layout .mdl-layout__content {
+        padding-top: 0;
+    }
+
+    .log-header {
+        width: 100%;
+        height: auto;
+
+        overflow: auto;
+    }
+
+    .blog-content {
+        padding: 0;
+    }
+
+    .adventure .blog-date {
+        font-size: large;
+        padding: 0;
+    }
+
+    .adventure .mdl-card__title h1.title {
+        font-size: xx-large;
+        padding: 0;
+    }
+
+    .adventure .blog-content h1 {
+        font-size: xx-large;
+        line-height: normal;
+    }
+
+    .adventure .blog-content h2 {
+        font-size: x-large;
+        line-height: normal;
+    }
+
+    .adventure .blog-content h3 {
+        font-size: large;
+        line-height: normal;
+    }
+
+    .adventure .blog-content h4 {
+        font-size: medium;
+        line-height: normal;
+    }
+
+    .adventure .mdl-card__title {
+        padding: 0;
+    }
+}

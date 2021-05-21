@@ -23,3 +23,7 @@
 .adventure .videos_pic .mdl-card__media {
 	background-image: url('/images/videos_pic.jpg');
 }
+
+.adventure .blog_pic .mdl-card__media {
+    background-image: url('/images/blog_pic.jpg');
+}

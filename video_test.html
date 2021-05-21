@@ -1,0 +1,32 @@
+<?php
+
+require_once('vendor/autoload.php');
+
+if($_GET['go'] == 1)
+{
+    echo 'test';
+
+    $job = Coconut_Job::create(array(
+      'api_key' => 'k-api-key',
+    'conf' => 'coconut.conf',
+    'source' => 'http://yoursite.com/media/video.mp4',
+    'vars' => array('vid' => 1234)
+    ));
+}
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    Streaming video test
+    <video width="800" height="600" controls>
+        <source src="https://www.flickr.com/photos/adamwbrown/48156373241/play/site/6d3d24473b/" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</body>
+</html>

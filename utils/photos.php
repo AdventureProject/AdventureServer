@@ -30,14 +30,14 @@ function getDbPdo()
 	global $keys;
 	$servername = "localhost";
 
-	try {
-		$conn = new PDO("mysql:host=$servername;dbname={$keys->mysql->database}", $keys->mysql->user, $keys->mysql->password);
+	try
+	{
+		$conn = new PDO( "mysql:host=$servername;dbname={$keys->mysql->database}", $keys->mysql->user, $keys->mysql->password );
 		// set the PDO error mode to exception
-		$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		$conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 
 		return $conn;
-	}
-	catch(PDOException $e)
+	} catch( PDOException $e )
 	{
 		error_log( "Connection failed: " . $e->getMessage() );
 	}
@@ -52,7 +52,7 @@ function getRandomPhoto()
 	$photoIds = array();
 	$photoIds['id'] = $data['id'];
 	$photoIds['flickr_id'] = $data['flickr_id'];
-	
+
 	$db->close();
 	$db = null;
 
@@ -73,7 +73,7 @@ function getAllPhotos()
 
 		$photos[] = $photoIds;
 	}
-	
+
 	$db->close();
 	$db = null;
 
@@ -89,7 +89,7 @@ function getRandomWallpaper()
 	$photoIds = array();
 	$photoIds['id'] = $data['id'];
 	$photoIds['flickr_id'] = $data['flickr_id'];
-	
+
 	$db->close();
 	$db = null;
 
@@ -110,7 +110,7 @@ function getWallpapers()
 
 		$wallpapers[] = $photoIds;
 	}
-	
+
 	$db->close();
 	$db = null;
 
@@ -141,7 +141,7 @@ function getPhotoForDayLocal( $dayOfYear )
 
 	$db->close();
 	$db = null;
-	
+
 	return $todaysPhotoData;
 }
 
@@ -208,7 +208,7 @@ function getPossiblePhotoSizes( $photoId )
 			break;
 		}
 	}
-	
+
 	$db->close();
 	$db = null;
 
@@ -244,13 +244,13 @@ function getPhoto( $photoId, $findSmallest = false, $minWidth = -1, $minHeight =
 		}
 		else
 		{
-			$selectedSize = b2GetPublicPhotoOriginalUrl( $photoId );
+			$selectedSize = b2GetPublicPhotoOriginalUrl( $photoId, $photoRow['imagetype'] );
 		}
 		$todaysPhoto->image = $selectedSize;
 	}
 
 	$todaysPhoto->thumbnail = b2GetPublicThumbnailUrl( $photoId );
-	
+
 	$db->close();
 	$db = null;
 
@@ -302,44 +302,55 @@ function findSmallest( $sizes, $minWidth, $minHeight, $imageType, $photoId )
 		{
 			error_log( 'Resized file does NOT exist!' );
 
-			$originalSizeUrl = b2GetPublicPhotoOriginalUrl( $photoId );
+			$originalSizeUrl = b2GetPublicPhotoOriginalUrl( $photoId, $imageType );
 			error_log( 'source ' . $originalSizeUrl );
 			$localPath = 'data/resize';
 			$fileName = "resize_" . $photoId . '_' . $smallestSize['width'] . '_' . $smallestSize['height'] . '.' . $imageType;
 			$localFile = $localPath . '/' . $fileName;
-
+			error_log('CurDir: ' . getcwd());
+			error_log('Resize file: '.$localFile);
 			// Download the original image
 			file_put_contents( $localFile, file_get_contents( $originalSizeUrl ) );
 
 			error_log( 'local: ' . $localFile );
 			error_log( 'downloaded original' );
-			$image = new Imagick( $localFile );
-			if( $image )
+			try
 			{
-				$image->resizeImage( $smallestSize['width'], $smallestSize['height'], Imagick::FILTER_LANCZOS, 1 );
-				error_log( 'resized!' );
-				$image->writeImage( $localFile );
+				$image = new Imagick( $localFile );
+				if( $image )
+				{
+					$image->resizeImage( $smallestSize['width'], $smallestSize['height'], Imagick::FILTER_LANCZOS, 1 );
+					error_log( 'resized!' );
+					$image->writeImage( $localFile );
 
-				error_log( 'Proccessed image' );
+					error_log( 'Proccessed image' );
 
-				$targetPath = getB2PhotoMetaResizedPath( $photoId, $smallestSize['width'], $smallestSize['height'], $imageType );
-				// Upload resized image to B2
-				uploadB2File( $localFile, $targetPath );
+					$targetPath = getB2PhotoMetaResizedPath( $photoId, $smallestSize['width'], $smallestSize['height'], $imageType );
+					// Upload resized image to B2
+					uploadB2File( $localFile, $targetPath );
 
-				$db->photo_sizes()->insert( $rowValues );
+					$db->photo_sizes()->insert( $rowValues );
 
-				error_log( 'uploaded' );
+					error_log( 'uploaded' );
+				}
 			}
+			catch(ImagickException $e)
+			{
+				error_log( "Failed to resize image: $photoId" );
 
-			unlink( $localFile );
+				// Fallback to original size URL
+				$resizedUrl = b2GetPublicPhotoOriginalUrl( $photoId, $imageType );
+			}
+			if (file_exists($localFile))
+				unlink($localFile);
 		}
-		
+
 		$db->close();
 		$db = null;
 	}
 	else
 	{
-		$resizedUrl = b2GetPublicPhotoOriginalUrl( $photoId );
+		$resizedUrl = b2GetPublicPhotoOriginalUrl( $photoId, $imageType );
 	}
 
 	return $resizedUrl;
@@ -355,6 +366,66 @@ function getHttpResponseCode( $theURL )
 {
 	$headers = @get_headers( $theURL );
 	return substr( $headers[0], 9, 3 );
+}
+
+function updateAlbumInfo( $albumId )
+{
+	$db = getDb();
+	$keys = getKeys();
+
+	$key = $keys->flickr_api->key;
+	$secret = $keys->flickr_api->secret;
+	$flickr = new Flickr($key, $secret);
+
+	$album = $db->albums[$albumId];
+	$flickrAlbumId = $album['flickr_album_id'];
+
+	////////////////////////////////////////////////////////
+	// Flickr Album Info
+
+	$method = 'flickr.photosets.getInfo';
+	$args = array(	'photoset_id' => $flickrAlbumId,
+		'user_id' => $keys->flickr_api->user_id );
+
+	$responseAlbumInfo = $flickr->call_method($method, $args);
+
+	if( $flickr->ok( $responseAlbumInfo ) )
+	{
+		error_log( 'got album info' );
+		$photoSetInfo = $responseAlbumInfo['photoset'];
+		$albumTitle = $photoSetInfo['title']['_content'];
+		$albumDescription = $photoSetInfo['description']['_content'];
+
+		//$albumCoverFlickrId = $photoSetInfo['primary'];
+
+		$rowUpdate = array(
+			'title' => $albumTitle,
+			'description' => $albumDescription
+		);
+
+		$albumRow = $db->albums[ $albumId ];
+		$result = $albumRow->update( $rowUpdate );
+
+		error_log("Album info updated! " . $albumId );
+	}
+
+	$db->close();
+}
+
+function updateAlbumPhotos( $albumId )
+{
+	$db = getDb();
+
+	$albumPhotoResults = $db->photos()->select('photos.id, photos.flickr_id')->where('album_photos:albums_id', $albumId)->order('date_taken ASC');
+	foreach( $albumPhotoResults as $photo )
+	{
+		$flickrId = $photo['flickr_id'];
+		$id = $photo['id'];
+
+		updatePhotoInfoFromFlickr( $id, $flickrId, $db );
+	}
+
+	$db->close();
 }
 
 function updatePhotoInfoFromFlickr( $id, $flickrId, $db )
@@ -375,25 +446,53 @@ function updatePhotoInfoFromFlickr( $id, $flickrId, $db )
 	$location = $responseInfo['photo']['location']['latitude'] . ',' . $responseInfo['photo']['location']['longitude'];
 	$dateTaken = $responseInfo['photo']['dates']['taken'];
 
+	$photoDate = pstToUtc( $dateTaken );
+
 	$rowUpdate = array(
 		'title' => $title,
 		'description' => $description,
 		'imagetype' => $imageType,
 		'location' => $location,
-		'date_taken' => $dateTaken,
+		'date_taken' => $photoDate,
 		'date_updated' => new NotORM_Literal( "NOW()" )
 	);
 
 	$photoRow = $db->photos[ $id ];
 	$result = $photoRow->update( $rowUpdate );
-	
-	error_log('updating photo info: ' . $id . ' flickr: ' . $flickrId);
+
+	error_log( 'updating photo info: ' . $id . ' flickr: ' . $flickrId );
+}
+
+function deleteResized( $photoId )
+{
+	$b2Files = listMetaFilesInternal( $photoId );
+
+	if( $b2Files )
+	{
+		foreach( $b2Files as $file )
+		{
+			echo $file . '<br />';
+			if (strpos($file, $GLOBALS['b2InternalPath']['photo']['resized_base']) !== false)
+			{
+				$deleteResult = deleteB2File( $file );
+				echo 'Delete file ' . $file . ' Success: ' . $deleteResult . '<br />';
+			}
+		}
+	}
+
+	$db = getDb();
+	$sizesResults = $db->photo_sizes( 'photo_id = ?', $photoId );
+	foreach( $sizesResults as $row )
+	{
+		$deleteResult = $row->delete();
+		echo 'Photo Size deleted: ' . ($deleteResult == true) . '<br />';
+	}
 }
 
 function deletePhoto( $photoId )
 {
 	$b2Files = listAllFilesInternal( $photoId );
-	
+
 	if( $b2Files )
 	{
 		foreach( $b2Files as $file )
@@ -406,21 +505,21 @@ function deletePhoto( $photoId )
 	$db = getDb();
 	$photoResult = $db->photos[ $photoId ]->delete();
 	echo 'Photo deleted: ' . ($photoResult == true) . '<br />';
-	
-	$sizesResults = $db->photo_sizes('photo_id = ?', $photoId);
+
+	$sizesResults = $db->photo_sizes( 'photo_id = ?', $photoId );
 	foreach( $sizesResults as $row )
 	{
 		$deleteResult = $row->delete();
 		echo 'Photo Size deleted: ' . ($deleteResult == true) . '<br />';
 	}
-	
-	$albumResults = $db->album_photos('photos_id = ?', $photoId);
+
+	$albumResults = $db->album_photos( 'photos_id = ?', $photoId );
 	foreach( $albumResults as $row )
 	{
 		$deleteResult = $row->delete();
 		echo 'Album Photo deleted: ' . ($deleteResult == true) . '<br />';
 	}
-	
+
 	$db->close();
 	$db = null;
 }
@@ -511,14 +610,14 @@ function createPhotoImport( $flickrId, $flickrAlbumId, $targetAlbum, $isAlbumCov
 		}
 		else
 		{
-			error_log('Failed to insert Import Task into DB!');
+			error_log( 'Failed to insert Import Task into DB!' );
 		}
 	}
 	else
 	{
 		error_log( 'Flickr import already exists! State: ' . $existingImport['import_state'] );
 	}
-	
+
 	$db->close();
 	$db = null;
 
@@ -568,7 +667,7 @@ function processImportTask( $importTaskId )
 
 							if( $isAlbumCover )
 							{
-								$album = $db->albums[$targetAlbumId];
+								$album = $db->albums[ $targetAlbumId ];
 								if( $album )
 								{
 									$album['cover_photo_id'] = $localId;
@@ -634,7 +733,7 @@ function processImportTask( $importTaskId )
 			}
 		}
 	}
-	
+
 	$db->close();
 	$db = null;
 
@@ -645,94 +744,112 @@ function createPhotoData( $flickrId, $targetAlbumId, $isWallpaper, $isHighlight,
 {
 	$success = false;
 
-	$row = $db->photos( 'flickr_id = ?', $flickrId )->fetch();
-
-	if( !$row )
+	$existingRow = $db->photos( 'flickr_id = ?', $flickrId )->fetch();
+	if($existingRow)
 	{
-		$item['flickr_id'] = $flickrId;
-		$item['wallpaper'] = $isWallpaper ? 1 : 0;
-		$item['highlight'] = $isHighlight ? 1 : 0;
-		$item['photoframe'] = $isPhotoframe ? 1 : 0;
+		$item = $existingRow;
+	}
 
-		if( $isPhotowall )
-		{
-			$item['photowall_id'] = $db->photos()->max( 'photowall_id' ) + 1;
-		}
-		else
-		{
-			$item['photowall_id'] = null;
-		}
+	$item['flickr_id'] = $flickrId;
+	$item['wallpaper'] = $isWallpaper ? 1 : 0;
+	$item['highlight'] = $isHighlight ? 1 : 0;
+	$item['photoframe'] = $isPhotoframe ? 1 : 0;
 
-		////////////////////////////////////////////////////////
-		// Flickr Info
-
-		$method = 'flickr.photos.getInfo';
-		$args = array( 'photo_id' => $flickrId );
-		$responseInfo = $flickr->call_method( $method, $args );
-
-		$item['imagetype'] = $responseInfo['photo']['originalformat'];
-		$item['title'] = $responseInfo['photo']['title']['_content'];
-		$item['description'] = $responseInfo['photo']['description']['_content'];
-		$item['location'] = $responseInfo['photo']['location']['latitude'] . ',' . $responseInfo['photo']['location']['longitude'];
-
-		$hadRotation = null;
-		$rotation = $responseInfo['photo']['rotation'];
-		if( $rotation == 90 || $rotation == 180 )
-		{
-			$hadRotation = true;
-		}
-		else
-		{
-			$hadRotation = false;
-		}
-
-		$item['date_taken'] = $responseInfo['photo']['dates']['taken'];
-
-		////////////////////////////////////////////////////////
-		// Flickr Sizes
-
-		$method = 'flickr.photos.getSizes';
-		$args = array( 'photo_id' => $flickrId );
-		$responseSizes = $flickr->call_method( $method, $args );
-
-		$width = -1;
-		$height = -1;
-
-		foreach( $responseSizes['sizes']['size'] as $size )
-		{
-			if( $size['label'] == 'Original' )
-			{
-				$width = $size['width'];
-				$height = $size['height'];
-				break;
-			}
-		}
-
-		if( $hadRotation )
-		{
-			$item['width'] = $height;
-			$item['height'] = $width;
-		}
-		else
-		{
-			$item['width'] = $width;
-			$item['height'] = $height;
-		}
-
-		$item['orientation'] = determineOrientation( $item['width'], $item['height'] );
-
-		////////////////////////////////////////////////////////
-		// Insert to DB
-
-		$newRow = $db->photos()->insert( $item );
-		if( $newRow )
-		{
-			$success = true;
-		}
+	if( $isPhotowall )
+	{
+		$item['photowall_id'] = $db->photos()->max( 'photowall_id' ) + 1;
 	}
 	else
 	{
+		$item['photowall_id'] = null;
+	}
+
+	////////////////////////////////////////////////////////
+	// Flickr Info
+
+	$method = 'flickr.photos.getInfo';
+	$args = array( 'photo_id' => $flickrId );
+	$responseInfo = $flickr->call_method( $method, $args );
+
+	$item['imagetype'] = $responseInfo['photo']['originalformat'];
+	$item['title'] = $responseInfo['photo']['title']['_content'];
+	$item['description'] = $responseInfo['photo']['description']['_content'];
+	$item['location'] = $responseInfo['photo']['location']['latitude'] . ',' . $responseInfo['photo']['location']['longitude'];
+
+	$hadRotation = null;
+	$rotation = $responseInfo['photo']['rotation'];
+
+	if( $rotation == 90 || $rotation == 270 )
+	{
+		$hadRotation = true;
+	}
+	else
+	{
+		$hadRotation = false;
+	}
+
+	$flickrDate = $responseInfo['photo']['dates']['taken'];
+	$item['date_taken'] = pstToUtc( $flickrDate );
+
+	////////////////////////////////////////////////////////
+	// Flickr Sizes
+
+	$method = 'flickr.photos.getSizes';
+	$args = array( 'photo_id' => $flickrId );
+	$responseSizes = $flickr->call_method( $method, $args );
+
+	$width = -1;
+	$height = -1;
+
+	foreach( $responseSizes['sizes']['size'] as $size )
+	{
+		if( $size['label'] == 'Original' )
+		{
+			$width = $size['width'];
+			$height = $size['height'];
+			break;
+		}
+	}
+
+	error_log( 'had rotation ' . $hadRotation . ' width ' . $width . ' height ' . $height );
+
+	if( $hadRotation )
+	{
+		$item['width'] = $height;
+		$item['height'] = $width;
+	}
+	else
+	{
+		$item['width'] = $width;
+		$item['height'] = $height;
+	}
+
+	$item['orientation'] = determineOrientation( $item['width'], $item['height'] );
+
+	////////////////////////////////////////////////////////
+	// Insert to DB
+
+
+	// If we already have this photo, add it's ID
+	if($existingRow)
+	{
+		error_log('updating photo');
+		$item->update();
+		$newRow = true;
+	}
+	else
+	{
+		error_log('creating photo');
+		$newRow = $db->photos()->insert( $item );
+	}
+
+	if( $newRow )
+	{
 		$success = true;
+	}
+	else
+	{
+		$success = false;
 	}
 
 	if( $success )
@@ -742,18 +859,23 @@ function createPhotoData( $flickrId, $targetAlbumId, $isWallpaper, $isHighlight,
 		{
 			$photoRow = $db->photos( 'flickr_id', $flickrId )->fetch();
 
-			$item = array( 'albums_id' => $targetAlbumId,
-				'photos_id' => $photoRow['id'] );
-
-			$db->album_photos()->insert( $item );
-
-			// By default we want the album date to be the date that the earliest photo in that album was taken,
-			// so if this photo is older than the current album date, update the album date
-			$album = $db->albums[ $targetAlbumId ];
-			if( strtotime( $photoRow['date_taken'] ) < strtotime( $album['date'] ) )
+			// Only insert if we don't already have one
+			$albumPhotoRow = $db->album_photos()->where( 'photos_id, albums_id', $photoRow['id'], $targetAlbumId );
+			if( count( $albumPhotoRow ) == 0 )
 			{
-				$album['date'] = $photoRow['date_taken'];
-				$album->update();
+				$item = array( 'albums_id' => $targetAlbumId,
+					'photos_id' => $photoRow['id'] );
+
+				$db->album_photos()->insert( $item );
+
+				// By default we want the album date to be the date that the earliest photo in that album was taken,
+				// so if this photo is older than the current album date, update the album date
+				$album = $db->albums[ $targetAlbumId ];
+				if( strtotime( $photoRow['date_taken'] ) < strtotime( $album['date'] ) )
+				{
+					$album['date'] = $photoRow['date_taken'];
+					$album->update();
+				}
 			}
 		}
 	}
@@ -798,7 +920,14 @@ function transferPhotoFromFlickrToB2( $id, $flickrId, $flickr, $force = false )
 {
 	$success = false;
 
-	$sourceUrl = b2GetPublicPhotoOriginalUrl( $id );
+	$db = getDb();
+	$photo = $db->photos[ $id ];
+	$db->close();
+	$db = null;
+
+	error_log( 'Getting source photo ' . $id . ' of FlickrId: ' . $flickrId );
+
+	$sourceUrl = b2GetPublicPhotoOriginalUrl( $id, $photo['imagetype'] );
 
 	if( !remoteFileExists( $sourceUrl ) || $force )
 	{
@@ -863,12 +992,12 @@ function transferThumbnailFromFlickrToB2( $photoId, $force = false )
 	if( (!remoteFileExists( $ourThumbnailUrl ) || $force) )
 	{
 		error_log( 'transferThumbnailFromFlickrToB2 photoId: ' . $photoId );
-		
+
 		$db = getDb();
 		$photoRow = $db->photos()->select( 'flickr_id' )->where( "id", $photoId )->fetch();
 		$db->close();
 		$db = null;
-		
+
 		$flickrId = $photoRow['flickr_id'];
 
 		$keys = getKeys();
@@ -920,6 +1049,45 @@ function transferThumbnailFromFlickrToB2( $photoId, $force = false )
 	return $success;
 }
 
+function createReimportTask( $photoId )
+{
+	$importTaskId = null;
+
+	$db = getDb();
+
+	$photo = $db->photos[ $photoId ];
+
+	error_log( 'Creating reimport task for ' . $photoId );
+
+	$newImportTask = array( 'flickr_id' => $photo['flickr_id'],
+		'flickr_album_id' => null,
+		'target_album_id' => null,
+		'created_photo_id' => $photoId,
+		'is_wallpaper' => $photo['is_wallpaper'] ? 1 : 0,
+		'is_photoframe' => $photo['is_photoframe'] ? 1 : 0,
+		'is_highlight' => $photo['is_highlight'] ? 1 : 0,
+		'is_photowall' => $photo['is_photowall'] ? 1 : 0,
+		'is_album_cover' => 0,
+		'import_state' => 'not_started' );
+
+	$insertResult = $db->photo_import()->insert( $newImportTask );
+	if( $insertResult )
+	{
+		$importTaskId = $insertResult['id'];
+		error_log( 'Import task created: ' . $importTaskId );
+	}
+	else
+	{
+		$importTaskId = false;
+		error_log( 'Failed to insert Import Task into DB!' );
+	}
+
+	$db->close();
+	$db = null;
+
+	return $importTaskId;
+}
+
 function autorotateImage( Imagick $image )
 {
 	switch( $image->getImageOrientation() )
@@ -955,6 +1123,36 @@ function autorotateImage( Imagick $image )
 	}
 	$image->setImageOrientation( Imagick::ORIENTATION_TOPLEFT );
 	return $image;
+}
+
+function pstToUtc( $inDate, $format='Y-m-d H:i:s' )
+{
+	$dateTime = new DateTime( $inDate, new DateTimeZone( 'America/Los_Angeles' ) );
+	$dateTime->setTimezone( new DateTimeZone( "UTC" ) );
+	return $dateTime->format( $format );
+}
+
+function utcToPst( $inDate, $format='Y-m-d H:i:s' )
+{
+	$dateTime = new DateTime( $inDate, new DateTimeZone( "UTC" ) );
+	$dateTime->setTimezone( new DateTimeZone( 'America/Los_Angeles' ) );
+	return $dateTime->format( $format );
+}
+
+function utcTimestamp( $inDate )
+{
+	$dateTime = new DateTime( $inDate, new DateTimeZone( "UTC" ) );
+	return $dateTime->getTimestamp();
+}
+
+function getPhotoSphereMapUrl( $location, $googleMapsApiKey )
+{
+	return "http://maps.googleapis.com/maps/api/staticmap?center=$location&zoom=2&scale=1&size=96x96&maptype=terrain&key=$googleMapsApiKey&format=jpg&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:%7C$location";
+}
+
+function getPhotoSphereMapLargeUrl( $location, $googleMapsApiKey )
+{
+	return "http://maps.googleapis.com/maps/api/staticmap?center=$location&zoom=2&scale=1&size=256x96&maptype=terrain&key=$googleMapsApiKey&format=jpg&visual_refresh=true&markers=size:mid%7Ccolor:0xff0000%7Clabel:%7C$location";
 }
 
 class Photo
